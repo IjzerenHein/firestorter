@@ -85,8 +85,6 @@ var _Document2 = _interopRequireDefault(_Document);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Query = function () {
@@ -96,7 +94,7 @@ var Query = function () {
 		this._ref = ref;
 		this._createDocFn = docFactoryFn || _Document2.default.create;
 		this._realtime = (0, _mobx.observable)(false);
-		this._fetchRefCount = (0, _mobx.observable)(0);
+		this._fetching = (0, _mobx.observable)(false);
 		this._docs = (0, _mobx.observable)([]);
 		this._onSnapshot = this._onSnapshot.bind(this);
 		if (realtime) this.realtime = true;
@@ -112,46 +110,21 @@ var Query = function () {
    *
    * @return {Promise} this query
    */
-		value: function () {
-			var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-				var snapshot;
-				return regeneratorRuntime.wrap(function _callee$(_context) {
-					while (1) {
-						switch (_context.prev = _context.next) {
-							case 0:
-								this._fetchRefCount.set(this._fetchRefCount.get() + 1);
-								_context.prev = 1;
-								_context.next = 4;
-								return this._ref.get();
+		value: function fetch() {
+			var _this = this;
 
-							case 4:
-								snapshot = _context.sent;
-
-								this._fetchRefCount.set(this._fetchRefCount.get() - 1);
-								this._updateFromSnapshot(snapshot);
-								return _context.abrupt('return', this);
-
-							case 10:
-								_context.prev = 10;
-								_context.t0 = _context['catch'](1);
-
-								this._fetchRefCount.set(this._fetchRefCount.get() - 1);
-								throw _context.t0;
-
-							case 14:
-							case 'end':
-								return _context.stop();
-						}
-					}
-				}, _callee, this, [[1, 10]]);
-			}));
-
-			function fetch() {
-				return _ref.apply(this, arguments);
-			}
-
-			return fetch;
-		}()
+			this._fetching.set(true);
+			return new Promise(function (resolve, reject) {
+				_this._ref.get().then(function (snapshot) {
+					_this._fetching.set(false);
+					_this._updateFromSnapshot(snapshot);
+					resolve(_this);
+				}, function (err) {
+					_this._fetching.set(false);
+					reject(err);
+				});
+			});
+		}
 
 		/**
    * True when a fetch is in progress
@@ -167,6 +140,7 @@ var Query = function () {
    * @private
    */
 		value: function _onSnapshot(snapshot) {
+			this._fetching.set(false);
 			this._updateFromSnapshot(snapshot);
 		}
 
@@ -261,6 +235,7 @@ var Query = function () {
 				this._onSnapshotUnsubscribe = undefined;
 			}
 			if (realtime) {
+				this._fetching.set(true);
 				this._onSnapshotUnsubscribe = this._ref.onSnapshot(this._onSnapshot);
 			}
 			this._realtime.set(realtime);
@@ -268,7 +243,7 @@ var Query = function () {
 	}, {
 		key: 'fetching',
 		get: function get() {
-			return this._fetchRefCount.get() > 0;
+			return this._fetching.get();
 		}
 	}]);
 

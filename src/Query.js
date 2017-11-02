@@ -60,18 +60,18 @@ class Query {
 	 *
 	 * @return {Promise} this query
 	 */
-	async fetch() {
+	fetch() {
 		this._fetching.set(true);
-		try {
-			const snapshot = await this._ref.get();
-			this._fetching.set(false);
-			this._updateFromSnapshot(snapshot);
-			return this;
-		}
-		catch (err) {
-			this._fetching.set(false);
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			this._ref.get().then((snapshot) => {
+				this._fetching.set(false);
+				this._updateFromSnapshot(snapshot);
+				resolve(this);
+			}, (err) => {
+				this._fetching.set(false);
+				reject(err);
+			})
+		});
 	}
 
 	/**

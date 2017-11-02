@@ -4,6 +4,7 @@ Simple & super efficient Firestore to React bindings using Mobx observables.
 
 Because Firestore, React and Mobx === ❤️
 
+
 ## Installation
 
 	yarn add react-firestore-mobx
@@ -51,8 +52,12 @@ const TodoItem = observer(({doc}) => {
 });
 
 ReactDOM.render(<Todos />, document.getElementById('root'));
-
 ```
+
+## Examples
+
+- [TodoApp](https://cdn.rawgit.com/IjzerenHein/react-firestore-mobx/d706091d/examples/todoApp/build/index.html)([source](./examples/todoApp))
+
 
 ## Work in progress
 
