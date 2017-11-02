@@ -1,15 +1,21 @@
 # react-firestore-mobx
 
-Simple, intuitive & super efficient Firestore to React bindings using Mobx observables.
+Simple, intuitive & super efficient Firestore bindings for React, using Mobx observables.
 
-Because Firestore, React and Mobx === ❤️
+- **Simple**, get up & running in minutes
+- **Intuitive**, straightforward API, classes map to firestore concepts
+- **Super efficient**, finely grained re-rendering because of mobx
+- **Animation friendly**, animations just work because of efficient rendering 
+- **No clutter**, no complex stores/providers/actions/reducers, just go
+
+Because, React `+` Firestore `+` Mobx `===` ❤️
 
 
 ## Installation
 
 	yarn add react-firestore-mobx
 	
-*This will automatically install `mobx` and `mobx-react`*.
+*This will automatically install `mobx` and `mobx-react`*
 	
 ## Usage
 
@@ -61,9 +67,16 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 
 ## Work in progress
 
+react-firestore-mobx is being build as you read this. The essentials are done 
+but more functionality and testing is still needed.
+
+Todo:
+
 - [ ] API Documentation
-- [ ] Adding documents (Collection.update)
-- [ ] Document.update
+- [ ] Revise Collection.add
+- [ ] Collection.delete
+- [ ] Batch updates
+- [ ] Sub-collections in documents
 - [ ] Optimize observable rendering further
 - [ ] More testing
 
