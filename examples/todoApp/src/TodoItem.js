@@ -6,7 +6,6 @@ import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 
 const styles = {
@@ -36,16 +35,8 @@ class TodoItem extends Component {
     todo: PropTypes.any
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      deleting: false
-    };
-  }
-
   render() {
     const {todo} = this.props;
-    const {deleting} = this.state;
     const {finished, text} = todo.data;
 
     console.log('TodoItem.render: ', todo.id, ', text: ', text);
@@ -63,13 +54,11 @@ class TodoItem extends Component {
             hintText={text ? undefined : 'What needs to be done?'}
             onChange={this.onTextChange}
             value={text || ''} />
-          {deleting ?
-            <CircularProgress /> :
-            <FlatButton
+          <FlatButton
             style={styles.icon}
             icon={<DeleteIcon />}
             secondary
-            onClick={this.onPressDelete} />}
+            onClick={this.onPressDelete} />
         </div>
         <Divider />
       </Paper>
@@ -78,15 +67,14 @@ class TodoItem extends Component {
 
   onPressDelete = async () => {
     const {todo} = this.props;
-    const {deleting} = this.state;
-    if (deleting) return;
-    this.setState({deleting: true});
+    if (this._deleting) return;
+    this._deleting = true;
     try {
       await todo.delete();
+      this._deleting = false;
     }
     catch (err) {
-      this.setState({deleting: false});
-
+      this._deleting = false;
     }
   };
 
