@@ -30,11 +30,11 @@ const todos = new Collection(db.collection('todos'), true);
 @observer class Todos extends Component {
   render() {
     return <div>
-	    {todos.docs.map((doc) => (
-	    	<TodoItem
-	    		key={todo.id}
-	    		doc={doc} />
-	    ))}
+      {todos.docs.map((doc) => (
+        <TodoItem
+          key={todo.id}
+          doc={doc} />
+      ))}
     </div>;
   }
 }
@@ -43,11 +43,11 @@ const todos = new Collection(db.collection('todos'), true);
 // Does not re-render when other docs are
 // added/removed/updated in the collection.
 const TodoItem = observer(({doc}) => {
-	const {finished, text} = doc.data;
-	return <div>
-      <input type='checkbox' checked={finished} />
-      <input type='text' value={text} />
-	</div>;
+  const {finished, text} = doc.data;
+  return <div>
+    <input type='checkbox' checked={finished} />
+    <input type='text' value={text} />
+  </div>;
 });
 
 ReactDOM.render(<Todos />, document.getElementById('root'));
@@ -56,11 +56,11 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 
 ## Work in progress
 
-[ ] API Documentation
-[ ] Adding documents (Collection.update)
-[ ] Document.update
-[ ] Optimize observable rendering further
-[ ] More testing
+- [ ] API Documentation
+- [ ] Adding documents (Collection.update)
+- [ ] Document.update
+- [ ] Optimize observable rendering further
+- [ ] More testing
 
 
 ## License
