@@ -1,0 +1,30 @@
+{
+  "name": "react-firestore-mobx",
+  "version": "0.1.0",
+  "description": "Simple & super efficient Firestore to React bindings using Mobx observables",
+  "main": "dist/react-firestore-mobx.js",
+  "module": "src/index.js",
+  "repository": "https://github.com/IjzerenHein/react-firestore-mobx",
+  "author": "IjzerenHein <hrutjes@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "mobx": "^3.3.1",
+    "mobx-react": "^4.3.3"
+  },
+  "peerDependencies": {
+    "firebase": "^4.6.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.8.1"
+  }
+}
