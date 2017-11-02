@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {observer} from 'mobx-react';
 import {todos} from './store';
-import Paper from 'material-ui/Paper';
+import FlipMove from 'react-flip-move';
 import CircularProgress from 'material-ui/CircularProgress';
 import TodoItem from './TodoItem';
 
@@ -24,10 +24,12 @@ const Todos = observer(class Todos extends Component {
   	const {docs, fetching} = todos;
   	console.log('Todos.render, fetching: ', fetching);
     return (
-      <Paper zDepth={2}>
-        {docs.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
+      <div>
+      	<FlipMove enterAnimation='fade' leaveAnimation='fade'>
+        	{docs.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
+        </FlipMove>
         {fetching ? <div style={styles.loader}><CircularProgress /></div> : undefined}
-      </Paper>
+      </div>
     );
   }
 });

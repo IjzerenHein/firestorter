@@ -7,6 +7,7 @@ import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import CircularProgress from 'material-ui/CircularProgress';
+import Paper from 'material-ui/Paper';
 
 const styles = {
   container: {
@@ -49,7 +50,7 @@ class TodoItem extends Component {
 
     console.log('TodoItem.render: ', todo.id, ', text: ', text);
     return (
-      <div style={styles.container}>
+      <Paper zDepth={1}>
         <div style={styles.row}>
           <Checkbox
             style={styles.checkbox}
@@ -71,7 +72,7 @@ class TodoItem extends Component {
             onClick={this.onPressDelete} />}
         </div>
         <Divider />
-      </div>
+      </Paper>
     );
   }
 
