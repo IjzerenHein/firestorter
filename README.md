@@ -1,6 +1,6 @@
 # react-firestore-mobx
 
-Simple & super efficient Firestore to React bindings using Mobx observables.
+Simple, intuitive & super efficient Firestore to React bindings using Mobx observables.
 
 Because Firestore, React and Mobx === ❤️
 
