@@ -19,6 +19,16 @@ class Collection extends Query {
 			}, reject);
 		});
 	}
+
+	/**
+	 * Deletes the collection by deleting all contained
+	 * documents in it.
+	 *
+	 * @return {Promise} Number of documents deleted
+	 */
+	delete() {
+		// TODO
+	}
 }
 
 export default Collection;
