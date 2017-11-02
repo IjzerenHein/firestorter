@@ -46,7 +46,8 @@ class App extends Component {
   onPressAdd = async () => {
     try {
       await todos.add({
-        finished: false
+        finished: false,
+        text: ''
       });
     }
     catch (err) {
