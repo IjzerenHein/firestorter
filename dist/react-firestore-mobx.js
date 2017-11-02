@@ -501,7 +501,7 @@ var Collection = function (_Query) {
 			return new Promise(function (resolve, reject) {
 				_this2.ref.add(data).then(function (ref) {
 					ref.get().then(function (snapshot) {
-						var doc = _this2._createDocument(snapshot);
+						var doc = _this2._createDocFn(snapshot);
 						resolve(doc);
 					}, reject);
 				}, reject);

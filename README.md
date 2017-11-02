@@ -56,7 +56,7 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 
 ## Examples
 
-- [TodoApp](https://rawgit.com/IjzerenHein/react-firestore-mobx/master/examples/todoApp/build/index.html)([source](./examples/todoApp/src))
+- [TodoApp](https://rawgit.com/IjzerenHein/react-firestore-mobx/master/examples/todoApp/build/index.html) ([source](./examples/todoApp/src))
 
 
 ## Work in progress

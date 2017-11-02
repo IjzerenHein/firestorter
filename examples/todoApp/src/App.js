@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import ContentAddIcon from 'material-ui/svg-icons/content/add';
 import Todos from './Todos';
+import {todos} from './store';
 
 const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column'
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  headerTitle: {
+    flex: 1
   }
 }
 
@@ -17,13 +28,31 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div style={styles.container}>
-          <h1>React/Firestore Todo App</h1>
-          <h3>using Mobx observables</h3>
+          <div style={styles.header}>
+            <div style={styles.headerTitle}>
+              <h1>React & Firestore Todo App</h1>
+              <h3>using Mobx observables</h3>
+            </div>
+            <FloatingActionButton onClick={this.onPressAdd}>
+              <ContentAddIcon />
+            </FloatingActionButton>
+          </div>
           <Todos />
         </div>
       </MuiThemeProvider>
     );
   }
+
+  onPressAdd = async () => {
+    try {
+      await todos.add({
+        finished: false
+      });
+    }
+    catch (err) {
+      // TODO
+    }
+  };
 }
 
 export default App;

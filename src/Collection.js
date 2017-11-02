@@ -13,7 +13,7 @@ class Collection extends Query {
 		return new Promise((resolve, reject) => {
 			this.ref.add(data).then((ref) => {
 				ref.get().then((snapshot) => {
-					const doc = this._createDocument(snapshot);
+					const doc = this._createDocFn(snapshot);
 					resolve(doc);
 				}, reject);
 			}, reject);
