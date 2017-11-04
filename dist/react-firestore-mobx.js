@@ -507,6 +507,19 @@ var Collection = function (_Query) {
 				}, reject);
 			});
 		}
+
+		/**
+   * Deletes the collection by deleting all contained
+   * documents in it.
+   *
+   * @return {Promise} Number of documents deleted
+   */
+
+	}, {
+		key: 'delete',
+		value: function _delete() {
+			// TODO
+		}
 	}]);
 
 	return Collection;
