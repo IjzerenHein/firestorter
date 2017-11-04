@@ -8,6 +8,7 @@ class Document {
 		this._updateTime = observable(snapshot.updateTime);
 		this._readTime = observable(snapshot.readTime);
 		this._data = observable(snapshot.data());
+		this._refCount = 1;
 	}
 
 	static create(snapshot) {
@@ -17,6 +18,16 @@ class Document {
 	// TODO - realtime?
 
 	/**
+	 * Overidable method that is called whenever the collection
+	 * or any of its associated queries are no longer referencing
+	 * this document. This function can be used to perform
+	 * optional cleanup.
+	 */
+	onFinalRelease() {
+		// Override to implement
+	}
+
+	/**
 	 * Firestore document reference.
 	 * @readonly
 	 * @type {DocumentReference}
@@ -24,7 +35,7 @@ class Document {
 	get ref() {
 		return this._snapshot.ref;
 	}
-	
+
 	/**
 	 * Underlying firestore snapshot.
 	 * @type {DocumentSnapshot}

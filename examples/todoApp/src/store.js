@@ -12,7 +12,7 @@ firebase.initializeApp({
 });
 
 const db = firebase.firestore();
-const todos = new Collection(db.collection('todos'), true);
+const todos = new Collection(db.collection('todos')).start();
 
 export {
 	todos
