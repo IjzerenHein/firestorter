@@ -73,6 +73,7 @@ but more functionality and testing is still needed.
 Todo:
 
 - [ ] API Documentation
+- [ ] Queries
 - [ ] Revise Collection.add
 - [ ] Collection.delete
 - [ ] Batch updates
