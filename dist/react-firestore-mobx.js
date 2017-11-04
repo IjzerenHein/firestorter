@@ -61,205 +61,17 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _mobx = __webpack_require__(1);
-
-var _Document = __webpack_require__(2);
-
-var _Document2 = _interopRequireDefault(_Document);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Query = function () {
-	function Query(ref, realtime, docFactoryFn) {
-		_classCallCheck(this, Query);
-
-		this._ref = ref;
-		this._createDocFn = docFactoryFn || _Document2.default.create;
-		this._realtime = (0, _mobx.observable)(false);
-		this._fetching = (0, _mobx.observable)(false);
-		this._docs = (0, _mobx.observable)([]);
-		this._onSnapshot = this._onSnapshot.bind(this);
-		if (realtime) this.realtime = true;
-	}
-
-	_createClass(Query, [{
-		key: 'fetch',
-
-
-		/**
-   * Fetches new data from firestore. Use this when `realtime`
-   * updates are disabled, to manually fetch new data.
-   *
-   * @return {Promise} this query
-   */
-		value: function fetch() {
-			var _this = this;
-
-			this._fetching.set(true);
-			return new Promise(function (resolve, reject) {
-				_this._ref.get().then(function (snapshot) {
-					_this._fetching.set(false);
-					_this._updateFromSnapshot(snapshot);
-					resolve(_this);
-				}, function (err) {
-					_this._fetching.set(false);
-					reject(err);
-				});
-			});
-		}
-
-		/**
-   * True when a fetch is in progress
-   * @property
-   * @type {bool}
-   */
-
-	}, {
-		key: '_onSnapshot',
-
-
-		/**
-   * @private
-   */
-		value: function _onSnapshot(snapshot) {
-			this._fetching.set(false);
-			this._updateFromSnapshot(snapshot);
-		}
-
-		/**
-   * @private
-   */
-
-	}, {
-		key: '_updateFromSnapshot',
-		value: function _updateFromSnapshot(snapshot) {
-			var docs = snapshot.docs;
-			var oldArray = this._docs.slice(0);
-			var newArray = [];
-
-			for (var i = 0, n = docs.length; i < n; i++) {
-				var docSnapshot = docs[i];
-
-				// Find existing document and re-use that when possible
-				var doc = void 0;
-				for (var j = 0; j < oldArray.length; j++) {
-					var oldDoc = oldArray[j];
-					if (oldDoc.id === docSnapshot.id) {
-						doc = oldDoc;
-						oldArray.splice(j, 1);
-						break;
-					}
-				}
-
-				// Create/update document
-				if (!doc) {
-					doc = this._createDocFn(docSnapshot);
-				} else {
-					doc.snapshot = docSnapshot;
-				}
-				newArray.push(doc);
-			}
-
-			// TODO, stop monitoring old stuff?
-
-			if (this._docs.length !== newArray.length) {
-				this._docs.replace(newArray);
-			} else {
-				for (var _i = 0, _n = newArray.length; _i < _n; _i++) {
-					if (newArray[_i] !== this._docs[_i]) {
-						this._docs.replace(newArray);
-						break;
-					}
-				}
-			}
-		}
-	}, {
-		key: 'docs',
-		get: function get() {
-			return this._docs;
-		}
-
-		/**
-   * Firestore query reference.
-   * @type {QueryReference|CollectionReference}
-   */
-
-	}, {
-		key: 'ref',
-		get: function get() {
-			return this._ref;
-		},
-		set: function set(ref) {
-			if (this._ref === ref) return;
-			this._ref = ref;
-			if (!this._realtime.get()) return;
-			if (this._onSnapshotUnsubscribe) {
-				this._onSnapshotUnsubscribe();
-			}
-			this._onSnapshotUnsubscribe = this._ref.onSnapshot(this._onSnapshot);
-		}
-
-		/**
-   * True when the firestore is monitored for real-time updates
-   * @property
-   * @type {bool}
-   */
-
-	}, {
-		key: 'realtime',
-		get: function get() {
-			return this._realtime.get();
-		},
-		set: function set(realtime) {
-			if (this._realtime.get() === realtime) return;
-			if (this._onSnapshotUnsubscribe) {
-				this._onSnapshotUnsubscribe();
-				this._onSnapshotUnsubscribe = undefined;
-			}
-			if (realtime) {
-				this._fetching.set(true);
-				this._onSnapshotUnsubscribe = this._ref.onSnapshot(this._onSnapshot);
-			}
-			this._realtime.set(realtime);
-		}
-	}, {
-		key: 'fetching',
-		get: function get() {
-			return this._fetching.get();
-		}
-	}]);
-
-	return Query;
-}();
-
-exports.default = Query;
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("mobx");
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -271,7 +83,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mobx = __webpack_require__(1);
+var _mobx = __webpack_require__(0);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -284,9 +96,32 @@ var Document = function () {
 		this._updateTime = (0, _mobx.observable)(snapshot.updateTime);
 		this._readTime = (0, _mobx.observable)(snapshot.readTime);
 		this._data = (0, _mobx.observable)(snapshot.data());
+		this._refCount = 1;
 	}
 
 	_createClass(Document, [{
+		key: 'onFinalRelease',
+
+
+		// TODO - realtime?
+
+		/**
+   * Overidable method that is called whenever the collection
+   * or any of its associated queries are no longer referencing
+   * this document. This function can be used to perform
+   * optional cleanup.
+   */
+		value: function onFinalRelease() {}
+		// Override to implement
+
+
+		/**
+   * Firestore document reference.
+   * @readonly
+   * @type {DocumentReference}
+   */
+
+	}, {
 		key: 'update',
 
 
@@ -312,15 +147,6 @@ var Document = function () {
 		}
 	}, {
 		key: 'ref',
-
-
-		// TODO - realtime?
-
-		/**
-   * Firestore document reference.
-   * @readonly
-   * @type {DocumentReference}
-   */
 		get: function get() {
 			return this._snapshot.ref;
 		}
@@ -421,7 +247,7 @@ var Document = function () {
 exports.default = Document;
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -430,28 +256,23 @@ exports.default = Document;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.Document = exports.Query = exports.Collection = undefined;
+exports.Document = exports.Collection = undefined;
 
-var _Collection = __webpack_require__(4);
+var _Collection = __webpack_require__(3);
 
 var _Collection2 = _interopRequireDefault(_Collection);
 
-var _Query = __webpack_require__(0);
-
-var _Query2 = _interopRequireDefault(_Query);
-
-var _Document = __webpack_require__(2);
+var _Document = __webpack_require__(1);
 
 var _Document2 = _interopRequireDefault(_Document);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Collection = _Collection2.default;
-exports.Query = _Query2.default;
 exports.Document = _Document2.default;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -463,28 +284,101 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Query2 = __webpack_require__(0);
+var _mobx = __webpack_require__(0);
 
-var _Query3 = _interopRequireDefault(_Query2);
+var _Document = __webpack_require__(1);
+
+var _Document2 = _interopRequireDefault(_Document);
+
+var _DocumentStore = __webpack_require__(4);
+
+var _DocumentStore2 = _interopRequireDefault(_DocumentStore);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Collection = function (_Query) {
-	_inherits(Collection, _Query);
-
-	function Collection() {
+var Collection = function () {
+	function Collection(ref, query) {
 		_classCallCheck(this, Collection);
 
-		return _possibleConstructorReturn(this, (Collection.__proto__ || Object.getPrototypeOf(Collection)).apply(this, arguments));
+		this._docStore = new _DocumentStore2.default();
+		this._createDocFn = _Document2.default.create;
+		this._ref = (0, _mobx.observable)(ref);
+		this._query = (0, _mobx.observable)(query);
+		this._realtime = (0, _mobx.observable)(false);
+		this._fetching = (0, _mobx.observable)(false);
+		this._docs = (0, _mobx.observable)([]);
+		this._onSnapshot = this._onSnapshot.bind(this);
 	}
 
+	/**
+  * Array of documents.
+  * @readonly
+  * @type Array(Document)
+  */
+
+
 	_createClass(Collection, [{
+		key: 'start',
+
+
+		/**
+   * Enables realtime updating and returns this object.
+   *
+   * @return {Collection} This collection
+   */
+		value: function start() {
+			this.realtime = true;
+			return this;
+		}
+
+		/**
+   * Stops realtime updating and returns this object.
+   *
+   * @return {Collection} This collection
+   */
+
+	}, {
+		key: 'stop',
+		value: function stop() {
+			this.realtime = false;
+			return this;
+		}
+
+		/**
+   * Fetches new data from firestore. Use this to manualle fetch
+   * new data when `realtime` is disabled.
+   *
+   * @return {Promise} this query
+   */
+
+	}, {
+		key: 'fetch',
+		value: function fetch() {
+			var _this = this;
+
+			this._fetching.set(true);
+			return new Promise(function (resolve, reject) {
+				var ref = _this._query.get() || _this._ref.get();
+				ref.then(function (snapshot) {
+					_this._fetching.set(false);
+					_this._updateFromSnapshot(snapshot);
+					resolve(_this);
+				}, function (err) {
+					_this._fetching.set(false);
+					reject(err);
+				});
+			});
+		}
+
+		/**
+   * True when a fetch is in progress
+   * @property
+   * @type {bool}
+   */
+
+	}, {
 		key: 'add',
 
 
@@ -509,23 +403,209 @@ var Collection = function (_Query) {
 		}
 
 		/**
-   * Deletes the collection by deleting all contained
-   * documents in it.
+   * Deletes all the documents in the collection or query.
    *
    * @return {Promise} Number of documents deleted
    */
 
 	}, {
-		key: 'delete',
-		value: function _delete() {
-			// TODO
+		key: 'deleteAll',
+		value: function deleteAll() {}
+		// TODO
+
+
+		/**
+   * @private
+   */
+
+	}, {
+		key: '_onSnapshot',
+		value: function _onSnapshot(snapshot) {
+			this._fetching.set(false);
+			this._updateFromSnapshot(snapshot);
+		}
+
+		/**
+   * @private
+   */
+
+	}, {
+		key: '_updateFromSnapshot',
+		value: function _updateFromSnapshot(snapshot) {
+			var _this3 = this;
+
+			var newDocs = snapshot.docs.map(function (snapshot) {
+				var doc = _this3._docStore.getAndAddRef(snapshot.id);
+				if (doc) {
+					doc.snapshot = snapshot;
+				} else {
+					doc = _this3._docStore.add(_this3._createDocFn(snapshot));
+				}
+				return doc;
+			});
+			this._docStore.releaseRefs(this._docs);
+
+			if (this._docs.length !== newDocs.length) {
+				this._docs.replace(newDocs);
+			} else {
+				for (var i = 0, n = newDocs.length; i < n; i++) {
+					if (newDocs[i] !== this._docs[i]) {
+						this._docs.replace(newDocs);
+						break;
+					}
+				}
+			}
+		}
+	}, {
+		key: 'docs',
+		get: function get() {
+			return this._docs;
+		}
+
+		/**
+   * Firestore collection reference.
+   * @type {CollectionReference}
+   */
+
+	}, {
+		key: 'ref',
+		get: function get() {
+			return this._ref.get();
+		},
+		set: function set(ref) {
+			if (this._ref.get() === ref) return;
+			this._ref.set(ref);
+			if (!this._realtime.get()) return;
+			if (!this._query.get()) {
+				if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
+				this._fetching.set(true);
+				this._onSnapshotUnsubscribe = ref.onSnapshot(this._onSnapshot);
+			}
+		}
+
+		/**
+   * Firestore query.
+   * @type {Query}
+   */
+
+	}, {
+		key: 'query',
+		get: function get() {
+			return this._query.get();
+		},
+		set: function set(query) {
+			if (this._query.get() === query) return;
+			this._query.set(query);
+			if (!this._realtime.get()) return;
+			if (this._onSnapshotUnsubscribe) {
+				this._onSnapshotUnsubscribe();
+				this._onSnapshotUnsubscribe = undefined;
+			}
+			if (query) {
+				this._fetching.set(true);
+				this._onSnapshotUnsubscribe = query.onSnapshot(this._onSnapshot);
+			} else if (this._ref.get()) {
+				this._fetching.set(true);
+				this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
+			}
+		}
+
+		/**
+   * True when the firestore is monitored for real-time updates
+   * @property
+   * @type {bool}
+   */
+
+	}, {
+		key: 'realtime',
+		get: function get() {
+			return this._realtime.get();
+		},
+		set: function set(realtime) {
+			if (this._realtime.get() === realtime) return;
+			if (this._onSnapshotUnsubscribe) {
+				this._onSnapshotUnsubscribe();
+				this._onSnapshotUnsubscribe = undefined;
+			}
+			if (realtime) {
+				this._fetching.set(true);
+				this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
+			}
+			this._realtime.set(realtime);
+		}
+	}, {
+		key: 'fetching',
+		get: function get() {
+			return this._fetching.get();
 		}
 	}]);
 
 	return Collection;
-}(_Query3.default);
+}();
 
 exports.default = Collection;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * The DocumentStore stores a reference to all in-use documents.
+ * It enables recycling of Documents so that a fetch doesn't create
+ * new documents, but instead uses the existing ones. This is
+ * important to ensure that no unneccesary rendering is performed.
+ */
+var DocumentStore = function () {
+	function DocumentStore() {
+		_classCallCheck(this, DocumentStore);
+
+		this._docs = {};
+	}
+
+	_createClass(DocumentStore, [{
+		key: 'add',
+		value: function add(doc) {
+			if (this._docs[doc.id]) throw new Error('Document is already in DocumentStore: ' + doc.id);
+			this._docs[doc.id] = doc;
+			return doc;
+		}
+	}, {
+		key: 'releaseRefs',
+		value: function releaseRefs(docs) {
+			var _this = this;
+
+			docs.forEach(function (doc) {
+				doc._refCount--;
+				if (!doc._refCount) {
+					doc.onFinalRelease();
+					delete _this._docs[doc.id];
+				}
+			});
+		}
+	}, {
+		key: 'getAndAddRef',
+		value: function getAndAddRef(id) {
+			var doc = this._docs[id];
+			if (doc) doc._refCount++;
+			return doc;
+		}
+	}]);
+
+	return DocumentStore;
+}();
+
+exports.default = DocumentStore;
 
 /***/ })
 /******/ ]);
