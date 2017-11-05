@@ -316,7 +316,7 @@ class Collection {
 		return new Promise((resolve, reject) => {
 			this.ref.add(data).then((ref) => {
 				ref.get().then((snapshot) => {
-					const doc = Document.create(snapshot);
+					const doc = new Document(snapshot);
 					resolve(doc);
 				}, reject);
 			}, reject);
@@ -350,7 +350,7 @@ class Collection {
 				doc.snapshot = snapshot;
 			}
 			else {
-				doc = this._docStore.add(Document.create(snapshot));
+				doc = this._docStore.add(new Document(snapshot));
 			}
 			return doc;
 		});

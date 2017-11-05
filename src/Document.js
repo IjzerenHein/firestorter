@@ -10,12 +10,12 @@ import type {
  * no-sql database. It is initialized with a firestore `DocumentSnapshot`
  * object so that it immediately has data. Document is
  * observable so that it can be efficiently linked to a React Component
- * using `mobx-react`'s `observer` pattern. This ensures that components
- * are ony re-rendered when data that is accessed in the `render` function
- * is changed.
+ * using `mobx-react`'s `observer` pattern. This ensures that a component
+ * is only re-rendered when data that is accessed in the `render` function
+ * has changed.
  *
  * Documents are typically created by the `Collection` class but can also
- * be explicitly created using the constructor or `Document.create`.
+ * be explicitly created using its constructor.
 */
 class Document {
 	_snapshot: DocumentSnapshot;
@@ -160,15 +160,6 @@ class Document {
 	 */
 	onFinalRelease() {
 		// Override to implement
-	}
-
-	/**
-	 * Creates a new Document.
-	 *
-	 * @param {DocumentSnapshot} snapshot - Snapshot of the document
-	 */
-	static create(snapshot: DocumentSnapshot): Document {
-		return new Document(snapshot);
 	}
 }
 

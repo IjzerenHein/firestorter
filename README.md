@@ -14,7 +14,7 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
-- [Documentation](#documentation)
+- [Documentation](./docs/API.md)
 
 
 ## Installation
