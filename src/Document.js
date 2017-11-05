@@ -8,9 +8,11 @@ import type {
 /**
  * Document represents a document stored in the firestore
  * no-sql database. It is initialized with a firestore `DocumentSnapshot`
- * object so that it immediately has data. The properties are MobX
- * observerables to enable fine grained efficient re-rendering of
- * components.
+ * object so that it immediately has data. Document is
+ * observable so that it can be efficiently linked to a React Component
+ * using `mobx-react`'s `observer` pattern. This ensures that components
+ * are ony re-rendered when data that is accessed in the `render` function
+ * is changed.
  *
  * Documents are typically created by the `Collection` class but can also
  * be explicitly created using the constructor or `Document.create`.

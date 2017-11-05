@@ -35,7 +35,7 @@
 The Collection class lays at the heart of `react-firestore-mobx`.
 It represents a collection in Firestore and its queried data. It is
 observable so that it can be efficiently linked to a React Component
-using `mobx-react`'s `observer`.
+using `mobx-react`'s `observer` pattern.
 
 A Collection can operate in two modes:
 
@@ -58,11 +58,13 @@ created or modified.
 
 **Parameters**
 
--   `ref` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
+-   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
 
 **Examples**
 
 ```javascript
+import {Collection} from 'react-firestore-mobx';
+
 // Create a collection using path (preferred)
 const col = new Collection('artists/Metallica/albums');
 
@@ -277,9 +279,11 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 Document represents a document stored in the firestore
 no-sql database. It is initialized with a firestore `DocumentSnapshot`
-object so that it immediately has data. The properties are MobX
-observerables to enable fine grained efficient re-rendering of
-components.
+object so that it immediately has data. Document is
+observable so that it can be efficiently linked to a React Component
+using `mobx-react`'s `observer` pattern. This ensures that components
+are ony re-rendered when data that is accessed in the `render` function
+is changed.
 
 Documents are typically created by the `Collection` class but can also
 be explicitly created using the constructor or `Document.create`.

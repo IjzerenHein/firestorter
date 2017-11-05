@@ -75,7 +75,7 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 
 ## Documentation
 
-- [API Reference](./docs.API.md)
+- [API Reference](./docs/API.md)
 
 
 ## Work in progress

@@ -14,7 +14,7 @@ import type {
  * The Collection class lays at the heart of `react-firestore-mobx`.
  * It represents a collection in Firestore and its queried data. It is
  * observable so that it can be efficiently linked to a React Component
- * using `mobx-react`'s `observer`.
+ * using `mobx-react`'s `observer` pattern.
  *
  * A Collection can operate in two modes:
  * - real-time updates enabled
@@ -35,6 +35,8 @@ import type {
  * created or modified.
  *
  * @example
+ * import {Collection} from 'react-firestore-mobx';
+ *
  * // Create a collection using path (preferred)
  * const col = new Collection('artists/Metallica/albums');
  *
@@ -82,12 +84,12 @@ class Collection {
 	_docs: Array<Document>;
 	_onSnapshotUnsubscribe: () => void | void;
 
-	constructor(ref: CollectionReference|string) {
+	constructor(pathOrRef: CollectionReference|string) {
 		this._docStore = new DocumentStore();
-		if (typeof ref === 'string') {
-			ref = getFirestore().collection(ref);
+		if (typeof pathOrRef === 'string') {
+			pathOrRef = getFirestore().collection(pathOrRef);
 		}
-		this._ref = observable(ref);
+		this._ref = observable(pathOrRef);
 		this._query = observable(undefined);
 		this._realtime = observable(false);
 		this._fetching = observable(false);
