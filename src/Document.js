@@ -1,8 +1,29 @@
+// @flow
 import {observable} from 'mobx';
+import type {
+	DocumentSnapshot,
+	DocumentReference
+} from 'firebase/firestore';
 
+/**
+ * Document represents a document stored in the firestore
+ * no-sql database. It is initialized with a firestore `DocumentSnapshot`
+ * object so that it immediately has data. The properties are MobX
+ * observerables to enable fine grained efficient re-rendering of
+ * components.
+ *
+ * Documents are typically created by the `Collection` class but can also
+ * be explicitly created using the constructor or `Document.create`.
+*/
 class Document {
+	_snapshot: DocumentSnapshot;
+	_createTime: DocumentSnapshot;
+	_updateTime: DocumentSnapshot;
+	_readTime: DocumentSnapshot;
+	_data: DocumentSnapshot;
+	_refCount: number;
 
-	constructor(snapshot) {
+	constructor(snapshot: DocumentSnapshot) {
 		this._snapshot = snapshot;
 		this._createTime = observable(snapshot.createTime);
 		this._updateTime = observable(snapshot.updateTime);
@@ -11,17 +32,19 @@ class Document {
 		this._refCount = 1;
 	}
 
-	static create(snapshot) {
+	/**
+	 * Creates a new Document.
+	 *
+	 * @param {DocumentSnapshot} snapshot - Snapshot of the document
+	 */
+	static create(snapshot: DocumentSnapshot): Document {
 		return new Document(snapshot);
 	}
 
-	// TODO - realtime?
-
 	/**
-	 * Overidable method that is called whenever the collection
-	 * or any of its associated queries are no longer referencing
-	 * this document. This function can be used to perform
-	 * optional cleanup.
+	 * Overidable method that is called whenever the document
+	 * is no longer referenced. Can be used to perform optional
+	 * cleanup.
 	 */
 	onFinalRelease() {
 		// Override to implement
@@ -30,20 +53,18 @@ class Document {
 	/**
 	 * Firestore document reference.
 	 * @readonly
-	 * @type {DocumentReference}
 	 */
-	get ref() {
+	get ref(): DocumentReference {
 		return this._snapshot.ref;
 	}
 
 	/**
 	 * Underlying firestore snapshot.
-	 * @type {DocumentSnapshot}
 	 */
-	get snapshot() {
+	get snapshot(): DocumentSnapshot {
 		return this._snapshot;
 	}
-	set snapshot(snapshot) {
+	set snapshot(snapshot: DocumentSnapshot) {
 		this._snapshot = snapshot;
 		this._createTime.set(snapshot.createTime);
 		this._updateTime.set(snapshot.updateTime);
@@ -57,66 +78,69 @@ class Document {
 
 	/**
 	 * Id of the Firestore document.
-	 * @readonly
-	 * @type {String}
 	 */
-	get id() {
+	get id(): string {
 		return this._snapshot.ref.id;
 	}
 
 	/**
-	 * Data inside the Firestore document.
-	 * @type {Object}
+	 * Returns the data inside the Firestore document.
 	 */
-	get data() {
+	get data(): any {
 		return this._data;
 	}
-	set data(data) {
+	/* set data(data: any) {
 		// TODO
-	}
+	}*/
 
 	/**
 	 * Time the document was created in firestore.
-	 * @readonly
-	 * @type {String}
 	 */
-	get createTime() {
+	get createTime(): string {
 		return this._readTime.get();
 	}
 
 	/**
 	 * Time the document was last updated in firestore.
-	 * @readonly
-	 * @type {String}
 	 */
-	get updateTime() {
+	get updateTime(): string {
 		return this._updateTime.get();
 	}
 
 	/**
 	 * Time this document was last read from firestore.
-	 * @readonly
-	 * @type {String}
 	 */
-	get readTime() {
+	get readTime(): string {
 		return this._readTime.get();
 	}
 
 	/**
 	 * Updates one or more fields in the document.
 	 *
-	 * @return {Promise}
+	 * The update will fail if applied to a document that does
+	 * not exist.
+	 *
+	 * @example
+	 * await todoDoc.update({
+   *	 finished: true,
+   *   text: 'O yeah, checked this one off',
+   *   foo: {
+	 *     bar: 10
+   *   }
+	 * });
 	 */
-	update(fields) {
+	update(fields: any): Promise<void> {
 		return this.ref.update(fields);
 	}
 
 	/**
-	 * Deletes the document in Firestore from its parent collection.
+	 * Deletes the document in Firestore.
 	 *
-	 * @return {Promise}
+	 * Returns a promise that resolves once the document has been
+	 * successfully deleted from the backend (Note that it won't
+	 * resolve while you're offline).
 	 */
-	delete() {
+	delete(): Promise<void> {
 		return this.ref.delete();
 	}
 }

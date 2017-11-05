@@ -1,0 +1,13 @@
+[ignore]
+
+[include]
+
+[libs]
+node_modules/mobx/lib/mobx.js.flow
+
+[lints]
+
+[options]
+unsafe.enable_getters_and_setters=true
+
+[strict]

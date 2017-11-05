@@ -1,11 +1,31 @@
+// @flow
 import {observable} from 'mobx';
 import Document from './Document';
 import DocumentStore from './DocumentStore';
+import type {
+	DocumentSnapshot,
+	CollectionReference,
+	Query,
+	QuerySnapshot
+} from 'firebase/firestore';
 
+/**
+ * This class implements the base functionality
+ * for a bluetooth connection. You typically don't instantiate this
+ * class explicitely, but instead derive a class from it which
+ * implements a specific connection (e.g. WebBluetoothComms).
+*/
 class Collection {
-	constructor(ref, query) {
+	_docStore: DocumentStore;
+	_ref: DocumentSnapshot;
+	_query: DocumentSnapshot;
+	_realtime: DocumentSnapshot;
+	_fetching: DocumentSnapshot;
+	_docs: Array<Document>;
+	_onSnapshotUnsubscribe: () => void | void;
+
+	constructor(ref: CollectionReference, query: Query) {
 		this._docStore = new DocumentStore();
-		this._createDocFn = Document.create;
 		this._ref = observable(ref);
 		this._query = observable(query);
 		this._realtime = observable(false);
@@ -15,22 +35,24 @@ class Collection {
 	}
 
 	/**
-	 * Array of documents.
-	 * @readonly
-	 * @type Array(Document)
+	 * Array of all the documents that have been fetched
+	 * from firestore.
 	 */
-	get docs() {
+	get docs(): Array<Document> {
 		return this._docs;
 	}
 
 	/**
 	 * Firestore collection reference.
-	 * @type {CollectionReference}
+	 *
+	 * Use this property to get or set the collection
+	 * reference. When set, a fetch to the new collection
+	 * is performed.
 	 */
-	get ref() {
+	get ref(): CollectionReference {
 		return this._ref.get();
 	}
-	set ref(ref) {
+	set ref(ref: CollectionReference) {
 		if (this._ref.get() === ref) return;
 		this._ref.set(ref);
 		if (!this._realtime.get()) return;
@@ -43,12 +65,19 @@ class Collection {
 
 	/**
 	 * Firestore query.
-	 * @type {Query}
+	 *
+	 * Use this property to set any order-by, where,
+	 * limit or start/end criteria. When set, the query
+	 * is used to retrieve any data. When cleared, the collection
+	 * reference is used.
+	 *
+	 * @example
+	 * todos.query = todos.ref.where('finished', '==', false).orderBy('asc').limit(20);
 	 */
-	get query() {
+	get query(): Query {
 		return this._query.get();
 	}
-	set query(query) {
+	set query(query: Query) {
 		if (this._query.get() === query) return;
 		this._query.set(query);
 		if (!this._realtime.get()) return;
@@ -71,10 +100,10 @@ class Collection {
 	 * @property
 	 * @type {bool}
 	 */
-	get realtime() {
+	get realtime(): boolean {
 		return this._realtime.get();
 	}
-	set realtime(realtime) {
+	set realtime(realtime: boolean) {
 		if (this._realtime.get() === realtime) return;
 		if (this._onSnapshotUnsubscribe) {
 			this._onSnapshotUnsubscribe();
@@ -92,7 +121,7 @@ class Collection {
 	 *
 	 * @return {Collection} This collection
 	 */
-	start() {
+	start(): Collection {
 		this.realtime = true;
 		return this;
 	}
@@ -102,7 +131,7 @@ class Collection {
 	 *
 	 * @return {Collection} This collection
 	 */
-	stop() {
+	stop(): Collection {
 		this.realtime = false;
 		return this;
 	}
@@ -111,9 +140,9 @@ class Collection {
 	 * Fetches new data from firestore. Use this to manualle fetch
 	 * new data when `realtime` is disabled.
 	 *
-	 * @return {Promise} this query
+	 * @return {Promise} This collection
 	 */
-	fetch() {
+	fetch(): Promise<Collection> {
 		this._fetching.set(true);
 		return new Promise((resolve, reject) => {
 			const ref = this._query.get() || this._ref.get();
@@ -130,25 +159,20 @@ class Collection {
 
 	/**
 	 * True when a fetch is in progress
-	 * @property
-	 * @type {bool}
 	 */
-	get fetching() {
+	get fetching(): boolean {
 		return this._fetching.get();
 	}
 
 	/**
 	 * Add a new document to this collection with the specified
 	 * data, assigning it a document ID automatically.
-	 *
-	 * @param {Object} data
-	 * @return {Promise} Promise to Document object
 	 */
-	add(data) {
+	add(data: any): Promise<Document> {
 		return new Promise((resolve, reject) => {
 			this.ref.add(data).then((ref) => {
 				ref.get().then((snapshot) => {
-					const doc = this._createDocFn(snapshot);
+					const doc = Document.create(snapshot);
 					resolve(doc);
 				}, reject);
 			}, reject);
@@ -160,14 +184,14 @@ class Collection {
 	 *
 	 * @return {Promise} Number of documents deleted
 	 */
-	deleteAll() {
+	deleteAll(): Promise<void> {
 		// TODO
 	}
 
 	/**
 	 * @private
 	 */
-	_onSnapshot(snapshot) {
+	_onSnapshot(snapshot: QuerySnapshot) {
 		this._fetching.set(false);
 		this._updateFromSnapshot(snapshot);
 	}
@@ -175,14 +199,14 @@ class Collection {
 	/**
 	 * @private
 	 */
-	_updateFromSnapshot(snapshot) {
+	_updateFromSnapshot(snapshot: QuerySnapshot) {
 		const newDocs = snapshot.docs.map((snapshot) => {
 			let doc = this._docStore.getAndAddRef(snapshot.id);
 			if (doc) {
 				doc.snapshot = snapshot;
 			}
 			else {
-				doc = this._docStore.add(this._createDocFn(snapshot));
+				doc = this._docStore.add(Document.create(snapshot));
 			}
 			return doc;
 		});

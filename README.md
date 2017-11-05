@@ -73,6 +73,8 @@ but more functionality and testing is still needed.
 Todo:
 
 - [ ] API Documentation
+- [ ] Per document fetching
+- [ ] Per document real time updates
 - [ ] Revise Collection.add
 - [ ] Collection.delete
 - [ ] Custom Documents
