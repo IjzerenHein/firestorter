@@ -30,7 +30,7 @@ firebase.initializeApp({...});
 
 // Create collection and listen for real-time updates
 const db = firebase.firestore();
-const todos = new Collection(db.collection('todos'), true);
+const todos = new Collection(db.collection('todos')).start();
 
 // Observe collection and only re-render when
 // documents are added/removed/moved in it.
