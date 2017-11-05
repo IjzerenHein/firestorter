@@ -27,7 +27,6 @@
     -   [update](#update)
     -   [delete](#delete)
     -   [onFinalRelease](#onfinalrelease)
-    -   [create](#create)
 -   [setFirebaseApp](#setfirebaseapp)
 
 ## Collection
@@ -281,12 +280,12 @@ Document represents a document stored in the firestore
 no-sql database. It is initialized with a firestore `DocumentSnapshot`
 object so that it immediately has data. Document is
 observable so that it can be efficiently linked to a React Component
-using `mobx-react`'s `observer` pattern. This ensures that components
-are ony re-rendered when data that is accessed in the `render` function
-is changed.
+using `mobx-react`'s `observer` pattern. This ensures that a component
+is only re-rendered when data that is accessed in the `render` function
+has changed.
 
 Documents are typically created by the `Collection` class but can also
-be explicitly created using the constructor or `Document.create`.
+be explicitly created using its constructor.
 
 **Parameters**
 
@@ -399,16 +398,6 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 Overidable method that is called whenever the document
 is no longer referenced. Can be used to perform optional
 cleanup.
-
-### create
-
-Creates a new Document.
-
-**Parameters**
-
--   `snapshot` **DocumentSnapshot** Snapshot of the document
-
-Returns **[Document](#document)** 
 
 ## setFirebaseApp
 
