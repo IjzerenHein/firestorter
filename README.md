@@ -87,6 +87,7 @@ but more functionality and testing is still needed.
 
 Todo:
 
+- [ ] Auto start/stop realtime on mount/unmount
 - [ ] Per document fetching
 - [ ] Per document real time updates
 - [ ] Sub-collections in documents
