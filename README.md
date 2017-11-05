@@ -1,12 +1,12 @@
 # react-firestore-mobx
 
-Simple, intuitive & super efficient Firestore bindings for React, using Mobx observables.
+Simple, super efficient Firestore bindings for React, using Mobx observables.
 
-- **Simple**, get up & running in minutes
-- **Intuitive**, straightforward API, classes map to firestore concepts
-- **Super efficient**, finely grained re-rendering because of mobx
-- **Animation friendly**, animations just work because of efficient rendering 
+- **Simple**, simple API, get up & running in minutes
+- **Efficient**, only re-renders those parts that have changed
 - **No clutter**, no complex stores/providers/actions/reducers, just go
+
+![this-thing-really-moves](./this-thing-really-moves.gif)
 
 Because, React `+` Firestore `+` Mobx `===` ❤️
 
