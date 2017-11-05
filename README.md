@@ -11,26 +11,34 @@ Simple, intuitive & super efficient Firestore bindings for React, using Mobx obs
 Because, React `+` Firestore `+` Mobx `===` ❤️
 
 
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Documentation](#documentation)
+
+
 ## Installation
 
 	yarn add react-firestore-mobx
 	
 *This will automatically install `mobx` and `mobx-react`*
-	
+
 ## Usage
 
 ```js
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {Collection} from 'firestore-react-mobx';
+import {setFirebaseApp, Collection} from 'firestore-react-mobx';
 import {observer} from 'mobx-react';
 
 // Initialize firebase app
 firebase.initializeApp({...});
 
+// Initialize `react-firestore-mobx`
+setFirebaseApp(firebase);
+
 // Create collection and listen for real-time updates
-const db = firebase.firestore();
-const todos = new Collection(db.collection('todos')).start();
+const todos = new Collection('todos').start();
 
 // Observe collection and only re-render when
 // documents are added/removed/moved in it.
@@ -65,6 +73,11 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 - [TodoApp](https://rawgit.com/IjzerenHein/react-firestore-mobx/master/examples/todoApp/build/index.html) ([source](./examples/todoApp/src))
 
 
+## Documentation
+
+- [API Reference](./docs.API.md)
+
+
 ## Work in progress
 
 react-firestore-mobx is being build as you read this. The essentials are done 
@@ -72,14 +85,15 @@ but more functionality and testing is still needed.
 
 Todo:
 
-- [ ] API Documentation
 - [ ] Per document fetching
 - [ ] Per document real time updates
-- [ ] Revise Collection.add
-- [ ] Collection.delete
-- [ ] Custom Documents
-- [ ] Batch updates
 - [ ] Sub-collections in documents
+- [ ] Revise Collection.add
+- [ ] Collection.delete()
+- [ ] Blobs
+- [ ] GeoPoint ?
+- [ ] Custom Documents ?
+- [ ] Batch updates
 - [ ] More testing
 
 

@@ -39,7 +39,7 @@ class TodoItem extends Component {
 		const {todo} = this.props;
 		const {finished, text} = todo.data;
 
-		console.log('TodoItem.render: ', todo.id, ', text: ', text);
+		console.log('TodoItem.render: ', todo.path, ', text: ', text);
 		return (
 			<Paper zDepth={1}>
 				<div style={styles.row}>

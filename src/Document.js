@@ -33,33 +33,57 @@ class Document {
 	}
 
 	/**
-	 * Creates a new Document.
+	 * Returns the data inside the firestore document.
 	 *
-	 * @param {DocumentSnapshot} snapshot - Snapshot of the document
+	 * @example
+	 * const docData = todos.docs.map((doc) => {
+   *	console.log(doc.data);
+   *  // {
+   *  //   finished: false
+   *  //   text: 'Must do this'
+   *  // }
+	 * });
 	 */
-	static create(snapshot: DocumentSnapshot): Document {
-		return new Document(snapshot);
-	}
-
-	/**
-	 * Overidable method that is called whenever the document
-	 * is no longer referenced. Can be used to perform optional
-	 * cleanup.
-	 */
-	onFinalRelease() {
-		// Override to implement
+	get data(): any {
+		return this._data;
 	}
 
 	/**
 	 * Firestore document reference.
-	 * @readonly
 	 */
 	get ref(): DocumentReference {
 		return this._snapshot.ref;
 	}
 
 	/**
+	 * Id of the firestore document.
+	 *
+	 * To get the full-path of the document, use `path`.
+	 */
+	get id(): string {
+		return this._snapshot.ref.id;
+	}
+
+	/**
+	 * Path of the document (e.g. 'albums/blackAlbum').
+	 */
+	get path(): string {
+		let ref = this._snapshot.ref;
+		let path = ref.id;
+		while (ref.parent) {
+			path = ref.parent.id + '/' + path;
+			ref = ref.parent;
+		}
+		return path;
+	}
+
+	/**
 	 * Underlying firestore snapshot.
+	 *
+	 * This property can be used to update the data
+	 * in the Document. It is for instance used by
+	 * the Collection class to update the document when an
+	 * update is received from the back-end.
 	 */
 	get snapshot(): DocumentSnapshot {
 		return this._snapshot;
@@ -75,23 +99,6 @@ class Document {
 			this._data[key] = data[key];
 		}
 	}
-
-	/**
-	 * Id of the Firestore document.
-	 */
-	get id(): string {
-		return this._snapshot.ref.id;
-	}
-
-	/**
-	 * Returns the data inside the Firestore document.
-	 */
-	get data(): any {
-		return this._data;
-	}
-	/* set data(data: any) {
-		// TODO
-	}*/
 
 	/**
 	 * Time the document was created in firestore.
@@ -142,6 +149,24 @@ class Document {
 	 */
 	delete(): Promise<void> {
 		return this.ref.delete();
+	}
+
+	/**
+	 * Overidable method that is called whenever the document
+	 * is no longer referenced. Can be used to perform optional
+	 * cleanup.
+	 */
+	onFinalRelease() {
+		// Override to implement
+	}
+
+	/**
+	 * Creates a new Document.
+	 *
+	 * @param {DocumentSnapshot} snapshot - Snapshot of the document
+	 */
+	static create(snapshot: DocumentSnapshot): Document {
+		return new Document(snapshot);
 	}
 }
 

@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {Collection} from 'react-firestore-mobx';
+import {setFirebaseApp, Collection} from 'react-firestore-mobx';
 
 firebase.initializeApp({
 	apiKey: 'AIzaSyBiY-6xQrji8oe5E90d1P8J8OvfIo3F6kE',
@@ -11,8 +11,9 @@ firebase.initializeApp({
 	messagingSenderId: '680642766706'
 });
 
-const db = firebase.firestore();
-const todos = new Collection(db.collection('todos')).start();
+setFirebaseApp(firebase);
+
+const todos = new Collection('todos').start();
 
 export {
 	todos

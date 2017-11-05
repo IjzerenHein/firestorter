@@ -13,7 +13,7 @@
   "scripts": {
     "build": "webpack",
     "lint": "eslint src",
-    "doc": "documentation build src/** -f html -o docs"
+    "doc": "documentation build src/** -f md > ./docs/API.md"
   },
   "dependencies": {
     "mobx": "^3.3.1",
