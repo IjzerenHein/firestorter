@@ -3,7 +3,7 @@
 Simple, super efficient Firestore bindings for React, using Mobx observables.
 
 - **Simple**, simple API, get up & running in minutes
-- **Efficient**, only query and re-render data is visible and has changed
+- **Efficient**, only query and re-render data that is visible and has changed
 - **No clutter**, no complex stores/providers/actions/reducers, just go
 
 ![this-thing-really-moves](./this-thing-really-moves.gif)
@@ -19,10 +19,9 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 
 ## Work in progress
 
-*Thank you for checking out this repo. This project is under active
-development and its API may therefore still change a bit as I work
-out the kinks. This message will disappear when I feel the API is 
-solid.*
+*Thank you for checking out this repo in its early stages. This project is
+under active development and its API may therefore still change a bit as I work
+out the kinks. This message will disappear when I feel the API is solid.*
 
 
 ## Installation
@@ -52,6 +51,8 @@ const todos = new Collection('todos');
 
 // Observe collection and only re-render when
 // documents are added/removed/moved in it.
+// Rendering this component automatically causes
+// the `todos` collection to start real-time updating.
 @observer class Todos extends Component {
   render() {
     return <div>

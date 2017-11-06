@@ -260,10 +260,10 @@ class Collection {
 
 	/**
 	 * Fetches new data from firestore. Use this to manually fetch
-	 * new data when `realtimeUpdatingEnabled` is False.
+	 * new data when `realtimeUpdating` is set to 'off'.
 	 *
 	 * @example
- 	 * const col = new Collection('albums');
+ 	 * const col = new Collection('albums', 'off');
  	 * col.fetch().then(({docs}) => {
    *   docs.forEach(doc => console.log(doc));
 	 * });

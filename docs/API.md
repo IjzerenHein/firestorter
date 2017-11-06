@@ -200,12 +200,12 @@ Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 ### fetch
 
 Fetches new data from firestore. Use this to manually fetch
-new data when `realtimeUpdatingEnabled` is False.
+new data when `realtimeUpdating` is set to 'off'.
 
 **Examples**
 
 ```javascript
-const col = new Collection('albums');
+const col = new Collection('albums', 'off');
 col.fetch().then(({docs}) => {
   docs.forEach(doc => console.log(doc));
 });
