@@ -1,5 +1,5 @@
 // @flow
-import {observable} from 'mobx';
+import {observable, transaction} from 'mobx';
 import Document from './Document';
 import DocumentStore from './DocumentStore';
 import {getFirestore} from './firebaseApp';
@@ -16,9 +16,15 @@ import type {
  * observable so that it can be efficiently linked to a React Component
  * using `mobx-react`'s `observer` pattern.
  *
- * A Collection can operate in two modes:
- * - real-time updates enabled
- * - real-time updates disabled
+ * Collection supports three modes of real-time updating:
+ * - "off" (real-time updating is turned off)
+ * - "on" (real-time updating is permanently turned on)
+ * - "auto" (real-time updating is enabled on demand) (default)
+ *
+ * The "auto" mode ensures that Collection only communicates with
+ * the firestore back-end whever the Collection is actually
+ * rendered by a Component. This prevents unneccesary background
+ * updates and leads to the best possible performance.
  *
  * When real-time updates are enabled, data is automatically fetched
  * from Firestore whenever it changes in the back-end (using `onSnapshot`).
@@ -43,26 +49,12 @@ import type {
  * // Create a collection using a reference
  * const col2 = new Collection(firebase.firestore().collection('todos'));
  *
- * // Create a collection and immediately start it
- * const col2 = new Collection('artists').start();
+ * // Create a collection and permanently start real-time updating
+ * const col2 = new Collection('artists', 'on');
  *
  * // Create a collection and set a query on it
  * const col3 = new Collection('artists');
  * col3.query = col3.ref.orderBy('name', 'asc');
- * col3.start();
- *
- * @example
- * // To start real-time updates, use
- * collection.start();
- *
- * // Or to create a collection and immediately start it, use
- * const col = new Collection('albums/black/tracks').start();
- *
- * // And to stop it
- * collection.stop();
- *
- * // You can check whether real-time updates are enabled like this
- * console.log(collection.realtimeUpdatesEnabled);
  *
  * @example
  * // In manual mode, just call `fetch` explicitely
@@ -79,22 +71,51 @@ class Collection {
 	_docStore: DocumentStore;
 	_ref: DocumentSnapshot;
 	_query: DocumentSnapshot;
-	_realtime: DocumentSnapshot;
+	_realtimeUpdating: DocumentSnapshot;
 	_fetching: DocumentSnapshot;
 	_docs: Array<Document>;
 	_onSnapshotUnsubscribe: () => void | void;
+	_isObserved: boolean;
 
-	constructor(pathOrRef: CollectionReference|string) {
+	constructor(pathOrRef: CollectionReference|string, realtimeUpdating: string = 'auto') {
 		this._docStore = new DocumentStore();
 		if (typeof pathOrRef === 'string') {
 			pathOrRef = getFirestore().collection(pathOrRef);
 		}
+		this._onSnapshot = this._onSnapshot.bind(this);
 		this._ref = observable(pathOrRef);
 		this._query = observable(undefined);
-		this._realtime = observable(false);
+		this._realtimeUpdating = observable(realtimeUpdating);
 		this._fetching = observable(false);
 		this._docs = observable([]);
-		this._onSnapshot = this._onSnapshot.bind(this);
+		this._isObserved = false;
+
+		// Hook into the MobX docs observable and track
+		// Whether any Component is observing this collection.
+		// When realtimeUpdating is set to 'auto', then realtime
+		// updating is started/stopped based on whether the component
+		// is being observed.
+		const onBecomeUnobserved = this._docs.$mobx.atom.onBecomeUnobserved;
+		const reportObserved = this._docs.$mobx.atom.reportObserved;
+		this._docs.$mobx.atom.isPendingUnobservation = false;
+		this._docs.$mobx.atom.onBecomeUnobserved = () => {
+			const res = onBecomeUnobserved.apply(this._docs.$mobx.atom, arguments);
+			this._isObserved = false;
+			if (this._realtimeUpdating.get() === 'auto') {
+				this._stop();
+			}
+			return res;
+		};
+		this._docs.$mobx.atom.reportObserved = () => {
+			const res = reportObserved.apply(this._docs.$mobx.atom, arguments);
+			if (!this._isObserved) {
+				this._isObserved = true;
+				if (this._realtimeUpdating.get() === 'auto') {
+					this._start();
+				}
+			}
+			return res;
+		};
 	}
 
 	/**
@@ -132,11 +153,8 @@ class Collection {
 	set ref(ref: CollectionReference) {
 		if (this._ref.get() === ref) return;
 		this._ref.set(ref);
-		if (!this._realtime.get()) return;
-		if (!this._query.get()) {
-			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
-			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = ref.onSnapshot(this._onSnapshot);
+		if (this._active && !this._query.get()) {
+			this._start();
 		}
 	}
 
@@ -202,61 +220,42 @@ class Collection {
 	set query(query?: Query) {
 		if (this._query.get() === query) return;
 		this._query.set(query);
-		if (!this._realtime.get()) return;
-		if (this._onSnapshotUnsubscribe) {
-			this._onSnapshotUnsubscribe();
-			this._onSnapshotUnsubscribe = undefined;
-		}
-		if (query) {
-			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = query.onSnapshot(this._onSnapshot);
-		}
-		else if (this._ref.get()) {
-			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
+		if (this._active) {
+			this._start();
 		}
 	}
 
 	/**
-	 * Starts real-time updating.
+	 * Real-time updating mode.
 	 *
-	 * @return {Collection} This collection so it can be chained.
+	 * Can be set to any of the following values:
+	 * - "auto" (enables real-time updating when the collection is observed)
+	 * - "off" (no real-time updating, you need to call fetch explicitly)
+	 * - "on" (real-time updating is permanently enabled)
 	 */
-	start(): Collection {
-		if (this._realtime.get()) return this;
-		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
-		this._fetching.set(true);
-		if (this._query.get()) {
-			this._onSnapshotUnsubscribe = this._query.get().onSnapshot(this._onSnapshot);
-		}
-		else {
-			this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
-		}
-		this._realtime.set(true);
-		return this;
+	get realtimeUpdating(): string {
+		return this._realtimeUpdating.get();
 	}
-
-	/**
-	 * Stops real-time updating.
-	 *
-	 * @return {Collection} This collection so it can be chained.
-	 */
-	stop(): Collection {
-		if (!this._realtime.get()) return this;
-		if (this._onSnapshotUnsubscribe) {
-			this._onSnapshotUnsubscribe();
-			this._onSnapshotUnsubscribe = undefined;
+	set realtimeUpdating(mode: string) {
+		if (this._realtimeUpdating.get() === mode) return;
+		switch (mode) {
+		case 'auto':
+		case 'off':
+		case 'on':
+			break;
+		default:
+			throw new Error('Invalid realtimeUpdating mode: ' + mode);
 		}
-		this._realtime.set(false);
-		return this;
-	}
+		const oldActive = this._active();
+		this._realtimeUpdating.set(mode);
+		const active = this._active();
 
-	/**
-	 * True when the firestore back-end is being monitored
-	 * for real-time updates.
-	 */
-	get realtimeUpdatesEnabled(): boolean {
-		return this._realtime.get();
+		if (!active && oldActive) {
+			this._stop();
+		}
+		else if (active && !oldActive) {
+			this._start();
+		}
 	}
 
 	/**
@@ -271,7 +270,7 @@ class Collection {
 	 */
 	fetch(): Promise<Collection> {
 		return new Promise((resolve, reject) => {
-			if (this._realtime.get()) return reject(new Error('Should not call fetch when real-time updates are enabled'));
+			if (this._active) return reject(new Error('Should not call fetch when real-time updating is active'));
 			this._fetching.set(true);
 			const ref = this._query.get() || this._ref.get();
 			ref.then((snapshot) => {
@@ -335,9 +334,53 @@ class Collection {
 	/**
 	 * @private
 	 */
+	_start(): Collection {
+		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
+		if (this._query.get()) {
+			this._fetching.set(true);
+			this._onSnapshotUnsubscribe = this._query.get().onSnapshot(this._onSnapshot);
+		}
+		else if (this._ref.get()) {
+			this._fetching.set(true);
+			this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
+		}
+		else {
+			this._onSnapshotUnsubscribe = undefined;
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	_stop(): Collection {
+		if (this._onSnapshotUnsubscribe) {
+			this._onSnapshotUnsubscribe();
+			this._onSnapshotUnsubscribe = undefined;
+		}
+		if (this._fetching.get()) {
+			this._fetching.set(false);
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	get _active(): boolean {
+		switch (this._realtimeUpdating.get()) {
+		case 'off': return false;
+		case 'auto': return this._isObserved;
+		case 'on': return true;
+		}
+	}
+
+	/**
+	 * @private
+	 */
 	_onSnapshot(snapshot: QuerySnapshot) {
-		this._fetching.set(false);
-		this._updateFromSnapshot(snapshot);
+		transaction(() => {
+			this._fetching.set(false);
+			this._updateFromSnapshot(snapshot);
+		});
 	}
 
 	/**

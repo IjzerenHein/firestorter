@@ -8,9 +8,7 @@
     -   [id](#id)
     -   [path](#path)
     -   [query](#query)
-    -   [start](#start)
-    -   [stop](#stop)
-    -   [realtimeUpdatesEnabled](#realtimeupdatesenabled)
+    -   [realtimeUpdating](#realtimeupdating)
     -   [fetch](#fetch)
     -   [fetching](#fetching)
     -   [add](#add)
@@ -36,10 +34,16 @@ It represents a collection in Firestore and its queried data. It is
 observable so that it can be efficiently linked to a React Component
 using `mobx-react`'s `observer` pattern.
 
-A Collection can operate in two modes:
+Collection supports three modes of real-time updating:
 
--   real-time updates enabled
--   real-time updates disabled
+-   "off" (real-time updating is turned off)
+-   "on" (real-time updating is permanently turned on)
+-   "auto" (real-time updating is enabled on demand) (default)
+
+The "auto" mode ensures that Collection only communicates with
+the firestore back-end whever the Collection is actually
+rendered by a Component. This prevents unneccesary background
+updates and leads to the best possible performance.
 
 When real-time updates are enabled, data is automatically fetched
 from Firestore whenever it changes in the back-end (using `onSnapshot`).
@@ -58,6 +62,7 @@ created or modified.
 **Parameters**
 
 -   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
+-   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
 
 **Examples**
 
@@ -70,27 +75,12 @@ const col = new Collection('artists/Metallica/albums');
 // Create a collection using a reference
 const col2 = new Collection(firebase.firestore().collection('todos'));
 
-// Create a collection and immediately start it
-const col2 = new Collection('artists').start();
+// Create a collection and permanently start real-time updating
+const col2 = new Collection('artists', 'on');
 
 // Create a collection and set a query on it
 const col3 = new Collection('artists');
 col3.query = col3.ref.orderBy('name', 'asc');
-col3.start();
-```
-
-```javascript
-// To start real-time updates, use
-collection.start();
-
-// Or to create a collection and immediately start it, use
-const col = new Collection('albums/black/tracks').start();
-
-// And to stop it
-collection.stop();
-
-// You can check whether real-time updates are enabled like this
-console.log(collection.realtimeUpdatesEnabled);
 ```
 
 ```javascript
@@ -195,24 +185,17 @@ todos.query = undefined;
 
 Returns **Query** 
 
-### start
+### realtimeUpdating
 
-Starts real-time updating.
+Real-time updating mode.
 
-Returns **[Collection](#collection)** This collection so it can be chained.
+Can be set to any of the following values:
 
-### stop
+-   "auto" (enables real-time updating when the collection is observed)
+-   "off" (no real-time updating, you need to call fetch explicitly)
+-   "on" (real-time updating is permanently enabled)
 
-Stops real-time updating.
-
-Returns **[Collection](#collection)** This collection so it can be chained.
-
-### realtimeUpdatesEnabled
-
-True when the firestore back-end is being monitored
-for real-time updates.
-
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 ### fetch
 
