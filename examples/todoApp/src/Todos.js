@@ -19,13 +19,40 @@ const styles = {
 		alignItems: 'center'
 	},
 	header: {
-		padding: 16
+		padding: 16,
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
 	}
 };
 
 const Todos = observer(class Todos extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			disabled: false
+		};
+	}
+
 	render() {
-		const {docs, fetching, query} = todos;
+		const {disabled} = this.state;
+		if (disabled) {
+			console.log('Todos.render, disabled');
+			return (
+				<div>
+					<div style={styles.header}>
+						<div />
+						<Checkbox
+							label='Disable observe'
+							checked={disabled}
+							onCheck={this.onCheckDisable} />
+					</div>
+				</div>
+			);
+		}
+		const {docs, query} = todos;
+		const children = docs.map((todo) => <TodoItem key={todo.id} todo={todo} />);
+		const {fetching} = todos;
 		console.log('Todos.render, fetching: ', fetching);
 		return (
 			<div>
@@ -34,9 +61,13 @@ const Todos = observer(class Todos extends Component {
 						label='Hide finished'
 						checked={query ? true : false}
 						onCheck={this.onCheckShowOnlyUnfinished} />
+					<Checkbox
+						label='Disable observe'
+						checked={disabled}
+						onCheck={this.onCheckDisable} />
 				</div>
 				<FlipMove enterAnimation='fade' leaveAnimation='fade'>
-					{docs.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
+					{children}
 				</FlipMove>
 				{fetching ? <div style={styles.loader}><CircularProgress /></div> : undefined}
 			</div>
@@ -51,6 +82,12 @@ const Todos = observer(class Todos extends Component {
 			todos.query = todos.ref.where('finished', '==', false).limit(10);
 		}
 	};
+
+	onCheckDisable = () => {
+		this.setState({
+			disabled: !this.state.disabled
+		});
+	}
 });
 
 export default Todos;

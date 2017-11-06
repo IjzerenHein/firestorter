@@ -13,7 +13,7 @@ firebase.initializeApp({
 
 setFirebaseApp(firebase);
 
-const todos = new Collection('todos').start();
+const todos = new Collection('todos');
 
 export {
 	todos
