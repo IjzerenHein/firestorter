@@ -18,6 +18,10 @@ const styles = {
 	},
 	headerTitle: {
 		flex: 1
+	},
+	logo: {
+		height: 50,
+		marginRight: 10
 	}
 };
 
@@ -29,8 +33,9 @@ class App extends Component {
 			<MuiThemeProvider muiTheme={muiTheme}>
 				<div style={styles.container}>
 					<div style={styles.header}>
+						<img src={require('./logo.jpg')} alt='logo' style={styles.logo} />
 						<div style={styles.headerTitle}>
-							<h1>React & Firestore Todo App</h1>
+							<h1>Firestorter - React & Firestore Todo App</h1>
 							<h3>using Mobx observables</h3>
 						</div>
 						<FloatingActionButton onClick={this.onPressAdd}>

@@ -10,7 +10,8 @@
 		"browser": true
 	},
 	"globals": {
-		"Promise": true
+		"Promise": true,
+		"require": true
 	},
 	"rules": {
 		"strict": 0,

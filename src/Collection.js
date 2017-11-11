@@ -11,7 +11,7 @@ import type {
 } from 'firebase/firestore';
 
 /**
- * The Collection class lays at the heart of `react-firestore-mobx`.
+ * The Collection class lays at the heart of `firestorter`.
  * It represents a collection in Firestore and its queried data. It is
  * observable so that it can be efficiently linked to a React Component
  * using `mobx-react`'s `observer` pattern.
@@ -41,7 +41,7 @@ import type {
  * created or modified.
  *
  * @example
- * import {Collection} from 'react-firestore-mobx';
+ * import {Collection} from 'firestorter';
  *
  * // Create a collection using path (preferred)
  * const col = new Collection('artists/Metallica/albums');

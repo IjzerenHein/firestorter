@@ -5,17 +5,17 @@ import type Firebase from 'firebase';
 let globalFirestore;
 
 /**
- * Initializes `react-firestore-mobx` with the firebase-app.
+ * Initializes `firestorter` with the firebase-app.
  *
  * @example
  * import firebase from 'firebase';
  * import 'firebase/firestore';
- * import {setFirebaseApp, Collection} from 'firestore-react-mobx';
+ * import {setFirebaseApp, Collection} from 'firestorter';
  *
  * // Initialize firebase app
  * firebase.initializeApp({...});
  *
- * // Initialize `react-firestore-mobx`
+ * // Initialize `firestorter`
  * setFirebaseApp(firebase);
  *
  * // Create collection and listen for real-time updates

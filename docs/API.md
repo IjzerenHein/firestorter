@@ -29,7 +29,7 @@
 
 ## Collection
 
-The Collection class lays at the heart of `react-firestore-mobx`.
+The Collection class lays at the heart of `firestorter`.
 It represents a collection in Firestore and its queried data. It is
 observable so that it can be efficiently linked to a React Component
 using `mobx-react`'s `observer` pattern.
@@ -67,7 +67,7 @@ created or modified.
 **Examples**
 
 ```javascript
-import {Collection} from 'react-firestore-mobx';
+import {Collection} from 'firestorter';
 
 // Create a collection using path (preferred)
 const col = new Collection('artists/Metallica/albums');
@@ -384,7 +384,7 @@ cleanup.
 
 ## setFirebaseApp
 
-Initializes `react-firestore-mobx` with the firebase-app.
+Initializes `firestorter` with the firebase-app.
 
 **Parameters**
 
@@ -395,12 +395,12 @@ Initializes `react-firestore-mobx` with the firebase-app.
 ```javascript
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {setFirebaseApp, Collection} from 'firestore-react-mobx';
+import {setFirebaseApp, Collection} from 'firestorter';
 
 // Initialize firebase app
 firebase.initializeApp({...});
 
-// Initialize `react-firestore-mobx`
+// Initialize `firestorter`
 setFirebaseApp(firebase);
 
 // Create collection and listen for real-time updates

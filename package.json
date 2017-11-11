@@ -1,9 +1,21 @@
 {
-  "name": "react-firestore-mobx",
+  "name": "firestorter",
   "version": "0.4.1",
-  "description": "Simple, intuitive & super efficient Firestore to React bindings using Mobx observables",
-  "main": "dist/react-firestore-mobx.js",
-  "repository": "https://github.com/IjzerenHein/react-firestore-mobx",
+  "description": "Simple & super fast Firestore to React bindings using Mobx observables",
+  "keywords": [
+  	"react-firestore-mobox",
+  	"react-firestore",
+  	"react-firebase",
+  	"firestorter",
+  	"firestoreter",
+  	"firestore-mobx",
+  	"firebase-mobx",
+  	"firestore-react",
+  	"mobx-firestore",
+  	"firestore-collection"
+  ],
+  "main": "dist/firestorter.js",
+  "repository": "https://github.com/IjzerenHein/firestorter",
   "author": "IjzerenHein <hrutjes@gmail.com>",
   "license": "MIT",
   "files": [

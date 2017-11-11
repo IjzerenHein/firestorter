@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {setFirebaseApp, Collection} from 'react-firestore-mobx';
+import {setFirebaseApp, Collection} from 'firestorter';
 
 firebase.initializeApp({
 	apiKey: 'AIzaSyBiY-6xQrji8oe5E90d1P8J8OvfIo3F6kE',
