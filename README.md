@@ -4,7 +4,7 @@
 </h1>
 
 
-Simple & fast Firestore bindings for React, using Mobx observables. 🤘
+Simple & super fast Firestore bindings for React, using Mobx observables. 🤘
 
 - **Simple**, easy to use API, get up & running in minutes
 - **Fast**, only queries and re-renders data when needed
@@ -23,6 +23,7 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 - [How it works](#how-it-works)
 - [Examples](#examples)
 - [Documentation](./docs/API.md)
+- [Todo](#todo)
 
 
 ## Work in progress
@@ -88,7 +89,7 @@ That's it.
 
 Firestorter makes integrating Firestore real-time data into React easy as pie. It does this by providing a simple API for accessing Collection and Document data, whilst taking away the burden of managing snapshot listeners, data-caching and efficiently updating your React components.
 
-It does this by intelligently tracking whether a Component is actually rendering a Collection or Document. Whenever this is the case, firestorter starts listening for real-time updates on that Collection or Document. Whenever a Component stops using the Document or Collection *(e.g., because it was unmounted)*, it stops listening for snapshot updates. It is possible that multiple components are rendering a Collection. And only when the last one stops rendering it, will real-time snapshots be turned off.
+It does this by intelligently tracking whether a Collection or Document should be listening for real-time updates (`onSnapshot` events) or not. Whenever a Component renders a Collection or Document, firestorter enables real-time updates on that resource. And whenever a Component stops using the resource *(e.g., component was unmounted)*, it stops listening for snapshot updates. This behavior really shines when multiple components are rendering collection/document data and it becomes more difficult to determine whether snapshot updates should be enabled or not.
 
 More to come..
 
@@ -107,24 +108,28 @@ More to come..
 - Manual fetching (coming soon)
 
 
-## Work in progress
+## Todo
 
-Firestorter is being build as you read this. The essentials are done 
-but more functionality and testing is still needed.
-
-Still Todo:
-
+- [x] Collection class
+- [x] Document class
+- [x] Adding documents
+- [x] Updating documents
+- [x] Deleting documents
+- [x] Queries
+- [x] Changing of ref/path in Collection
+- [x] Smart enable/disable real-time fetching based on whether collection is rendered
+- [x] Real-time fetching (onSnapshot) always enabled mode
+- [x] Manual fetching mode
+- [x] Fetching property to indicate loading state
 - [ ] Per document fetching
 - [ ] Per document real time updates
 - [ ] Sub-collections in documents
 - [ ] Revise Collection.add
-- [ ] Collection.delete()
-- [ ] Schemas
+- [ ] Delete all documents in a collection or query
+- [ ] Schemas / custom documents
 - [ ] Blobs
 - [ ] GeoPoint ?
-- [ ] Custom Documents ?
 - [ ] Batch updates
-- [ ] More testing
 
 
 ## License
