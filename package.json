@@ -1,6 +1,6 @@
 {
   "name": "react-firestore-mobx",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Simple, intuitive & super efficient Firestore to React bindings using Mobx observables",
   "main": "dist/react-firestore-mobx.js",
   "repository": "https://github.com/IjzerenHein/react-firestore-mobx",
