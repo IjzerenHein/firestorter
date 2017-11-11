@@ -4,19 +4,23 @@
 </h1>
 
 
-Simple & super fast Firestore bindings for React, using Mobx observables.
+Simple & fast Firestore bindings for React, using Mobx observables. 🤘
 
 - **Simple**, easy to use API, get up & running in minutes
-- **Fast**, only query and re-render data when needed
+- **Fast**, only queries and re-renders data when needed
 - **No clutter**, no complex stores/providers/actions/reducers, just go
+
 
 ![this-thing-really-moves](./this-thing-really-moves.gif)
 
 Because, React `+` Firestore `+` Mobx `===` ❤️
 
+## Index
 
+- [Work in progress](#work-in-progress)
 - [Installation](#installation)
 - [Usage](#usage)
+- [How it works](#how-it-works)
 - [Examples](#examples)
 - [Documentation](./docs/API.md)
 
@@ -49,15 +53,11 @@ firebase.initializeApp({...});
 // Initialize `firestorter`
 setFirebaseApp(firebase);
 
-// Create collection and listen for real-time updates
+// Define collection
 const todos = new Collection('todos');
-// note, you can also use references if you like:
-// new Collection(firebase.firestore().collection('todos'));
 
-// Observe collection and only re-render when
-// documents are added/removed/moved in it.
-// Rendering this component automatically causes
-// the `todos` collection to start real-time updating.
+// Wrap your classes with mobx's observer wherever
+// you use a Firestorter Collection or Document.
 @observer class Todos extends Component {
 	render() {
 		return <div>
@@ -70,9 +70,6 @@ const todos = new Collection('todos');
 	}
 }
 
-// Observe doc and re-render when finished or text change.
-// Does not re-render when other docs are
-// added/removed/updated in the collection.
 const TodoItem = observer(({doc}) => {
 	const {finished, text} = doc.data;
 	return <div>
@@ -84,6 +81,16 @@ const TodoItem = observer(({doc}) => {
 ReactDOM.render(<Todos />, document.getElementById('root'));
 ```
 
+That's it.
+
+
+## How it works
+
+Firestorter makes integrating Firestore real-time data into React easy as pie. It does this by providing a simple API for accessing Collection and Document data, whilst taking away the burden of managing snapshot listeners, data-caching and efficiently updating your React components.
+
+It does this by intelligently tracking whether a Component is actually rendering a Collection or Document. Whenever this is the case, firestorter starts listening for real-time updates on that Collection or Document. Whenever a Component stops using the Document or Collection *(e.g., because it was unmounted)*, it stops listening for snapshot updates. It is possible that multiple components are rendering a Collection. And only when the last one stops rendering it, will real-time snapshots be turned off.
+
+
 ## Examples
 
 - [TodoApp](https://rawgit.com/IjzerenHein/firestorter/master/examples/todoApp/build/index.html) ([source](./examples/todoApp/src))
@@ -92,6 +99,11 @@ ReactDOM.render(<Todos />, document.getElementById('root'));
 ## Documentation
 
 - [API Reference](./docs/API.md)
+- Why you should create a component per document (coming soon)
+- Using Queries (coming soon)
+- Creating a Collection/Document inside a Component (coming soon)
+- Permanently keep a Collection/Document up to date (coming soon)
+- Manual fetching (coming soon)
 
 
 ## Work in progress
@@ -106,6 +118,7 @@ Still Todo:
 - [ ] Sub-collections in documents
 - [ ] Revise Collection.add
 - [ ] Collection.delete()
+- [ ] Schemas
 - [ ] Blobs
 - [ ] GeoPoint ?
 - [ ] Custom Documents ?
