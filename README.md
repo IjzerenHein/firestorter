@@ -56,8 +56,8 @@ setFirebaseApp(firebase);
 // Define collection
 const todos = new Collection('todos');
 
-// Wrap your classes with mobx's observer wherever
-// you use a Firestorter Collection or Document.
+// Wrap your Components with mobx's `observer` when
+// you use a Firestorter Collection- or Document
 @observer class Todos extends Component {
 	render() {
 		return <div>
@@ -90,6 +90,7 @@ Firestorter makes integrating Firestore real-time data into React easy as pie. I
 
 It does this by intelligently tracking whether a Component is actually rendering a Collection or Document. Whenever this is the case, firestorter starts listening for real-time updates on that Collection or Document. Whenever a Component stops using the Document or Collection *(e.g., because it was unmounted)*, it stops listening for snapshot updates. It is possible that multiple components are rendering a Collection. And only when the last one stops rendering it, will real-time snapshots be turned off.
 
+More to come..
 
 ## Examples
 
