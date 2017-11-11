@@ -109,7 +109,7 @@ More to come..
 
 ## Work in progress
 
-Firestoreter is being build as you read this. The essentials are done 
+Firestorter is being build as you read this. The essentials are done 
 but more functionality and testing is still needed.
 
 Still Todo:
