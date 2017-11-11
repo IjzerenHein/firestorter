@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./logo.png"/><br>
+  <img src="./logo.jpg"/><br>
   Firestorter
 </h1>
 
