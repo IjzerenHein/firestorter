@@ -1,8 +1,8 @@
 // @flow
 import {observable, transaction} from 'mobx';
+import {enhancedObservable} from './enhancedObservable';
 import Document from './Document';
-import DocumentStore from './DocumentStore';
-import {getFirestore} from './firebaseApp';
+import {getFirestore} from './init';
 import type {
 	DocumentSnapshot,
 	CollectionReference,
@@ -68,54 +68,27 @@ import type {
  * console.log(col.fetching);
  */
 class Collection {
-	_docStore: DocumentStore;
+	_docLookup: {[string]: Document};
 	_ref: DocumentSnapshot;
 	_query: DocumentSnapshot;
 	_realtimeUpdating: DocumentSnapshot;
 	_fetching: DocumentSnapshot;
 	_docs: Array<Document>;
 	_onSnapshotUnsubscribe: () => void | void;
-	_isObserved: boolean;
+	_observedRefCount: number;
 
 	constructor(pathOrRef: CollectionReference|string, realtimeUpdating: string = 'auto') {
-		this._docStore = new DocumentStore();
+		this._docLookup = {};
 		if (typeof pathOrRef === 'string') {
 			pathOrRef = getFirestore().collection(pathOrRef);
 		}
 		this._onSnapshot = this._onSnapshot.bind(this);
+		this._observedRefCount = 0;
 		this._ref = observable(pathOrRef);
 		this._query = observable(undefined);
 		this._realtimeUpdating = observable(realtimeUpdating);
 		this._fetching = observable(false);
-		this._docs = observable([]);
-		this._isObserved = false;
-
-		// Hook into the MobX docs observable and track
-		// Whether any Component is observing this collection.
-		// When realtimeUpdating is set to 'auto', then realtime
-		// updating is started/stopped based on whether the component
-		// is being observed.
-		const onBecomeUnobserved = this._docs.$mobx.atom.onBecomeUnobserved;
-		const reportObserved = this._docs.$mobx.atom.reportObserved;
-		this._docs.$mobx.atom.isPendingUnobservation = false;
-		this._docs.$mobx.atom.onBecomeUnobserved = () => {
-			const res = onBecomeUnobserved.apply(this._docs.$mobx.atom, arguments);
-			this._isObserved = false;
-			if (this._realtimeUpdating.get() === 'auto') {
-				this._stop();
-			}
-			return res;
-		};
-		this._docs.$mobx.atom.reportObserved = () => {
-			const res = reportObserved.apply(this._docs.$mobx.atom, arguments);
-			if (!this._isObserved) {
-				this._isObserved = true;
-				if (this._realtimeUpdating.get() === 'auto') {
-					this._start();
-				}
-			}
-			return res;
-		};
+		this._docs = enhancedObservable([], this);
 	}
 
 	/**
@@ -246,9 +219,9 @@ class Collection {
 		default:
 			throw new Error('Invalid realtimeUpdating mode: ' + mode);
 		}
-		const oldActive = this._active();
+		const oldActive = this._active;
 		this._realtimeUpdating.set(mode);
-		const active = this._active();
+		const active = this._active;
 
 		if (!active && oldActive) {
 			this._stop();
@@ -332,9 +305,32 @@ class Collection {
 	}
 
 	/**
+	 * Called whenever a property of this class becomes observed.
 	 * @private
 	 */
-	_start(): Collection {
+	addObserverRef(): number {
+		if ((++this._observedRefCount === 1) && (this._realtimeUpdating.get() === 'auto')) {
+			this._start();
+		}
+		return this._observedRefCount;
+	}
+
+	/**
+	 * Called whenever a property of this class becomes un-observed.
+	 * @private
+	 */
+	releaseObserverRef(): number {
+		if ((--this._observedRefCount === 0) && (this._realtimeUpdating.get() === 'auto')) {
+			this._stop();
+		}
+		return this._observedRefCount;
+	}
+
+	/**
+	 * @private
+	 */
+	_start(): void {
+		console.log('onStart');
 		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 		if (this._query.get()) {
 			this._fetching.set(true);
@@ -352,7 +348,8 @@ class Collection {
 	/**
 	 * @private
 	 */
-	_stop(): Collection {
+	_stop(): void {
+		console.log('onStop');
 		if (this._onSnapshotUnsubscribe) {
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
@@ -368,8 +365,9 @@ class Collection {
 	get _active(): boolean {
 		switch (this._realtimeUpdating.get()) {
 		case 'off': return false;
-		case 'auto': return this._isObserved;
+		case 'auto': return (this._observedRefCount >= 1);
 		case 'on': return true;
+		default: return false;
 		}
 	}
 
@@ -388,16 +386,22 @@ class Collection {
 	 */
 	_updateFromSnapshot(snapshot: QuerySnapshot) {
 		const newDocs = snapshot.docs.map((snapshot) => {
-			let doc = this._docStore.getAndAddRef(snapshot.id);
+			let doc = this._docLookup[snapshot.id];
 			if (doc) {
 				doc.snapshot = snapshot;
 			}
 			else {
-				doc = this._docStore.add(new Document(snapshot));
+				doc = new Document(snapshot);
+				this._docLookup[doc.id] = doc;
 			}
+			doc.addCollectionRef();
 			return doc;
 		});
-		this._docStore.releaseRefs(this._docs);
+		this._docs.forEach((doc) => {
+			if (!doc.releaseCollectionRef()) {
+				delete this._docLookup[doc.id];
+			}
+		});
 
 		if (this._docs.length !== newDocs.length) {
 			this._docs.replace(newDocs);

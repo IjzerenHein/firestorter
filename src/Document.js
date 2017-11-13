@@ -1,5 +1,5 @@
 // @flow
-import {observable} from 'mobx';
+import {enhancedObservable} from './enhancedObservable';
 import type {
 	DocumentSnapshot,
 	DocumentReference
@@ -23,15 +23,17 @@ class Document {
 	_updateTime: DocumentSnapshot;
 	_readTime: DocumentSnapshot;
 	_data: DocumentSnapshot;
-	_refCount: number;
+	_observedRefCount: number;
+	_collectionRefCount: number;
 
 	constructor(snapshot: DocumentSnapshot) {
 		this._snapshot = snapshot;
-		this._createTime = observable(snapshot.createTime);
-		this._updateTime = observable(snapshot.updateTime);
-		this._readTime = observable(snapshot.readTime);
-		this._data = observable(snapshot.data());
-		this._refCount = 1;
+		this._createTime = enhancedObservable(snapshot.createTime, this);
+		this._updateTime = enhancedObservable(snapshot.updateTime, this);
+		this._readTime = enhancedObservable(snapshot.readTime, this);
+		this._data = enhancedObservable(snapshot.data(), this);
+		this._observedRefCount = 0;
+		this._collectionRefCount = 0;
 	}
 
 	/**
@@ -47,7 +49,7 @@ class Document {
 	 * });
 	 */
 	get data(): any {
-		return this._data;
+		return this._data.get();
 	}
 
 	/**
@@ -97,9 +99,11 @@ class Document {
 		this._readTime.set(snapshot.readTime);
 
 		const data = snapshot.data();
-		for (const key in data) {
+		this._data.set(data);
+
+		/* for (const key in data) {
 			this._data[key] = data[key];
-		}
+		}*/
 	}
 
 	/**
@@ -154,12 +158,39 @@ class Document {
 	}
 
 	/**
-	 * Overidable method that is called whenever the document
-	 * is no longer referenced. Can be used to perform optional
-	 * cleanup.
+	 * Called whenever a property of this class becomes observed.
+	 * @private
 	 */
-	onFinalRelease() {
-		// Override to implement
+	addObserverRef(): number {
+		return ++this._observedRefCount;
+	}
+
+	/**
+	 * Called whenever a property of this class becomes un-observed.
+	 * @private
+	 */
+	releaseObserverRef(): number {
+		return --this._observedRefCount;
+	}
+
+	/**
+	 * Called whenever the parent collection adds an in-use reference
+	 * to this document.
+	 * @private
+	 */
+	addCollectionRef(): number {
+		return ++this._collectionRefCount;
+	}
+
+	/**
+	 * Called whenever the parent collection removed an in-use reference
+	 * to this document. Whenever the collection reference reaches 0
+	 * then it is no longer owned by the collection and therefore no
+	 * longer updated by it.
+	 * @private
+	 */
+	releaseCollectionRef(): number {
+		return --this._collectionRefCount;
 	}
 }
 

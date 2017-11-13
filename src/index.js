@@ -1,4 +1,4 @@
-import {setFirebaseApp} from './firebaseApp';
+import {setFirebaseApp} from './init';
 import Collection from './Collection';
 import Document from './Document';
 
