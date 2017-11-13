@@ -57,8 +57,7 @@ setFirebaseApp(firebase);
 // Define collection
 const todos = new Collection('todos');
 
-// Wrap your Components with mobx's `observer` when
-// you use a Firestorter Collection- or Document
+// Wrap your Components with mobx's `observer` pattern
 @observer class Todos extends Component {
 	render() {
 		return <div>
@@ -82,7 +81,8 @@ const TodoItem = observer(({doc}) => {
 ReactDOM.render(<Todos />, document.getElementById('root'));
 ```
 
-That's it.
+That's it. Your Components will now render your firestore data
+and re-render when data in the back-end changes.
 
 
 ## How it works
