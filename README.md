@@ -81,7 +81,7 @@ const TodoItem = observer(({doc}) => {
 ReactDOM.render(<Todos />, document.getElementById('root'));
 ```
 
-That's it. Your Components will now render your firestore data
+**That's it.** Your Components will now render your firestore data
 and re-render when data in the back-end changes.
 
 
