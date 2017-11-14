@@ -1,4 +1,5 @@
 // @flow
+import {observable, transaction} from 'mobx';
 import {enhancedObservable} from './enhancedObservable';
 import type {
 	DocumentSnapshot,
@@ -23,15 +24,21 @@ class Document {
 	_updateTime: DocumentSnapshot;
 	_readTime: DocumentSnapshot;
 	_data: DocumentSnapshot;
+	_realtimeUpdating: DocumentSnapshot;
+	_fetching: DocumentSnapshot;
+	_onSnapshotUnsubscribe: () => void | void;
 	_observedRefCount: number;
 	_collectionRefCount: number;
 
 	constructor(snapshot: DocumentSnapshot) {
+		this._onSnapshot = this._onSnapshot.bind(this);
 		this._snapshot = snapshot;
 		this._createTime = enhancedObservable(snapshot.createTime, this);
 		this._updateTime = enhancedObservable(snapshot.updateTime, this);
 		this._readTime = enhancedObservable(snapshot.readTime, this);
 		this._data = enhancedObservable(snapshot.data(), this);
+		this._realtimeUpdating = observable('auto');
+		this._fetching = observable(false);
 		this._observedRefCount = 0;
 		this._collectionRefCount = 0;
 	}
@@ -93,17 +100,9 @@ class Document {
 		return this._snapshot;
 	}
 	set snapshot(snapshot: DocumentSnapshot) {
-		this._snapshot = snapshot;
-		this._createTime.set(snapshot.createTime);
-		this._updateTime.set(snapshot.updateTime);
-		this._readTime.set(snapshot.readTime);
-
-		const data = snapshot.data();
-		this._data.set(data);
-
-		/* for (const key in data) {
-			this._data[key] = data[key];
-		}*/
+		transaction(() => {
+			this._updateFromSnapshot(snapshot);
+		});
 	}
 
 	/**
@@ -126,6 +125,76 @@ class Document {
 	get readTime(): string {
 		return this._readTime.get();
 	}
+
+
+	/**
+	 * Real-time updating mode.
+	 *
+	 * Can be set to any of the following values:
+	 * - "auto" (enables real-time updating when the document is observed)
+	 * - "off" (no real-time updating, you need to call fetch explicitly)
+	 * - "on" (real-time updating is permanently enabled)
+	 */
+	get realtimeUpdating(): string {
+		return this._realtimeUpdating.get();
+	}
+	set realtimeUpdating(mode: string) {
+		if (this._realtimeUpdating.get() === mode) return;
+		switch (mode) {
+		case 'auto':
+		case 'off':
+		case 'on':
+			break;
+		default:
+			throw new Error('Invalid realtimeUpdating mode: ' + mode);
+		}
+		transaction(() => {
+			this._realtimeUpdating.set(mode);
+			this._updateRealtimeUpdates();
+		});
+	}
+
+	/**
+	 * Fetches new data from firestore. Use this to manually fetch
+	 * new data when `realtimeUpdating` is set to 'off'.
+	 *
+	 * @example
+ 	 * const col = new Collection('albums', 'off');
+ 	 * col.fetch().then(({docs}) => {
+   *   docs.forEach(doc => console.log(doc));
+	 * });
+	 */
+	fetch(): Promise<Document> {
+		return new Promise((resolve, reject) => {
+			if (this._active) return reject(new Error('Should not call fetch when real-time updating is active'));
+			this._fetching.set(true);
+			this.ref.get().then((snapshot) => {
+				transaction(() => {
+					this._fetching.set(false);
+					this._updateFromSnapshot(snapshot);
+				});
+				resolve(this);
+			}, (err) => {
+				this._fetching.set(false);
+				reject(err);
+			});
+		});
+	}
+
+	/**
+	 * True when a fetch is in progress.
+	 *
+	 * Fetches are performed in these cases:
+	 *
+	 * - When real-time updating is started
+	 * - When a different `ref` or `path` is set
+	 * - When a `query` is set or cleared
+	 * - When `fetch` is explicitely called
+	 */
+	get fetching(): boolean {
+		return this._fetching.get();
+	}
+
 
 	/**
 	 * Updates one or more fields in the document.
@@ -162,7 +231,9 @@ class Document {
 	 * @private
 	 */
 	addObserverRef(): number {
-		return ++this._observedRefCount;
+		const res = ++this._observedRefCount;
+		this._updateRealtimeUpdates();
+		return res;
 	}
 
 	/**
@@ -170,7 +241,9 @@ class Document {
 	 * @private
 	 */
 	releaseObserverRef(): number {
-		return --this._observedRefCount;
+		const res = --this._observedRefCount;
+		this._updateRealtimeUpdates();
+		return res;
 	}
 
 	/**
@@ -179,7 +252,9 @@ class Document {
 	 * @private
 	 */
 	addCollectionRef(): number {
-		return ++this._collectionRefCount;
+		const res = ++this._collectionRefCount;
+		this._updateRealtimeUpdates();
+		return res;
 	}
 
 	/**
@@ -190,7 +265,58 @@ class Document {
 	 * @private
 	 */
 	releaseCollectionRef(): number {
-		return --this._collectionRefCount;
+		const res = --this._collectionRefCount;
+		this._updateRealtimeUpdates();
+		return res;
+	}
+
+	/**
+	 * @private
+	 */
+	_onSnapshot(snapshot: DocumentSnapshot) {
+		transaction(() => {
+			this._fetching.set(false);
+			this._updateFromSnapshot(snapshot);
+		});
+	}
+
+	/**
+	 * @private
+	 */
+	_updateFromSnapshot(snapshot: DocumentSnapshot) {
+		this._snapshot = snapshot;
+		this._createTime.set(snapshot.createTime);
+		this._updateTime.set(snapshot.updateTime);
+		this._readTime.set(snapshot.readTime);
+
+		const data = snapshot.data();
+		this._data.set(data);
+
+		/* for (const key in data) {
+			this._data[key] = data[key];
+		}*/
+	}
+
+	/**
+	 * @private
+	 */
+	_updateRealtimeUpdates() {
+		let newActive;
+		switch (this._realtimeUpdating.get()) {
+		case 'auto': newActive = !this._collectionRefCount && this._observedRefCount; break;
+		case 'off': newActive = false; break;
+		case 'on': newActive = true; break;
+		}
+		const active = !!this._onSnapshotUnsubscribe;
+		if (newActive && !active) {
+			// Disabled for now, not yet working...
+			// this._fetching.set(true);
+			// this._onSnapshotUnsubscribe = this.ref.onSnapshot(this._onSnapshot);
+		}
+		else if (!newActive && active) {
+			this._onSnapshotUnsubscribe();
+			this._onSnapshotUnsubscribe = undefined;
+		}
 	}
 }
 
