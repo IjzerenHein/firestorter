@@ -125,10 +125,12 @@ class Collection {
 	}
 	set ref(ref: CollectionReference) {
 		if (this._ref.get() === ref) return;
-		this._ref.set(ref);
-		if (this._active && !this._query.get()) {
-			this._start();
-		}
+		transaction(() => {
+			this._ref.set(ref);
+			if (this._active && !this._query.get()) {
+				this._start();
+			}
+		});
 	}
 
 	/**
@@ -192,10 +194,12 @@ class Collection {
 	}
 	set query(query?: Query) {
 		if (this._query.get() === query) return;
-		this._query.set(query);
-		if (this._active) {
-			this._start();
-		}
+		transaction(() => {
+			this._query.set(query);
+			if (this._active) {
+				this._start();
+			}
+		});
 	}
 
 	/**
@@ -219,16 +223,18 @@ class Collection {
 		default:
 			throw new Error('Invalid realtimeUpdating mode: ' + mode);
 		}
-		const oldActive = this._active;
-		this._realtimeUpdating.set(mode);
-		const active = this._active;
+		transaction(() => {
+			const oldActive = this._active;
+			this._realtimeUpdating.set(mode);
+			const active = this._active;
 
-		if (!active && oldActive) {
-			this._stop();
-		}
-		else if (active && !oldActive) {
-			this._start();
-		}
+			if (!active && oldActive) {
+				this._stop();
+			}
+			else if (active && !oldActive) {
+				this._start();
+			}
+		});
 	}
 
 	/**
@@ -247,8 +253,10 @@ class Collection {
 			this._fetching.set(true);
 			const ref = this._query.get() || this._ref.get();
 			ref.then((snapshot) => {
-				this._fetching.set(false);
-				this._updateFromSnapshot(snapshot);
+				transaction(() => {
+					this._fetching.set(false);
+					this._updateFromSnapshot(snapshot);
+				});
 				resolve(this);
 			}, (err) => {
 				this._fetching.set(false);
