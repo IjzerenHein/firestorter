@@ -79,7 +79,7 @@ class Collection {
 	_observedRefCount: number;
 
 	constructor(
-		pathOrRef: CollectionReference|string,
+		pathOrRef: CollectionReference|string|void,
 		realtimeUpdating: string = 'auto'
 	) {
 		this._docLookup = {};
@@ -171,7 +171,7 @@ class Collection {
 	}
 	set path(collectionPath: string) {
 		if (this.path === collectionPath) return;
-		this.ref = this.ref.firestore.collection(collectionPath);
+		this.ref = this.getFirestore().collection(collectionPath);
 	}
 
 	/**

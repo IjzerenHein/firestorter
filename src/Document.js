@@ -20,7 +20,7 @@ class Document extends DocumentData {
 	_onSnapshotUnsubscribe: () => void | void;
 
 	constructor(
-		pathOrRef: DocumentReference|string,
+		pathOrRef: DocumentReference|string|void,
 		realtimeUpdating: string = 'auto',
 		snapshot?: DocumentSnapshot
 	) {
@@ -71,7 +71,7 @@ class Document extends DocumentData {
 	 */
 	set path(documentPath: string) {
 		if (this.path === documentPath) return;
-		this.ref = this._ref.get().firestore.doc(documentPath);
+		this.ref = getFirestore().doc(documentPath);
 	}
 
 	/**
