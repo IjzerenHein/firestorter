@@ -101,11 +101,11 @@ More to come..
 ## Documentation
 
 - [API Reference](./docs/API.md)
-- Why you should create a component per document (coming soon)
+- Real-time updating modes
+- [Using Collections and Documents with a store](./docs/Store.md)
+- Using Collection and Document inside a Component (coming soon)
 - Using Queries (coming soon)
-- Creating a Collection/Document inside a Component (coming soon)
-- Permanently keep a Collection/Document up to date (coming soon)
-- Manual fetching (coming soon)
+- Why you should create a component per document (coming soon)
 
 
 ## Todo
