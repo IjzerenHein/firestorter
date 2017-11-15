@@ -1,7 +1,4 @@
 // @flow
-import type Firebase from 'firebase';
-
-// let globalFirebase = undefined;
 let globalFirestore;
 
 /**
@@ -10,21 +7,22 @@ let globalFirestore;
  * @example
  * import firebase from 'firebase';
  * import 'firebase/firestore';
- * import {setFirebaseApp, Collection} from 'firestorter';
+ * import {initFirestorter, Collection, Document} from 'firestorter';
  *
  * // Initialize firebase app
  * firebase.initializeApp({...});
  *
  * // Initialize `firestorter`
- * setFirebaseApp(firebase);
+ * initFirestorter({firebase: firebase});
  *
- * // Create collection and listen for real-time updates
- * const albums = new Collection('artists/Metallica/albumbs').start();
+ * // Create collection or document
+ * const albums = new Collection('artists/Metallica/albums');
+ * ...
+ * const album = new Document('artists/Metallica/albums/BlackAlbum');
  * ...
  */
-function setFirebaseApp(firebase: Firebase) {
-	// globalFirebase = firebase;
-	globalFirestore = firebase.firestore();
+function initFirestorter(config: any) {
+	globalFirestore = config.firebase.firestore();
 	if (!globalFirestore) {
 		throw new Error('firebase.firestore() returned `undefined`, did you forget `import \'firebase/firestore\';`');
 	}
@@ -38,6 +36,6 @@ function getFirestore() {
 }
 
 export {
-	setFirebaseApp,
+	initFirestorter,
 	getFirestore
 };
