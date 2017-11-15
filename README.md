@@ -59,23 +59,23 @@ const todos = new Collection('todos');
 
 // Wrap your Components with mobx's `observer` pattern
 @observer class Todos extends Component {
-	render() {
-		return <div>
-			{todos.docs.map((doc) => (
-				<TodoItem
-					key={todo.id}
-					doc={doc} />
-			))}
-		</div>;
-	}
+  render() {
+    return <div>
+      {todos.docs.map((doc) => (
+        <TodoItem
+          key={todo.id}
+          doc={doc} />
+      ))}
+    </div>;
+  }
 }
 
 const TodoItem = observer(({doc}) => {
-	const {finished, text} = doc.data;
-	return <div>
-		<input type='checkbox' checked={finished} />
-		<input type='text' value={text} />
-	</div>;
+  const {finished, text} = doc.data;
+  return <div>
+    <input type='checkbox' checked={finished} />
+    <input type='text' value={text} />
+  </div>;
 });
 
 ReactDOM.render(<Todos />, document.getElementById('root'));
