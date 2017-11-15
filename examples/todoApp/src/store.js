@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {setFirebaseApp, Collection} from 'firestorter';
+import {initFirestorter, Collection} from 'firestorter';
 
 firebase.initializeApp({
 	apiKey: 'AIzaSyBiY-6xQrji8oe5E90d1P8J8OvfIo3F6kE',
@@ -11,7 +11,7 @@ firebase.initializeApp({
 	messagingSenderId: '680642766706'
 });
 
-setFirebaseApp(firebase);
+initFirestorter({firebase: firebase});
 
 const todos = new Collection('todos');
 

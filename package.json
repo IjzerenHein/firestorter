@@ -46,6 +46,7 @@
     "eslint-plugin-flowtype": "^2.39.1",
     "firebase": "^4.6.1",
     "flow-bin": "^0.58.0",
+    "lodash.isequal": "^4.5.0",
     "webpack": "^3.8.1"
   }
 }

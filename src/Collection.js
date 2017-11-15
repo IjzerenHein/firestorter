@@ -1,7 +1,8 @@
 // @flow
 import {observable, transaction} from 'mobx';
 import {enhancedObservable} from './enhancedObservable';
-import Document from './Document';
+import DocumentData from './DocumentData';
+import CollectionDocument from './CollectionDocument';
 import {getFirestore} from './init';
 import type {
 	DocumentSnapshot,
@@ -68,16 +69,19 @@ import type {
  * console.log(col.fetching);
  */
 class Collection {
-	_docLookup: {[string]: Document};
+	_docLookup: {[string]: CollectionDocument};
 	_ref: DocumentSnapshot;
 	_query: DocumentSnapshot;
 	_realtimeUpdating: DocumentSnapshot;
 	_fetching: DocumentSnapshot;
-	_docs: Array<Document>;
+	_docs: Array<CollectionDocument>;
 	_onSnapshotUnsubscribe: () => void | void;
 	_observedRefCount: number;
 
-	constructor(pathOrRef: CollectionReference|string, realtimeUpdating: string = 'auto') {
+	constructor(
+		pathOrRef: CollectionReference|string,
+		realtimeUpdating: string = 'auto'
+	) {
 		this._docLookup = {};
 		if (typeof pathOrRef === 'string') {
 			pathOrRef = getFirestore().collection(pathOrRef);
@@ -89,6 +93,7 @@ class Collection {
 		this._realtimeUpdating = observable(realtimeUpdating);
 		this._fetching = observable(false);
 		this._docs = enhancedObservable([], this);
+		if (realtimeUpdating === 'on') this._start();
 	}
 
 	/**
@@ -100,7 +105,7 @@ class Collection {
 	 *   console.log(doc.data);
 	 * });
 	 */
-	get docs(): Array<Document> {
+	get docs(): Array<DocumentData> {
 		return this._docs;
 	}
 
@@ -292,11 +297,11 @@ class Collection {
 	 *   }
 	 * });
 	 */
-	add(data: any): Promise<Document> {
+	add(data: any): Promise<DocumentData> {
 		return new Promise((resolve, reject) => {
 			this.ref.add(data).then((ref) => {
 				ref.get().then((snapshot) => {
-					const doc = new Document(snapshot);
+					const doc = new CollectionDocument(snapshot);
 					resolve(doc);
 				}, reject);
 			}, reject);
@@ -310,6 +315,7 @@ class Collection {
 	 */
 	deleteAll(): Promise<void> {
 		// TODO
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -338,7 +344,6 @@ class Collection {
 	 * @private
 	 */
 	_start(): void {
-		console.log('onStart');
 		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 		if (this._query.get()) {
 			this._fetching.set(true);
@@ -357,7 +362,6 @@ class Collection {
 	 * @private
 	 */
 	_stop(): void {
-		console.log('onStop');
 		if (this._onSnapshotUnsubscribe) {
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
@@ -396,17 +400,17 @@ class Collection {
 		const newDocs = snapshot.docs.map((snapshot) => {
 			let doc = this._docLookup[snapshot.id];
 			if (doc) {
-				doc.snapshot = snapshot;
+				doc._updateFromSnapshot(snapshot);
 			}
 			else {
-				doc = new Document(snapshot);
+				doc = new CollectionDocument(snapshot);
 				this._docLookup[doc.id] = doc;
 			}
-			doc.addCollectionRef();
+			doc._addCollectionRef();
 			return doc;
 		});
 		this._docs.forEach((doc) => {
-			if (!doc.releaseCollectionRef()) {
+			if (!doc._releaseCollectionRef()) {
 				delete this._docLookup[doc.id];
 			}
 		});

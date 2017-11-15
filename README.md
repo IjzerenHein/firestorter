@@ -45,14 +45,14 @@ This message will disappear when I feel the API is solid.*
 ```js
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {setFirebaseApp, Collection} from 'firestorter';
+import {initFirestorter, Collection} from 'firestorter';
 import {observer} from 'mobx-react';
 
 // Initialize firebase app
 firebase.initializeApp({...});
 
 // Initialize `firestorter`
-setFirebaseApp(firebase);
+initFirestorter({firebase: firebase});
 
 // Define collection
 const todos = new Collection('todos');
@@ -121,8 +121,8 @@ More to come..
 - [x] Real-time fetching (onSnapshot) always enabled mode
 - [x] Manual fetching mode
 - [x] Fetching property to indicate loading state
-- [ ] Per document fetching
-- [ ] Per document real time updates
+- [x] Per document fetching
+- [x] Per document real time updates
 - [ ] Sub-collections in documents
 - [ ] Revise Collection.add
 - [ ] Delete all documents in a collection or query
