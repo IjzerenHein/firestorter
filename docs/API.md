@@ -14,18 +14,23 @@
     -   [add](#add)
     -   [deleteAll](#deleteall)
 -   [Document](#document)
-    -   [data](#data)
     -   [ref](#ref-1)
-    -   [id](#id-1)
     -   [path](#path-1)
+    -   [realtimeUpdating](#realtimeupdating-1)
+    -   [fetch](#fetch-1)
+    -   [fetching](#fetching-1)
+-   [DocumentData](#documentdata)
+    -   [data](#data)
+    -   [ref](#ref-2)
+    -   [id](#id-1)
+    -   [path](#path-2)
     -   [snapshot](#snapshot)
     -   [createTime](#createtime)
     -   [updateTime](#updatetime)
     -   [readTime](#readtime)
     -   [update](#update)
     -   [delete](#delete)
-    -   [onFinalRelease](#onfinalrelease)
--   [setFirebaseApp](#setfirebaseapp)
+-   [initFirestorter](#initfirestorter)
 
 ## Collection
 
@@ -108,7 +113,7 @@ collection.docs.forEach((doc) => {
 });
 ```
 
-Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Document](#document)>** 
+Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[DocumentData](#documentdata)>** 
 
 ### ref
 
@@ -247,7 +252,7 @@ const doc = await collection.add({
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[DocumentData](#documentdata)>** 
 
 ### deleteAll
 
@@ -259,19 +264,116 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## Document
 
-Document represents a document stored in the firestore
-no-sql database. It is initialized with a firestore `DocumentSnapshot`
-object so that it immediately has data. Document is
-observable so that it can be efficiently linked to a React Component
-using `mobx-react`'s `observer` pattern. This ensures that a component
-is only re-rendered when data that is accessed in the `render` function
-has changed.
+**Extends DocumentData**
 
-Documents are typically created by the `Collection` class but can also
-be explicitly created using its constructor.
+Document represents a document stored in the firestore no-sql database.
+Document is observable so that it can be efficiently linked to a React
+Component using `mobx-react`'s `observer` pattern. This ensures that a
+component is only re-rendered when data that is accessed in the `render`
+function has changed.
 
 **Parameters**
 
+-   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
+-   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
+-   `snapshot` **DocumentSnapshot** 
+
+### ref
+
+Firestore dcument reference.
+
+Use this property to get or set the document
+reference. When set, a fetch to the new document
+is performed.
+
+Alternatively, you can also use `path` to change the
+reference in more a readable way.
+
+**Parameters**
+
+-   `ref` **DocumentReference** 
+
+**Examples**
+
+```javascript
+const doc = new Document(firebase.firestore().doc('albums/splinter'));
+...
+// Switch to another document
+doc.ref = firebase.firestore().doc('albums/americana');
+```
+
+### path
+
+Path of the document (e.g. 'albums/blackAlbum').
+
+Use this property to switch to another document in
+the back-end. Effectively, it is a more compact
+and readable way of setting a new ref.
+
+**Parameters**
+
+-   `documentPath` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+**Examples**
+
+```javascript
+const doc = new Document('artists/Metallica');
+...
+// Switch to another document in the back-end
+doc.path = 'artists/EaglesOfDeathMetal';
+```
+
+### realtimeUpdating
+
+Real-time updating mode.
+
+Can be set to any of the following values:
+
+-   "auto" (enables real-time updating when the document becomes observed)
+-   "off" (no real-time updating, you need to call fetch explicitly)
+-   "on" (real-time updating is permanently enabled)
+
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+### fetch
+
+Fetches new data from firestore. Use this to manually fetch
+new data when `realtimeUpdating` is set to 'off'.
+
+**Examples**
+
+```javascript
+const col = new Document('albums/splinter', 'off');
+col.fetch().then(({docs}) => {
+  docs.forEach(doc => console.log(doc));
+});
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
+
+### fetching
+
+True when a fetch is in progress.
+
+Fetches are performed in these cases:
+
+-   When real-time updating is started
+-   When a different `ref` or `path` is set
+-   When a `query` is set or cleared
+-   When `fetch` is explicitely called
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+## DocumentData
+
+DocumentData is the base class for Document and implements the data-storage
+part of a document. You should not instantiate this class directly, but instead
+use the Collection class to obtain document or use the Document class to fetch
+document data from the back-end.
+
+**Parameters**
+
+-   `ref` **DocumentReference** 
 -   `snapshot` **DocumentSnapshot** 
 
 ### data
@@ -315,11 +417,6 @@ Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 ### snapshot
 
 Underlying firestore snapshot.
-
-This property can be used to update the data
-in the Document. It is for instance used by
-the Collection class to update the document when an
-update is received from the back-end.
 
 Returns **DocumentSnapshot** 
 
@@ -376,34 +473,30 @@ resolve while you're offline).
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
 
-### onFinalRelease
-
-Overidable method that is called whenever the document
-is no longer referenced. Can be used to perform optional
-cleanup.
-
-## setFirebaseApp
+## initFirestorter
 
 Initializes `firestorter` with the firebase-app.
 
 **Parameters**
 
--   `firebase` **Firebase** 
+-   `config` **any** 
 
 **Examples**
 
 ```javascript
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {setFirebaseApp, Collection} from 'firestorter';
+import {initFirestorter, Collection, Document} from 'firestorter';
 
 // Initialize firebase app
 firebase.initializeApp({...});
 
 // Initialize `firestorter`
-setFirebaseApp(firebase);
+initFirestorter({firebase: firebase});
 
-// Create collection and listen for real-time updates
-const albums = new Collection('artists/Metallica/albumbs').start();
+// Create collection or document
+const albums = new Collection('artists/Metallica/albums');
+...
+const album = new Document('artists/Metallica/albums/BlackAlbum');
 ...
 ```
