@@ -66,7 +66,7 @@ created or modified.
 
 **Parameters**
 
--   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
+-   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
 -   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
 
 **Examples**
@@ -274,7 +274,7 @@ function has changed.
 
 **Parameters**
 
--   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** 
+-   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
 -   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
 -   `snapshot` **DocumentSnapshot** 
 
