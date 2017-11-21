@@ -10,28 +10,18 @@ Simple & super fast Firestore bindings for React, using Mobx observables. 🤘
 - **Fast**, only queries and re-renders data when needed
 - **No clutter**, no complex stores/providers/actions/reducers, just go
 
+Because, React `+` Firestore `+` Mobx `===` ❤️
 
 ![this-thing-really-moves](./this-thing-really-moves.gif)
 
-Because, React `+` Firestore `+` Mobx `===` ❤️
-
 ## Index
 
-- [Work in progress](#work-in-progress)
 - [Installation](#installation)
 - [Usage](#usage)
 - [How it works](#how-it-works)
 - [Examples](#examples)
 - [Documentation](./docs/API.md)
-- [Todo](#todo)
-
-
-## Work in progress
-
-*Thank you for checking out this repo in its early stages. This project was 
-previously known as `react-firestore-mobx` and is under active development.
-Its API may therefore still change a bit as I work out the kinks.
-This message will disappear when I feel the API is solid.*
+- [Work in progress](#work-in-progress)
 
 
 ## Installation
@@ -91,7 +81,6 @@ Firestorter makes integrating Firestore real-time data into React easy as pie. I
 
 It does this by intelligently tracking whether a Collection or Document should be listening for real-time updates (`onSnapshot` events) or not. Whenever a Component renders a Collection or Document, firestorter enables real-time updates on that resource. And whenever a Component stops using the resource *(e.g., component was unmounted)*, it stops listening for snapshot updates. This behavior really shines when multiple components are rendering collection/document data and it becomes more difficult to determine whether snapshot updates should be enabled or not.
 
-More to come..
 
 ## Examples
 
@@ -101,14 +90,17 @@ More to come..
 ## Documentation
 
 - [API Reference](./docs/API.md)
-- Real-time updating modes
 - [Using Collections and Documents with a store](./docs/Store.md)
+- Real-time updating modes (coming soon)
 - Using Collection and Document inside a Component (coming soon)
 - Using Queries (coming soon)
 - Why you should create a component per document (coming soon)
 
 
-## Todo
+## Work in progress
+
+Hi ✋, and thanks for visiting this project in it's early stages.
+Firestorter is being build as you read this. The API is pretty stable, but more testing and documentation is still needed. Let me know if you run into problems or have requests 🤘
 
 - [x] Collection class
 - [x] Document class
@@ -130,6 +122,7 @@ More to come..
 - [ ] Blobs
 - [ ] GeoPoint ?
 - [ ] Batch updates
+- [ ] More documentation / articles
 
 
 ## License

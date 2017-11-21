@@ -2,7 +2,7 @@
 
 When creating an application you need to think about how
 to structure your data. When a Collection is used in multiple
-React  Components, it can be useful to put it in a store. The
+React  Components, it can be useful to put it in a shared store. The
 following example shows a simple store with collections and a
 document.
 
@@ -34,7 +34,7 @@ export store;
 #### Artists.js
 
 When `ArtistsView` is mounted, real-time updating is automatically enabled on the `artists` collection
-because its `realtimeUpdating` property is set to `auto`. 
+because its `realtimeUpdating` property is set to `auto` (=default). 
 
 ```js
 import {artists, albums} from './store';
@@ -78,6 +78,11 @@ const ArtistView = observer(class ArtistView extends Component {
 ```
 
 #### Albums.js
+
+In `Artists.js`, whenever an album is clicked, the `albums` collection is 
+switched to a new Firestore colllection reference. When AlbumView is visible
+or becomes visible, it will automatically update to show that data from
+back-end, as efficiently as possible.
 
 ```js
 import {albums} from './store';
