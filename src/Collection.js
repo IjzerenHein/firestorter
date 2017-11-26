@@ -171,7 +171,7 @@ class Collection {
 	}
 	set path(collectionPath: string) {
 		if (this.path === collectionPath) return;
-		this.ref = this.getFirestore().collection(collectionPath);
+		this.ref = getFirestore().collection(collectionPath);
 	}
 
 	/**
