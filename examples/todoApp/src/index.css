@@ -4,7 +4,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
  	margin: 0;
- 	padding: 0 30px;
+ 	padding: 0 0;
 }
 
 h1 {
@@ -19,4 +19,10 @@ h3 {
 	font-weight: bold;
 	letter-spacing: 1px;
 	text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+	.mobile-margins {
+		padding: 20px;
+	}
 }

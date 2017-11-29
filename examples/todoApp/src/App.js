@@ -8,20 +8,39 @@ import {todos} from './store';
 
 const styles = {
 	container: {
+		position: 'absolute',
+		left: 0,
+		top: 0,
+		right: 0,
+		bottom: 0,
 		display: 'flex',
 		flexDirection: 'column'
 	},
 	header: {
+		padding: 20,
+		paddingBottom: 0,
+		paddingRight: 10
+	},
+	headerRow: {
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
-	headerTitle: {
-		flex: 1
+	h1: {
+		margin: 0,
+		padding: 0
+	},
+	h3: {
+		marginBottom: 0
 	},
 	logo: {
 		height: 50,
 		marginRight: 10
+	},
+	add: {
+		position: 'absolute',
+		bottom: 20,
+		right: 20
 	}
 };
 
@@ -33,16 +52,16 @@ class App extends Component {
 			<MuiThemeProvider muiTheme={muiTheme}>
 				<div style={styles.container}>
 					<div style={styles.header}>
-						<img src={require('./logo.jpg')} alt='logo' style={styles.logo} />
-						<div style={styles.headerTitle}>
-							<h1>Firestorter - React & Firestore Todo App</h1>
-							<h3>using Mobx observables</h3>
+						<div style={styles.headerRow}>
+							<img src={require('./logo.jpg')} alt='logo' style={styles.logo} />
+							<h1 style={styles.h1}>Firestorter Todo</h1>
 						</div>
-						<FloatingActionButton onClick={this.onPressAdd}>
-							<ContentAddIcon />
-						</FloatingActionButton>
+						<h3 style={styles.h3}>Firestore & React, using MobX</h3>
 					</div>
 					<Todos />
+					<FloatingActionButton style={styles.add} onClick={this.onPressAdd}>
+						<ContentAddIcon />
+					</FloatingActionButton>
 				</div>
 			</MuiThemeProvider>
 		);

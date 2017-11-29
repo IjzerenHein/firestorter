@@ -7,6 +7,12 @@ import Checkbox from 'material-ui/Checkbox';
 import TodoItem from './TodoItem';
 
 const styles = {
+	container: {
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column',
+		position: 'relative'
+	},
 	loader: {
 		position: 'absolute',
 		left: 0,
@@ -22,7 +28,12 @@ const styles = {
 		padding: 16,
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		borderBottom: '1px solid #DDD'
+	},
+	content: {
+		flex: 1,
+		overflowY: 'scroll'
 	}
 };
 
@@ -55,20 +66,22 @@ const Todos = observer(class Todos extends Component {
 		const {fetching} = todos;
 		console.log('Todos.render, fetching: ', fetching);
 		return (
-			<div>
+			<div style={styles.container}>
 				<div style={styles.header}>
 					<Checkbox
 						label='Hide finished'
 						checked={query ? true : false}
 						onCheck={this.onCheckShowOnlyUnfinished} />
-					<Checkbox
+					{/* <Checkbox
 						label='Disable observe'
 						checked={disabled}
-						onCheck={this.onCheckDisable} />
+						onCheck={this.onCheckDisable} />*/}
 				</div>
-				<FlipMove enterAnimation='fade' leaveAnimation='fade'>
-					{children}
-				</FlipMove>
+				<div style={styles.content} className='mobile-margins'>
+					<FlipMove enterAnimation='fade' leaveAnimation='fade'>
+						{children}
+					</FlipMove>
+				</div>
 				{fetching ? <div style={styles.loader}><CircularProgress /></div> : undefined}
 			</div>
 		);
