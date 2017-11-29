@@ -144,7 +144,8 @@ class Collection {
 	 * To get the full-path of the collection, use `path`.
 	 */
 	get id(): string {
-		return this.ref.id;
+		const ref = this._ref.get();
+		return ref ? ref.id : undefined;
 	}
 
 	/**
@@ -162,6 +163,7 @@ class Collection {
 	 */
 	get path(): string {
 		let ref = this._ref.get();
+		if (!ref) return undefined;
 		let path = ref.id;
 		while (ref.parent) {
 			path = ref.parent.id + '/' + path;
