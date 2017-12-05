@@ -28,7 +28,9 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 
 	yarn add firestorter
 	
-*This will automatically install `mobx` and `mobx-react`*
+*firestorter has a peer-dependency on `firebase`, `mobx` and `mobx-react`. To install these, use:*
+
+	yarn add firebase mobx mobx-react
 
 ## Usage
 
