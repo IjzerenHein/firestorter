@@ -11,6 +11,7 @@ export default {
 	// sourceMap: true,
 	moduleName: 'firestorter',
 	external: ['mobx'],
+	exports: 'named',
 	globals: {
 		mobx: 'mobx'
 	},
@@ -26,6 +27,7 @@ export default {
 			exclude: 'node_modules/**'
 		}),
 		resolve({
+			module: true,
 			jsnext: true,
 			main: true
 		}),
