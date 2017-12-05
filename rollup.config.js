@@ -5,16 +5,26 @@ import filesize from 'rollup-plugin-filesize';
 import progress from 'rollup-plugin-progress';
 
 export default {
-	entry: 'src/index.js',
-	dest: 'dist/firestorter.js',
-	format: 'umd',
-	// sourceMap: true,
-	moduleName: 'firestorter',
+	input: 'src/index.js',
 	external: ['mobx'],
-	exports: 'named',
-	globals: {
-		mobx: 'mobx'
-	},
+	output: [{
+		file: 'dist/firestorter.js',
+		format: 'umd',
+		name: 'firestorter',
+		globals: {
+			mobx: 'mobx'
+		},
+		// sourcemap: true,
+		exports: 'named',
+	}, {
+		file: 'dist/firestorter.module.js',
+		format: 'es',
+		name: 'firestorter',
+		globals: {
+			mobx: 'mobx'
+		},
+		exports: 'named',
+	}],
 	plugins: [
 		babel({
 			babelrc: false,
@@ -28,7 +38,6 @@ export default {
 		}),
 		resolve({
 			module: true,
-			jsnext: true,
 			main: true
 		}),
 		commonjs(),
