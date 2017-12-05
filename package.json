@@ -28,12 +28,9 @@
     "lint": "eslint src",
     "doc": "documentation build src/** -f md > ./docs/API.md"
   },
-  "dependencies": {
-    "mobx": "^3.3.1",
-    "mobx-react": "^4.3.3"
-  },
   "peerDependencies": {
-    "firebase": "^4.6.0"
+    "firebase": "^4.6.0",
+    "mobx": "^3.3.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
