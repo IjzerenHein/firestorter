@@ -82,11 +82,13 @@ class Collection {
 	_documentClass: any;
 	_onSnapshotUnsubscribe: any;
 	_observedRefCount: number;
+	_debug: boolean;
 
 	constructor(pathOrRef: CollectionReference | string | void, options: any) {
-		const { DocumentClass = Document, realtimeUpdating = 'auto' } =
+		const { DocumentClass = Document, realtimeUpdating = 'auto', debug } =
 			options || Collection.EMPTY_OPTIONS;
 		this._documentClass = DocumentClass;
+		this._debug = debug || false;
 		this._docLookup = {};
 		if (typeof pathOrRef === 'string') {
 			pathOrRef = getFirestore().collection(pathOrRef);
@@ -340,6 +342,10 @@ class Collection {
 	 * @private
 	 */
 	addObserverRef(): number {
+		if (this._debug)
+			console.debug(
+				`${this.debugName} - addRef (${this._observedRefCount + 1})`
+			);
 		if (
 			++this._observedRefCount === 1 &&
 			this._realtimeUpdating.get() === 'auto'
@@ -354,6 +360,10 @@ class Collection {
 	 * @private
 	 */
 	releaseObserverRef(): number {
+		if (this._debug)
+			console.debug(
+				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
+			);
 		if (
 			--this._observedRefCount === 0 &&
 			this._realtimeUpdating.get() === 'auto'
@@ -367,13 +377,31 @@ class Collection {
 	 * @private
 	 */
 	_start(): void {
-		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
+		if (this._onSnapshotUnsubscribe) {
+			this._onSnapshotUnsubscribe();
+		}
 		if (this._query.get()) {
+			if (this._debug)
+				console.debug(
+					`${
+						this.debugName
+					} - start (type: query, mode: ${this._realtimeUpdating.get()}, refCount: ${
+						this._observedRefCount
+					})`
+				);
 			this._fetching.set(true);
 			this._onSnapshotUnsubscribe = this._query
 				.get()
 				.onSnapshot(snapshot => this._onSnapshot(snapshot));
 		} else if (this._ref.get()) {
+			if (this._debug)
+				console.debug(
+					`${
+						this.debugName
+					} - start (type: collection, mode: ${this._realtimeUpdating.get()}, refCount: ${
+						this._observedRefCount
+					})`
+				);
 			this._fetching.set(true);
 			this._onSnapshotUnsubscribe = this._ref
 				.get()
@@ -388,6 +416,14 @@ class Collection {
 	 */
 	_stop(): void {
 		if (this._onSnapshotUnsubscribe) {
+			if (this._debug)
+				console.debug(
+					`${
+						this.debugName
+					} - stop (mode: ${this._realtimeUpdating.get()}, refCount: ${
+						this._observedRefCount
+					})`
+				);
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
 		}
@@ -417,6 +453,7 @@ class Collection {
 	 */
 	_onSnapshot(snapshot: QuerySnapshot) {
 		transaction(() => {
+			if (this._debug) console.debug(`${this.debugName} - onSnapshot`);
 			this._fetching.set(false);
 			this._updateFromSnapshot(snapshot);
 		});
@@ -460,6 +497,13 @@ class Collection {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @private
+	 */
+	get debugName(): string {
+		return `${this.constructor.name} (${this.id})`;
 	}
 }
 

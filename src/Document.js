@@ -24,6 +24,7 @@ class Document {
 	_ref: any;
 	_snapshot: any;
 	_schema: any;
+	_debug: any;
 	_collectionRefCount: number;
 	_observedRefCount: number;
 	_createTime: any;
@@ -35,12 +36,13 @@ class Document {
 	_onSnapshotUnsubscribe: any;
 
 	constructor(pathOrRef: DocumentReference | string | void, options: any) {
-		const { schema, snapshot, realtimeUpdating } =
+		const { schema, snapshot, realtimeUpdating = 'auto', debug } =
 			options || Document.EMPTY_OPTIONS;
 		const ref =
 			typeof pathOrRef === 'string' ? getFirestore().doc(pathOrRef) : pathOrRef;
 		this._ref = observable(ref);
 		this._schema = schema;
+		this._debug = debug || false;
 		this._snapshot = observable(snapshot);
 		this._collectionRefCount = 0;
 		this._observedRefCount = 0;
@@ -282,6 +284,10 @@ class Document {
 	 * @private
 	 */
 	addObserverRef(): number {
+		if (this._debug)
+			console.debug(
+				`${this.debugName} - addRef (${this._observedRefCount + 1})`
+			);
 		const res = ++this._observedRefCount;
 		this._updateRealtimeUpdates();
 		return res;
@@ -292,6 +298,10 @@ class Document {
 	 * @private
 	 */
 	releaseObserverRef(): number {
+		if (this._debug)
+			console.debug(
+				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
+			);
 		const res = --this._observedRefCount;
 		this._updateRealtimeUpdates();
 		return res;
@@ -410,15 +420,38 @@ class Document {
 		}
 		const active = !!this._onSnapshotUnsubscribe;
 		if (newActive && (!active || force)) {
+			if (this._debug)
+				console.debug(
+					`${
+						this.debugName
+					} - start (mode: ${this._realtimeUpdating.get()}, refCount: ${
+						this._observedRefCount
+					})`
+				);
 			this._fetching.set(true);
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = this._ref
 				.get()
 				.onSnapshot(snapshot => this._onSnapshot(snapshot));
 		} else if (!newActive && active) {
+			if (this._debug)
+				console.debug(
+					`${
+						this.debugName
+					} - stop (mode: ${this._realtimeUpdating.get()}, refCount: ${
+						this._observedRefCount
+					})`
+				);
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
 		}
+	}
+
+	/**
+	 * @private
+	 */
+	get debugName(): string {
+		return `${this.constructor.name} (${this.id})`;
 	}
 }
 
