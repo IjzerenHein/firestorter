@@ -1,14 +1,14 @@
 // @flow
-import {observable, transaction} from 'mobx';
-import {enhancedObservable} from './enhancedObservable';
-import DocumentData from './DocumentData';
-import CollectionDocument from './CollectionDocument';
-import {getFirestore} from './init';
+import { observable, transaction } from 'mobx';
+import { enhancedObservable } from './enhancedObservable';
+import { getFirestore } from './init';
+import Document from './Document';
+
 import type {
-	DocumentSnapshot,
-	CollectionReference,
+	QuerySnapshot,
 	Query,
-	QuerySnapshot
+	DocumentSnapshot,
+	CollectionReference
 } from 'firebase/firestore';
 
 /**
@@ -51,7 +51,9 @@ import type {
  * const col2 = new Collection(firebase.firestore().collection('todos'));
  *
  * // Create a collection and permanently start real-time updating
- * const col2 = new Collection('artists', 'on');
+ * const col2 = new Collection('artists', {
+ *   realtimeUpdating: 'on'
+ * });
  *
  * // Create a collection and set a query on it
  * const col3 = new Collection('artists');
@@ -69,24 +71,26 @@ import type {
  * console.log(col.fetching);
  */
 class Collection {
-	_docLookup: {[string]: CollectionDocument};
-	_ref: DocumentSnapshot;
-	_query: DocumentSnapshot;
-	_realtimeUpdating: DocumentSnapshot;
-	_fetching: DocumentSnapshot;
-	_docs: Array<CollectionDocument>;
-	_onSnapshotUnsubscribe: () => void | void;
+	static EMPTY_OPTIONS = {};
+
+	_docLookup: { [string]: Document };
+	_ref: any;
+	_query: any;
+	_realtimeUpdating: any;
+	_fetching: any;
+	_docs: any;
+	_documentClass: any;
+	_onSnapshotUnsubscribe: any;
 	_observedRefCount: number;
 
-	constructor(
-		pathOrRef: CollectionReference|string|void,
-		realtimeUpdating: string = 'auto'
-	) {
+	constructor(pathOrRef: CollectionReference | string | void, options: any) {
+		const { DocumentClass = Document, realtimeUpdating = 'auto' } =
+			options || Collection.EMPTY_OPTIONS;
+		this._documentClass = DocumentClass;
 		this._docLookup = {};
 		if (typeof pathOrRef === 'string') {
 			pathOrRef = getFirestore().collection(pathOrRef);
 		}
-		this._onSnapshot = this._onSnapshot.bind(this);
 		this._observedRefCount = 0;
 		this._ref = observable(pathOrRef);
 		this._query = observable(undefined);
@@ -105,7 +109,7 @@ class Collection {
 	 *   console.log(doc.data);
 	 * });
 	 */
-	get docs(): Array<DocumentData> {
+	get docs(): Array<Document> {
 		return this._docs;
 	}
 
@@ -125,10 +129,10 @@ class Collection {
 	 * // Switch to another collection
 	 * col.ref = firebase.firestore().collection('albums/americana/tracks');
 	 */
-	get ref(): CollectionReference {
+	get ref(): ?CollectionReference {
 		return this._ref.get();
 	}
-	set ref(ref: CollectionReference) {
+	set ref(ref: ?CollectionReference) {
 		if (this._ref.get() === ref) return;
 		transaction(() => {
 			this._ref.set(ref);
@@ -143,7 +147,7 @@ class Collection {
 	 *
 	 * To get the full-path of the collection, use `path`.
 	 */
-	get id(): string {
+	get id(): ?string {
 		const ref = this._ref.get();
 		return ref ? ref.id : undefined;
 	}
@@ -161,7 +165,7 @@ class Collection {
 	 * // Switch to another collection in the back-end
 	 * col.path = 'artists/EaglesOfDeathMetal/albums';
 	 */
-	get path(): string {
+	get path(): ?string {
 		let ref = this._ref.get();
 		if (!ref) return undefined;
 		let path = ref.id;
@@ -171,9 +175,11 @@ class Collection {
 		}
 		return path;
 	}
-	set path(collectionPath: string) {
+	set path(collectionPath: ?string) {
 		if (this.path === collectionPath) return;
-		this.ref = getFirestore().collection(collectionPath);
+		this.ref = collectionPath
+			? getFirestore().collection(collectionPath)
+			: undefined;
 	}
 
 	/**
@@ -196,7 +202,7 @@ class Collection {
 	 * // Clear the query, will cause whole collection to be fetched
 	 * todos.query = undefined;
 	 */
-	get query(): Query {
+	get query(): ?Query {
 		return this._query.get();
 	}
 	set query(query?: Query) {
@@ -223,12 +229,12 @@ class Collection {
 	set realtimeUpdating(mode: string) {
 		if (this._realtimeUpdating.get() === mode) return;
 		switch (mode) {
-		case 'auto':
-		case 'off':
-		case 'on':
-			break;
-		default:
-			throw new Error('Invalid realtimeUpdating mode: ' + mode);
+			case 'auto':
+			case 'off':
+			case 'on':
+				break;
+			default:
+				throw new Error('Invalid realtimeUpdating mode: ' + mode);
 		}
 		transaction(() => {
 			const oldActive = this._active;
@@ -237,8 +243,7 @@ class Collection {
 
 			if (!active && oldActive) {
 				this._stop();
-			}
-			else if (active && !oldActive) {
+			} else if (active && !oldActive) {
 				this._start();
 			}
 		});
@@ -249,26 +254,32 @@ class Collection {
 	 * new data when `realtimeUpdating` is set to 'off'.
 	 *
 	 * @example
- 	 * const col = new Collection('albums', 'off');
- 	 * col.fetch().then(({docs}) => {
-   *   docs.forEach(doc => console.log(doc));
+	 * const col = new Collection('albums', 'off');
+	 * col.fetch().then(({docs}) => {
+	 *   docs.forEach(doc => console.log(doc));
 	 * });
 	 */
 	fetch(): Promise<Collection> {
 		return new Promise((resolve, reject) => {
-			if (this._active) return reject(new Error('Should not call fetch when real-time updating is active'));
+			if (this._active)
+				return reject(
+					new Error('Should not call fetch when real-time updating is active')
+				);
 			this._fetching.set(true);
 			const ref = this._query.get() || this._ref.get();
-			ref.then((snapshot) => {
-				transaction(() => {
+			ref.then(
+				snapshot => {
+					transaction(() => {
+						this._fetching.set(false);
+						this._updateFromSnapshot(snapshot);
+					});
+					resolve(this);
+				},
+				err => {
 					this._fetching.set(false);
-					this._updateFromSnapshot(snapshot);
-				});
-				resolve(this);
-			}, (err) => {
-				this._fetching.set(false);
-				reject(err);
-			});
+					reject(err);
+				}
+			);
 		});
 	}
 
@@ -299,11 +310,15 @@ class Collection {
 	 *   }
 	 * });
 	 */
-	add(data: any): Promise<DocumentData> {
+	add(data: any): Promise<Document> {
 		return new Promise((resolve, reject) => {
-			this.ref.add(data).then((ref) => {
-				ref.get().then((snapshot) => {
-					const doc = new CollectionDocument(snapshot);
+			const ref = this.ref;
+			if (!ref) throw new Error('No valid collection reference');
+			ref.add(data).then(ref => {
+				ref.get().then(snapshot => {
+					const doc = new this._documentClass(snapshot.ref, {
+						snapshot: snapshot
+					});
 					resolve(doc);
 				}, reject);
 			}, reject);
@@ -325,7 +340,10 @@ class Collection {
 	 * @private
 	 */
 	addObserverRef(): number {
-		if ((++this._observedRefCount === 1) && (this._realtimeUpdating.get() === 'auto')) {
+		if (
+			++this._observedRefCount === 1 &&
+			this._realtimeUpdating.get() === 'auto'
+		) {
 			this._start();
 		}
 		return this._observedRefCount;
@@ -336,7 +354,10 @@ class Collection {
 	 * @private
 	 */
 	releaseObserverRef(): number {
-		if ((--this._observedRefCount === 0) && (this._realtimeUpdating.get() === 'auto')) {
+		if (
+			--this._observedRefCount === 0 &&
+			this._realtimeUpdating.get() === 'auto'
+		) {
 			this._stop();
 		}
 		return this._observedRefCount;
@@ -349,13 +370,15 @@ class Collection {
 		if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 		if (this._query.get()) {
 			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = this._query.get().onSnapshot(this._onSnapshot);
-		}
-		else if (this._ref.get()) {
+			this._onSnapshotUnsubscribe = this._query
+				.get()
+				.onSnapshot(snapshot => this._onSnapshot(snapshot));
+		} else if (this._ref.get()) {
 			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = this._ref.get().onSnapshot(this._onSnapshot);
-		}
-		else {
+			this._onSnapshotUnsubscribe = this._ref
+				.get()
+				.onSnapshot(snapshot => this._onSnapshot(snapshot));
+		} else {
 			this._onSnapshotUnsubscribe = undefined;
 		}
 	}
@@ -378,10 +401,14 @@ class Collection {
 	 */
 	get _active(): boolean {
 		switch (this._realtimeUpdating.get()) {
-		case 'off': return false;
-		case 'auto': return (this._observedRefCount >= 1);
-		case 'on': return true;
-		default: return false;
+			case 'off':
+				return false;
+			case 'auto':
+				return this._observedRefCount >= 1;
+			case 'on':
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -399,28 +426,33 @@ class Collection {
 	 * @private
 	 */
 	_updateFromSnapshot(snapshot: QuerySnapshot) {
-		const newDocs = snapshot.docs.map((snapshot) => {
+		const newDocs = [];
+		snapshot.docs.forEach((snapshot: DocumentSnapshot) => {
 			let doc = this._docLookup[snapshot.id];
-			if (doc) {
-				doc._updateFromSnapshot(snapshot);
+			try {
+				if (doc) {
+					doc._updateFromSnapshot(snapshot);
+				} else {
+					doc = new this._documentClass(snapshot.ref, {
+						snapshot: snapshot
+					});
+					this._docLookup[doc.id] = doc;
+				}
+				doc._collectionRefCount++;
+				newDocs.push(doc);
+			} catch (err) {
+				console.error(err.message);
 			}
-			else {
-				doc = new CollectionDocument(snapshot);
-				this._docLookup[doc.id] = doc;
-			}
-			doc._addCollectionRef();
-			return doc;
 		});
-		this._docs.forEach((doc) => {
-			if (!doc._releaseCollectionRef()) {
-				delete this._docLookup[doc.id];
+		this._docs.forEach(doc => {
+			if (!--doc._collectionRefCount) {
+				delete this._docLookup[doc.id || ''];
 			}
 		});
 
 		if (this._docs.length !== newDocs.length) {
 			this._docs.replace(newDocs);
-		}
-		else {
+		} else {
 			for (let i = 0, n = newDocs.length; i < n; i++) {
 				if (newDocs[i] !== this._docs[i]) {
 					this._docs.replace(newDocs);

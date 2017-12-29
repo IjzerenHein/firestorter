@@ -1,8 +1,11 @@
 // @flow
-import {observable} from 'mobx';
+import { observable } from 'mobx';
 
 function enhancedObservable(data: any, delegate: any): any {
-	const o = (!Array.isArray(data) && (typeof data === 'object')) ? observable.box(data) : observable(data);
+	const o =
+		!Array.isArray(data) && typeof data === 'object'
+			? observable.box(data)
+			: observable(data);
 
 	// Hook into the MobX observable and track
 	// Whether any Component is observing this observable.
@@ -33,6 +36,4 @@ function enhancedObservable(data: any, delegate: any): any {
 	return o;
 }
 
-export {
-	enhancedObservable
-};
+export { enhancedObservable };

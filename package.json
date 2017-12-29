@@ -1,52 +1,50 @@
 {
-  "name": "firestorter",
-  "version": "0.7.5",
-  "description": "Simple & super fast Firestore to React bindings using Mobx observables",
-  "keywords": [
-    "react-firestore-mobox",
-    "react-firestore",
-    "react-firebase",
-    "firestorter",
-    "firestoreter",
-    "firestore-mobx",
-    "firebase-mobx",
-    "firestore-react",
-    "mobx-firestore",
-    "firestore-collection"
-  ],
-  "main": "dist/firestorter.js",
-  "module": "dist/firestorter.module.js",
-  "repository": "https://github.com/IjzerenHein/firestorter",
-  "author": "IjzerenHein <hrutjes@gmail.com>",
-  "license": "MIT",
-  "files": [
-    "src",
-    "dist"
-  ],
-  "scripts": {
-    "build": "rollup -c",
-    "lint": "eslint src",
-    "doc": "documentation build src/** -f md > ./docs/API.md"
-  },
-  "peerDependencies": {
-    "firebase": "^4.6.0",
-    "mobx": "^3.3.1"
-  },
-  "devDependencies": {
-    "babel-eslint": "^8.0.1",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-es2015-rollup": "^3.0.0",
-    "documentation": "^5.3.3",
-    "eslint": "^4.10.0",
-    "eslint-plugin-flowtype": "^2.39.1",
-    "firebase": "^4.6.1",
-    "flow-bin": "^0.58.0",
-    "lodash.isequal": "^4.5.0",
-    "rollup": "^0.52.1",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-filesize": "^1.5.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-progress": "^0.4.0"
-  }
+	"name": "firestorter",
+	"version": "0.7.5",
+	"description":
+		"Simple & super fast Firestore to React bindings using Mobx observables",
+	"keywords": [
+		"react-firestore-mobox",
+		"react-firestore",
+		"react-firebase",
+		"firestorter",
+		"firestoreter",
+		"firestore-mobx",
+		"firebase-mobx",
+		"firestore-react",
+		"mobx-firestore",
+		"firestore-collection"
+	],
+	"main": "dist/firestorter.js",
+	"module": "dist/firestorter.module.js",
+	"repository": "https://github.com/IjzerenHein/firestorter",
+	"author": "IjzerenHein <hrutjes@gmail.com>",
+	"license": "MIT",
+	"files": ["src", "dist"],
+	"scripts": {
+		"build": "rollup -c",
+		"lint": "eslint src",
+		"doc": "documentation build src/** -f md > ./docs/API.md"
+	},
+	"peerDependencies": {
+		"firebase": "^4.6.0",
+		"mobx": "^3.4.1"
+	},
+	"devDependencies": {
+		"babel-eslint": "^8.0.1",
+		"babel-plugin-transform-flow-strip-types": "^6.22.0",
+		"babel-preset-es2015-rollup": "^3.0.0",
+		"documentation": "^5.3.3",
+		"eslint": "^4.10.0",
+		"eslint-plugin-flowtype": "^2.39.1",
+		"firebase": "^4.6.1",
+		"flow-bin": "^0.62.0",
+		"lodash.isequal": "^4.5.0",
+		"rollup": "^0.52.1",
+		"rollup-plugin-babel": "^3.0.2",
+		"rollup-plugin-commonjs": "^8.2.6",
+		"rollup-plugin-filesize": "^1.5.0",
+		"rollup-plugin-node-resolve": "^3.0.0",
+		"rollup-plugin-progress": "^0.4.0"
+	}
 }

@@ -14,22 +14,20 @@
     -   [add](#add)
     -   [deleteAll](#deleteall)
 -   [Document](#document)
+    -   [schema](#schema)
+    -   [data](#data)
     -   [ref](#ref-1)
+    -   [id](#id-1)
     -   [path](#path-1)
     -   [realtimeUpdating](#realtimeupdating-1)
-    -   [fetch](#fetch-1)
-    -   [fetching](#fetching-1)
--   [DocumentData](#documentdata)
-    -   [data](#data)
-    -   [ref](#ref-2)
-    -   [id](#id-1)
-    -   [path](#path-2)
     -   [snapshot](#snapshot)
     -   [createTime](#createtime)
     -   [updateTime](#updatetime)
     -   [readTime](#readtime)
     -   [update](#update)
     -   [delete](#delete)
+    -   [fetch](#fetch-1)
+    -   [fetching](#fetching-1)
 -   [initFirestorter](#initfirestorter)
 
 ## Collection
@@ -67,7 +65,7 @@ created or modified.
 **Parameters**
 
 -   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
--   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
+-   `options` **any** 
 
 **Examples**
 
@@ -81,7 +79,9 @@ const col = new Collection('artists/Metallica/albums');
 const col2 = new Collection(firebase.firestore().collection('todos'));
 
 // Create a collection and permanently start real-time updating
-const col2 = new Collection('artists', 'on');
+const col2 = new Collection('artists', {
+  realtimeUpdating: 'on'
+});
 
 // Create a collection and set a query on it
 const col3 = new Collection('artists');
@@ -113,7 +113,7 @@ collection.docs.forEach((doc) => {
 });
 ```
 
-Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[DocumentData](#documentdata)>** 
+Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Document](#document)>** 
 
 ### ref
 
@@ -135,7 +135,7 @@ const col = new Collection(firebase.firestore().collection('albums/splinter/trac
 col.ref = firebase.firestore().collection('albums/americana/tracks');
 ```
 
-Returns **CollectionReference** 
+Returns **CollectionReference?** 
 
 ### id
 
@@ -143,7 +143,7 @@ Id of the Firestore collection (e.g. 'tracks').
 
 To get the full-path of the collection, use `path`.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
 ### path
 
@@ -162,7 +162,7 @@ const col = new Collection('artists/Metallica/albums');
 col.path = 'artists/EaglesOfDeathMetal/albums';
 ```
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
 ### query
 
@@ -188,7 +188,7 @@ todos.query = todos.ref.where('finished', '==', false).orderBy('finished', 'asc'
 todos.query = undefined;
 ```
 
-Returns **Query** 
+Returns **Query?** 
 
 ### realtimeUpdating
 
@@ -252,7 +252,7 @@ const doc = await collection.add({
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[DocumentData](#documentdata)>** 
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
 
 ### deleteAll
 
@@ -264,7 +264,10 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## Document
 
-**Extends DocumentData**
+DocumentData is the base class for Document and implements the data-storage
+part of a document. You should not instantiate this class directly, but instead
+use the Collection class to obtain document or use the Document class to fetch
+document data from the back-end.
 
 Document represents a document stored in the firestore no-sql database.
 Document is observable so that it can be efficiently linked to a React
@@ -275,106 +278,14 @@ function has changed.
 **Parameters**
 
 -   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
--   `realtimeUpdating` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `'auto'`)
--   `snapshot` **DocumentSnapshot** 
+-   `options` **any** 
 
-### ref
+### schema
 
-Firestore dcument reference.
+Returns the superstruct schema used to validate the
+document, or undefined.
 
-Use this property to get or set the document
-reference. When set, a fetch to the new document
-is performed.
-
-Alternatively, you can also use `path` to change the
-reference in more a readable way.
-
-**Parameters**
-
--   `ref` **DocumentReference** 
-
-**Examples**
-
-```javascript
-const doc = new Document(firebase.firestore().doc('albums/splinter'));
-...
-// Switch to another document
-doc.ref = firebase.firestore().doc('albums/americana');
-```
-
-### path
-
-Path of the document (e.g. 'albums/blackAlbum').
-
-Use this property to switch to another document in
-the back-end. Effectively, it is a more compact
-and readable way of setting a new ref.
-
-**Parameters**
-
--   `documentPath` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-**Examples**
-
-```javascript
-const doc = new Document('artists/Metallica');
-...
-// Switch to another document in the back-end
-doc.path = 'artists/EaglesOfDeathMetal';
-```
-
-### realtimeUpdating
-
-Real-time updating mode.
-
-Can be set to any of the following values:
-
--   "auto" (enables real-time updating when the document becomes observed)
--   "off" (no real-time updating, you need to call fetch explicitly)
--   "on" (real-time updating is permanently enabled)
-
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-### fetch
-
-Fetches new data from firestore. Use this to manually fetch
-new data when `realtimeUpdating` is set to 'off'.
-
-**Examples**
-
-```javascript
-const col = new Document('albums/splinter', 'off');
-col.fetch().then(({docs}) => {
-  docs.forEach(doc => console.log(doc));
-});
-```
-
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
-
-### fetching
-
-True when a fetch is in progress.
-
-Fetches are performed in these cases:
-
--   When real-time updating is started
--   When a different `ref` or `path` is set
--   When a `query` is set or cleared
--   When `fetch` is explicitely called
-
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-
-## DocumentData
-
-DocumentData is the base class for Document and implements the data-storage
-part of a document. You should not instantiate this class directly, but instead
-use the Collection class to obtain document or use the Document class to fetch
-document data from the back-end.
-
-**Parameters**
-
--   `ref` **DocumentReference** 
--   `snapshot` **DocumentSnapshot** 
+Returns **any** 
 
 ### data
 
@@ -398,7 +309,23 @@ Returns **any**
 
 Firestore document reference.
 
-Returns **DocumentReference** 
+Use this property to get or set the document
+reference. When set, a fetch to the new document
+is performed.
+
+Alternatively, you can also use `path` to change the
+reference in more a readable way.
+
+**Examples**
+
+```javascript
+const doc = new Document(firebase.firestore().doc('albums/splinter'));
+...
+// Switch to another document
+doc.ref = firebase.firestore().doc('albums/americana');
+```
+
+Returns **DocumentReference?** 
 
 ### id
 
@@ -406,11 +333,36 @@ Id of the firestore document.
 
 To get the full-path of the document, use `path`.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
 ### path
 
 Path of the document (e.g. 'albums/blackAlbum').
+
+Use this property to switch to another document in
+the back-end. Effectively, it is a more compact
+and readable way of setting a new ref.
+
+**Examples**
+
+```javascript
+const doc = new Document('artists/Metallica');
+...
+// Switch to another document in the back-end
+doc.path = 'artists/EaglesOfDeathMetal';
+```
+
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+
+### realtimeUpdating
+
+Real-time updating mode.
+
+Can be set to any of the following values:
+
+-   "auto" (enables real-time updating when the document becomes observed)
+-   "off" (no real-time updating, you need to call fetch explicitly)
+-   "on" (real-time updating is permanently enabled)
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
@@ -472,6 +424,35 @@ successfully deleted from the backend (Note that it won't
 resolve while you're offline).
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+
+### fetch
+
+Fetches new data from firestore. Use this to manually fetch
+new data when `realtimeUpdating` is set to 'off'.
+
+**Examples**
+
+```javascript
+const col = new Document('albums/splinter', 'off');
+col.fetch().then(({docs}) => {
+  docs.forEach(doc => console.log(doc));
+});
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
+
+### fetching
+
+True when a fetch is in progress.
+
+Fetches are performed in these cases:
+
+-   When real-time updating is started
+-   When a different `ref` or `path` is set
+-   When a `query` is set or cleared
+-   When `fetch` is explicitely called
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
 ## initFirestorter
 

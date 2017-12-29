@@ -12,8 +12,7 @@
 	},
 	"rules": {
 		"strict": 0,
-		"quotes": ["error", "single"],
-		"indent": ["warn", "tab"],
+		"indent": ["warn", "tab", { "SwitchCase": 1 }],
 		"no-console": ["warn", {"allow": ["warn", "error", "info", "debug"] }],
 		"camelcase": "error",
 		"prefer-const": "error",
