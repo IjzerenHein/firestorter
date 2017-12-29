@@ -7,16 +7,17 @@ import isEqual from 'lodash.isequal';
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
 
 /**
- * DocumentData is the base class for Document and implements the data-storage
- * part of a document. You should not instantiate this class directly, but instead
- * use the Collection class to obtain document or use the Document class to fetch
- * document data from the back-end.
- *
  * Document represents a document stored in the firestore no-sql database.
  * Document is observable so that it can be efficiently linked to a React
  * Component using `mobx-react`'s `observer` pattern. This ensures that a
  * component is only re-rendered when data that is accessed in the `render`
  * function has changed.
+ *
+ * @param {Object} [options] Configuration options
+ * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating` (default: auto)
+ * @param {Object} [options.schema] Superstruct schema for data validation
+ * @param {DocumentSnapshot} [options.snapshot] Initial document snapshot
+ * @param {Bool} [options.debug] Enables debug logging
  */
 class Document {
 	static EMPTY_OPTIONS = {};

@@ -41,6 +41,11 @@ import type {
  * If nothing has changed on the back-end, no new Documents would be
  * created or modified.
  *
+ * @param {Object} [options] Configuration options
+ * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating`
+ * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
+ * @param {Bool} [options.debug] Enables debug logging
+ *
  * @example
  * import {Collection} from 'firestorter';
  *

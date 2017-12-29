@@ -65,7 +65,10 @@ created or modified.
 **Parameters**
 
 -   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
--   `options` **any** 
+-   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
+    -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating`
+    -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
+    -   `options.debug` **Bool?** Enables debug logging
 
 **Examples**
 
@@ -264,11 +267,6 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## Document
 
-DocumentData is the base class for Document and implements the data-storage
-part of a document. You should not instantiate this class directly, but instead
-use the Collection class to obtain document or use the Document class to fetch
-document data from the back-end.
-
 Document represents a document stored in the firestore no-sql database.
 Document is observable so that it can be efficiently linked to a React
 Component using `mobx-react`'s `observer` pattern. This ensures that a
@@ -278,7 +276,11 @@ function has changed.
 **Parameters**
 
 -   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
--   `options` **any** 
+-   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
+    -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating` (default: auto)
+    -   `options.schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Superstruct schema for data validation
+    -   `options.snapshot` **DocumentSnapshot?** Initial document snapshot
+    -   `options.debug` **Bool?** Enables debug logging
 
 ### schema
 
