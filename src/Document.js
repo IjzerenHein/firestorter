@@ -406,7 +406,7 @@ class Document {
 	 */
 	_updateRealtimeUpdates(force?: boolean) {
 		let newActive = false;
-		if (!this._collectionRefCount) {
+		if (!this._collectionRefCount && this._ref.get()) {
 			switch (this._realtimeUpdating.get()) {
 				case 'auto':
 					newActive = !!this._observedRefCount;
