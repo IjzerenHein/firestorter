@@ -275,12 +275,13 @@ function has changed.
 
 **Parameters**
 
--   `pathOrRef` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
+-   `source` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
     -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating` (default: auto)
     -   `options.schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Superstruct schema for data validation
     -   `options.snapshot` **DocumentSnapshot?** Initial document snapshot
     -   `options.debug` **Bool?** Enables debug logging
+    -   `options.debugName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Name to use when debug logging is enabled
 
 ### schema
 
@@ -352,6 +353,11 @@ const doc = new Document('artists/Metallica');
 ...
 // Switch to another document in the back-end
 doc.path = 'artists/EaglesOfDeathMetal';
+
+// Or, you can use a reactive function to link
+// to the contents of another document.
+const doc2 = new Document('settings/activeArtist');
+doc.path = () => 'artists/' + doc2.data.artistId;
 ```
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 

@@ -113,6 +113,8 @@ Firestorter is being build as you read this. The API is pretty stable, but more 
 * [x] Per document real time updates
 * [x] Document Schemas (using superstruct)
 * [x] Custom Document classes
+* [x] Add ability to set Document path, based on contents of another document
+* [ ] Add ability to set Collection path, based on contents of a document
 * [ ] Sub-collections in documents
 * [ ] Revise Collection.add
 * [ ] Delete all documents in a collection or query

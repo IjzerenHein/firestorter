@@ -1,10 +1,23 @@
 // @flow
-import { observable, transaction } from 'mobx';
+import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore } from './init';
 import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
+
+/**
+ * @private
+ */
+function resolveRef(value) {
+	if (typeof value === 'string') {
+		return getFirestore().doc(value);
+	} else if (typeof value === 'function') {
+		return resolveRef(value());
+	} else {
+		return value;
+	}
+}
 
 /**
  * Document represents a document stored in the firestore no-sql database.
@@ -13,15 +26,19 @@ import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
  * component is only re-rendered when data that is accessed in the `render`
  * function has changed.
  *
+ * @param {DocumentReference | string | () => string | void} [source] Ref, path or observable function
  * @param {Object} [options] Configuration options
  * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating` (default: auto)
  * @param {Object} [options.schema] Superstruct schema for data validation
  * @param {DocumentSnapshot} [options.snapshot] Initial document snapshot
  * @param {Bool} [options.debug] Enables debug logging
+ * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
 class Document {
 	static EMPTY_OPTIONS = {};
 
+	_source: any;
+	_sourceDisposer: any;
 	_ref: any;
 	_snapshot: any;
 	_schema: any;
@@ -36,14 +53,17 @@ class Document {
 	_fetching: any;
 	_onSnapshotUnsubscribe: any;
 
-	constructor(pathOrRef: DocumentReference | string | void, options: any) {
-		const { schema, snapshot, realtimeUpdating = 'auto', debug } =
+	constructor(
+		source: DocumentReference | string | (() => string | void),
+		options: any
+	) {
+		const { schema, snapshot, realtimeUpdating = 'auto', debug, debugName } =
 			options || Document.EMPTY_OPTIONS;
-		const ref =
-			typeof pathOrRef === 'string' ? getFirestore().doc(pathOrRef) : pathOrRef;
-		this._ref = observable(ref);
+		this._source = source;
+		this._ref = observable(resolveRef(source));
 		this._schema = schema;
 		this._debug = debug || false;
+		this._debugName = debugName;
 		this._snapshot = observable(snapshot);
 		this._collectionRefCount = 0;
 		this._observedRefCount = 0;
@@ -134,16 +154,8 @@ class Document {
 	get ref(): ?DocumentReference {
 		return this._ref.get();
 	}
-	set ref(ref: DocumentReference) {
-		if (this._collectionRefCount)
-			throw new Error(
-				'Cannot change ref on Document controlled by a Collection'
-			);
-		if (this._ref.get() === ref) return;
-		transaction(() => {
-			this._ref.set(ref);
-			this._updateRealtimeUpdates(true);
-		});
+	set ref(ref: ?DocumentReference) {
+		this.source = ref;
 	}
 
 	/**
@@ -168,6 +180,11 @@ class Document {
 	 * ...
 	 * // Switch to another document in the back-end
 	 * doc.path = 'artists/EaglesOfDeathMetal';
+	 *
+	 * // Or, you can use a reactive function to link
+	 * // to the contents of another document.
+	 * const doc2 = new Document('settings/activeArtist');
+	 * doc.path = () => 'artists/' + doc2.data.artistId;
 	 */
 	get path(): ?string {
 		let ref = this._ref.get();
@@ -179,13 +196,35 @@ class Document {
 		}
 		return path;
 	}
-	set path(documentPath: ?string) {
+	set path(documentPath: string | (() => string | void)) {
+		this.source = documentPath;
+	}
+
+	/**
+	 * @private
+	 */
+	get source(): ?any {
+		return this._source.get();
+	}
+
+	/**
+	 * @private
+	 */
+	set source(source: ?any) {
 		if (this._collectionRefCount)
 			throw new Error(
-				'Cannot change path on Document controlled by a Collection'
+				'Cannot change source on Document that is controlled by a Collection'
 			);
-		if (this.path === documentPath) return;
-		this.ref = getFirestore().doc(documentPath);
+		if (this._source === source) return;
+		if (this._sourceDisposer) {
+			this._sourceDisposer();
+			this._sourceDisposer = undefined;
+		}
+		transaction(() => {
+			this._source = source;
+			this._ref.set(resolveRef(source));
+			this._updateRealtimeUpdates(true);
+		});
 	}
 
 	/**
@@ -406,28 +445,47 @@ class Document {
 	 */
 	_updateRealtimeUpdates(force?: boolean) {
 		let newActive = false;
-		if (!this._collectionRefCount && this._ref.get()) {
-			switch (this._realtimeUpdating.get()) {
-				case 'auto':
-					newActive = !!this._observedRefCount;
-					break;
-				case 'off':
-					newActive = false;
-					break;
-				case 'on':
-					newActive = true;
-					break;
+		switch (this._realtimeUpdating.get()) {
+			case 'auto':
+				newActive = !!this._observedRefCount;
+				break;
+			case 'off':
+				newActive = false;
+				break;
+			case 'on':
+				newActive = true;
+				break;
+		}
+
+		// Start/stop observing the source if neccessary
+		if (typeof this._source === 'function') {
+			if (newActive && !this._sourceDisposer) {
+				this._sourceDisposer = reaction(
+					() => this._source(),
+					value => {
+						transaction(() => {
+							this._ref.set(resolveRef(value));
+							this._updateRealtimeUpdates(true);
+						});
+					}
+				);
+			} else if (!newActive && this._sourceDisposer) {
+				this._sourceDisposer();
+				this._sourceDisposer = undefined;
 			}
+		}
+
+		// Start/stop listening for snapshot updates
+		if (this._collectionRefCount || !this._ref.get()) {
+			newActive = false;
 		}
 		const active = !!this._onSnapshotUnsubscribe;
 		if (newActive && (!active || force)) {
 			if (this._debug)
 				console.debug(
-					`${
-						this.debugName
-					} - start (mode: ${this._realtimeUpdating.get()}, refCount: ${
-						this._observedRefCount
-					})`
+					`${this.debugName} - ${
+						active ? 're-' : ''
+					}start (${this._realtimeUpdating.get()}:${this._observedRefCount})`
 				);
 			this._fetching.set(true);
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
@@ -437,9 +495,7 @@ class Document {
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
-					`${
-						this.debugName
-					} - stop (mode: ${this._realtimeUpdating.get()}, refCount: ${
+					`${this.debugName} - stop (${this._realtimeUpdating.get()}:${
 						this._observedRefCount
 					})`
 				);
@@ -452,7 +508,7 @@ class Document {
 	 * @private
 	 */
 	get debugName(): string {
-		return `${this.constructor.name} (${this.id})`;
+		return `${this._debugName || this.constructor.name} (${this.path})`;
 	}
 }
 
