@@ -1,5 +1,5 @@
 // @flow
-import { observable } from 'mobx';
+import { observable, extras } from 'mobx';
 
 function enhancedObservable(data: any, delegate: any): any {
 	const o =
@@ -9,24 +9,22 @@ function enhancedObservable(data: any, delegate: any): any {
 
 	// Hook into the MobX observable and track
 	// Whether any Component is observing this observable.
-	let atom = o;
-	if (Array.isArray(data)) {
-		atom = o.$mobx.atom;
-	}
-	atom = atom || o;
+	const atom = extras.getAtom(o);
 	const onBecomeUnobserved = atom.onBecomeUnobserved;
 	const reportObserved = atom.reportObserved;
 	let isObserved = false;
 	atom.isPendingUnobservation = false;
 	atom.onBecomeUnobserved = () => {
 		const res = onBecomeUnobserved.apply(atom, arguments);
-		isObserved = false;
-		delegate.releaseObserverRef();
+		if (isObserved) {
+			isObserved = false;
+			delegate.releaseObserverRef();
+		}
 		return res;
 	};
 	atom.reportObserved = () => {
 		const res = reportObserved.apply(atom, arguments);
-		if (!isObserved) {
+		if (!isObserved && extras.isComputingDerivation()) {
 			isObserved = true;
 			delegate.addObserverRef();
 		}
