@@ -87,6 +87,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Documentation
 
 * [API Reference](./docs/API.md)
+* [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
 * Real-time updating modes (coming soon)
 * Using Collection and Document inside a Component (coming soon)
