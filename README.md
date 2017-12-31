@@ -89,9 +89,9 @@ It does this by intelligently tracking whether a Collection or Document should b
 * [API Reference](./docs/API.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
+* [Using Queries](./docs/Querues.md)
 * Real-time updating modes (coming soon)
 * Using Collection and Document inside a Component (coming soon)
-* Using Queries (coming soon)
 * Why you should create a component per document (coming soon)
 
 ## Work in progress
