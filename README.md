@@ -48,7 +48,7 @@ initFirestorter({firebase: firebase});
 const todos = new Collection('todos');
 
 // Wrap your Components with mobx's `observer` pattern
-@observer class Todos extends Component {
+const Todos = observer(class Todos extends Component {
   render() {
     return <div>
       {todos.docs.map((doc) => (
@@ -58,7 +58,7 @@ const todos = new Collection('todos');
       ))}
     </div>;
   }
-}
+});
 
 const TodoItem = observer(({doc}) => {
   const {finished, text} = doc.data;
