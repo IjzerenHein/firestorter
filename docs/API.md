@@ -67,6 +67,7 @@ created or modified.
 
 -   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
+    -   `options.query` **Query?** See `Document.query`
     -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating`
     -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
     -   `options.debug` **Bool?** Enables debug logging

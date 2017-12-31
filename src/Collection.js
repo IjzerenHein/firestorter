@@ -42,6 +42,8 @@ import type {
  * created or modified.
  *
  * @param {Object} [options] Configuration options
+ * @param
+ * @param {Query} [options.query] See `Document.query`
  * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
  * @param {Bool} [options.debug] Enables debug logging
@@ -90,7 +92,12 @@ class Collection {
 	_debug: boolean;
 
 	constructor(pathOrRef: CollectionReference | string | void, options: any) {
-		const { DocumentClass = Document, realtimeUpdating = 'auto', debug } =
+		const {
+			query,
+			DocumentClass = Document,
+			realtimeUpdating = 'auto',
+			debug
+		} =
 			options || Collection.EMPTY_OPTIONS;
 		this._documentClass = DocumentClass;
 		this._debug = debug || false;
@@ -100,7 +107,7 @@ class Collection {
 		}
 		this._observedRefCount = 0;
 		this._ref = observable(pathOrRef);
-		this._query = observable(undefined);
+		this._query = observable(query);
 		this._realtimeUpdating = observable(realtimeUpdating);
 		this._fetching = observable(false);
 		this._docs = enhancedObservable([], this);
