@@ -25,6 +25,7 @@
     -   [updateTime](#updatetime)
     -   [readTime](#readtime)
     -   [update](#update)
+    -   [set](#set)
     -   [delete](#delete)
     -   [fetch](#fetch-1)
     -   [fetching](#fetching-1)
@@ -297,12 +298,12 @@ Returns the data inside the firestore document.
 **Examples**
 
 ```javascript
-const docData = todos.docs.map((doc) => {
-console.log(doc.data);
- // {
- //   finished: false
- //   text: 'Must do this'
- // }
+todos.docs.map((doc) => {
+ console.log(doc.data);
+  // {
+  //   finished: false
+  //   text: 'Must do this'
+  // }
 });
 ```
 
@@ -312,9 +313,8 @@ Returns **any**
 
 Firestore document reference.
 
-Use this property to get or set the document
-reference. When set, a fetch to the new document
-is performed.
+Use this property to get or set the
+underlying document reference.
 
 Alternatively, you can also use `path` to change the
 reference in more a readable way.
@@ -322,8 +322,11 @@ reference in more a readable way.
 **Examples**
 
 ```javascript
-const doc = new Document(firebase.firestore().doc('albums/splinter'));
-...
+const doc = new Document('albums/splinter');
+
+// Get the DocumentReference for `albums/splinter`
+const ref = doc.ref;
+
 // Switch to another document
 doc.ref = firebase.firestore().doc('albums/americana');
 ```
@@ -418,6 +421,32 @@ await todoDoc.update({
   foo: {
     bar: 10
   }
+});
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+
+### set
+
+Writes to the document.
+
+If the document does not exist yet, it will be created.
+If you pass options, the provided data can be merged into
+the existing document.
+
+**Parameters**
+
+-   `data` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** An object of the fields and values for the document
+-   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Set behaviour options
+    -   `options.merge` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
+
+**Examples**
+
+```javascript
+const todo = new Document('todos/mynewtodo');
+await todo.set({
+ finished: false,
+  text: 'this is awesome'
 });
 ```
 

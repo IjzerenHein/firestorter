@@ -123,12 +123,12 @@ class Document {
 	 * Returns the data inside the firestore document.
 	 *
 	 * @example
-	 * const docData = todos.docs.map((doc) => {
-	 *	console.log(doc.data);
-	 *  // {
-	 *  //   finished: false
-	 *  //   text: 'Must do this'
-	 *  // }
+	 * todos.docs.map((doc) => {
+	 *	 console.log(doc.data);
+	 *   // {
+	 *   //   finished: false
+	 *   //   text: 'Must do this'
+	 *   // }
 	 * });
 	 */
 	get data(): any {
@@ -138,16 +138,18 @@ class Document {
 	/**
 	 * Firestore document reference.
 	 *
-	 * Use this property to get or set the document
-	 * reference. When set, a fetch to the new document
-	 * is performed.
+	 * Use this property to get or set the
+	 * underlying document reference.
 	 *
 	 * Alternatively, you can also use `path` to change the
 	 * reference in more a readable way.
 	 *
 	 * @example
-	 * const doc = new Document(firebase.firestore().doc('albums/splinter'));
-	 * ...
+	 * const doc = new Document('albums/splinter');
+	 *
+	 * // Get the DocumentReference for `albums/splinter`
+	 * const ref = doc.ref;
+	 *
 	 * // Switch to another document
 	 * doc.ref = firebase.firestore().doc('albums/americana');
 	 */
@@ -300,12 +302,45 @@ class Document {
 	update(fields: any): Promise<void> {
 		if (this._schema) {
 			// Todo - investigate this deeper
+			// Todo - support fieldPath
 			this._validateSchema({
 				...this.data,
 				fields
 			});
 		}
 		return this._ref.get().update(fields);
+	}
+
+	/**
+	 * Writes to the document.
+	 *
+	 * If the document does not exist yet, it will be created.
+	 * If you pass options, the provided data can be merged into
+	 * the existing document.
+	 *
+	 * @param {Object} data - An object of the fields and values for the document
+	 * @param {Object} [options] - Set behaviour options
+	 * @param {Boolean} [options.merge] - Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
+	 *
+	 * @example
+	 * const todo = new Document('todos/mynewtodo');
+	 * await todo.set({
+	 *	 finished: false,
+	 *   text: 'this is awesome'
+	 * });
+	 */
+	set(data: any, options: any): Promise<void> {
+		if (this._schema) {
+			if (options && options.merge) {
+				this._validateSchema({
+					...this.data,
+					...data
+				});
+			} else {
+				this._validateSchema(data);
+			}
+		}
+		return this._ref.get().set(data, options);
 	}
 
 	/**
