@@ -129,3 +129,7 @@ Firestorter is being build as you read this. The API is pretty stable, but more 
 ## License
 
 [MIT](./LICENSE.txt)
+
+## Acknowledgements
+
+* Logo design by [Alex Prodrom](https://github.com/AlexProdrom)
