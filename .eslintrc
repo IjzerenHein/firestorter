@@ -2,10 +2,13 @@
 	"extends": ["eslint:recommended"],
 	"parser": "babel-eslint",
 	"plugins": [
-    "flowtype"
+    "flowtype",
+    "jest"
   ],
 	"env": {
-		"browser": true
+		"browser": true,
+		"es6": true,
+		"jest": true
 	},
 	"globals": {
 		"Promise": true
