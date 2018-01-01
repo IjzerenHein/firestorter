@@ -87,7 +87,7 @@ back-end, as efficiently as possible.
 import {albums} from './store';
 import {observer} from 'mobx-react';
 
-@observer class AlbumView extends Component {
+class AlbumView extends Component {
   render() {
     return (
       <div>
@@ -97,5 +97,6 @@ import {observer} from 'mobx-react';
   }
 }
 
+export default observer(AlbumView);
 ...
 ```
