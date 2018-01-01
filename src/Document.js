@@ -42,7 +42,8 @@ class Document {
 	_ref: any;
 	_snapshot: any;
 	_schema: any;
-	_debug: any;
+	_debug: boolean;
+	_debugName: ?string;
 	_collectionRefCount: number;
 	_observedRefCount: number;
 	_createTime: any;
@@ -419,7 +420,7 @@ class Document {
 						'Should not call fetch on Document that is controlled by a Collection'
 					)
 				);
-			if (this._active)
+			if (this._onSnapshotUnsubscribe)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
