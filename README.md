@@ -5,6 +5,7 @@
 
 [![Build Status](https://travis-ci.org/IjzerenHein/firestorter.svg?branch=master)](https://travis-ci.org/IjzerenHein/firestorter)
 <span class="badge-npmversion"><a href="https://npmjs.org/package/badges" title="View this project on NPM"><img src="https://img.shields.io/npm/v/firestorter.svg" alt="NPM version" /></a></span>
+<span class="badge-daviddm"><a href="https://david-dm.org/IjzerenHein/firestorter" title="View the status of this project's dependencies on DavidDM"><img src="https://img.shields.io/david/IjzerenHein/firestorter.svg" alt="Dependency Status" /></a></span>
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/IjzerenHein/firestorter/master/LICENSE.txt)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
