@@ -8,7 +8,8 @@
     -   [id](#id)
     -   [path](#path)
     -   [query](#query)
-    -   [realtimeUpdating](#realtimeupdating)
+    -   [mode](#mode)
+    -   [active](#active)
     -   [fetch](#fetch)
     -   [fetching](#fetching)
     -   [add](#add)
@@ -19,7 +20,8 @@
     -   [ref](#ref-1)
     -   [id](#id-1)
     -   [path](#path-1)
-    -   [realtimeUpdating](#realtimeupdating-1)
+    -   [mode](#mode-1)
+    -   [active](#active-1)
     -   [snapshot](#snapshot)
     -   [createTime](#createtime)
     -   [updateTime](#updatetime)
@@ -65,10 +67,10 @@ created or modified.
 
 **Parameters**
 
--   `pathOrRef` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void)** 
+-   `source` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
     -   `options.query` **Query?** See `Document.query`
-    -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating`
+    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.mode`
     -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
     -   `options.debug` **Bool?** Enables debug logging
 
@@ -85,7 +87,7 @@ const col2 = new Collection(firebase.firestore().collection('todos'));
 
 // Create a collection and permanently start real-time updating
 const col2 = new Collection('artists', {
-  realtimeUpdating: 'on'
+  mode: 'on'
 });
 
 // Create a collection and set a query on it
@@ -195,7 +197,7 @@ todos.query = undefined;
 
 Returns **Query?** 
 
-### realtimeUpdating
+### mode
 
 Real-time updating mode.
 
@@ -207,10 +209,17 @@ Can be set to any of the following values:
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
+### active
+
+Returns true when the Document is actively listening
+for changes in the firestore back-end.
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
 ### fetch
 
 Fetches new data from firestore. Use this to manually fetch
-new data when `realtimeUpdating` is set to 'off'.
+new data when `mode` is set to 'off'.
 
 **Examples**
 
@@ -279,7 +288,7 @@ function has changed.
 
 -   `source` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
-    -   `options.realtimeUpdating` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.realtimeUpdating` (default: auto)
+    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.mode` (default: auto)
     -   `options.schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Superstruct schema for data validation
     -   `options.snapshot` **DocumentSnapshot?** Initial document snapshot
     -   `options.debug` **Bool?** Enables debug logging
@@ -366,7 +375,7 @@ doc.path = () => 'artists/' + doc2.data.artistId;
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 
-### realtimeUpdating
+### mode
 
 Real-time updating mode.
 
@@ -377,6 +386,13 @@ Can be set to any of the following values:
 -   "on" (real-time updating is permanently enabled)
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+### active
+
+Returns true when the Document is actively listening
+for changes in the firestore back-end.
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
 ### snapshot
 
@@ -466,7 +482,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 ### fetch
 
 Fetches new data from firestore. Use this to manually fetch
-new data when `realtimeUpdating` is set to 'off'.
+new data when `mode` is set to 'off'.
 
 **Examples**
 
