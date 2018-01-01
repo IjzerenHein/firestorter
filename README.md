@@ -2,6 +2,7 @@
   <img src="./logo2.jpg" /><br>
   Firestorter
 </h1>
+
 [![Build Status](https://travis-ci.org/IjzerenHein/firestorter.svg?branch=master)](https://travis-ci.org/IjzerenHein/firestorter) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/IjzerenHein/firestorter/master/LICENSE.txt)
 
 Simple & super fast Firestore bindings for React, using Mobx observables. 🤘
