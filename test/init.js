@@ -3,8 +3,10 @@ import 'firebase/firestore';
 import { initFirestorter, Collection, Document } from '../src';
 import { autorun, reaction } from 'mobx';
 
+let firebaseApp;
+
 beforeAll(() => {
-	firebase.initializeApp({
+	firebaseApp = firebase.initializeApp({
 		apiKey: 'AIzaSyDgDX7GD9b8h8JxEB-ANs9LjlRkXpYpS3U',
 		authDomain: 'firestorter-tests.firebaseapp.com',
 		databaseURL: 'https://firestorter-tests.firebaseio.com',
@@ -14,6 +16,10 @@ beforeAll(() => {
 	});
 
 	initFirestorter({ firebase: firebase });
+});
+
+afterAll(() => {
+	firebaseApp.delete();
 });
 
 export { firebase, initFirestorter, Collection, Document, autorun, reaction };

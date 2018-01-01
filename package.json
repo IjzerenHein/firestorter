@@ -1,7 +1,8 @@
 {
 	"name": "firestorter",
 	"version": "0.8.4",
-	"description": "Simple & super fast Firestore to React bindings using Mobx observables",
+	"description":
+		"Simple & super fast Firestore to React bindings using Mobx observables",
 	"keywords": [
 		"react-firestore-mobox",
 		"react-firestore",
@@ -19,10 +20,7 @@
 	"repository": "https://github.com/IjzerenHein/firestorter",
 	"author": "IjzerenHein <hrutjes@gmail.com>",
 	"license": "MIT",
-	"files": [
-		"src",
-		"dist"
-	],
+	"files": ["src", "dist"],
 	"scripts": {
 		"build": "rollup -c",
 		"lint": "eslint src",
