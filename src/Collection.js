@@ -1,7 +1,7 @@
 // @flow
-import { observable, transaction } from 'mobx';
+import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore } from './init';
+import { getFirestore, verifyMode } from './init';
 import Document from './Document';
 
 import type {
@@ -10,6 +10,27 @@ import type {
 	DocumentSnapshot,
 	CollectionReference
 } from 'firebase/firestore';
+
+/**
+ * @private
+ */
+function resolveRef(value) {
+	if (typeof value === 'string') {
+		return getFirestore().collection(value);
+	} else if (typeof value === 'function') {
+		return resolveRef(value());
+	} else {
+		return value;
+	}
+}
+
+function resolveQuery(value) {
+	if (typeof value === 'function') {
+		return resolveQuery(value());
+	} else {
+		return value;
+	}
+}
 
 /**
  * The Collection class lays at the heart of `firestorter`.
@@ -44,7 +65,7 @@ import type {
  * @param {Object} [options] Configuration options
  * @param
  * @param {Query} [options.query] See `Document.query`
- * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating`
+ * @param {String} [options.mode] See `Document.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
  * @param {Bool} [options.debug] Enables debug logging
  *
@@ -59,7 +80,7 @@ import type {
  *
  * // Create a collection and permanently start real-time updating
  * const col2 = new Collection('artists', {
- *   realtimeUpdating: 'on'
+ *   mode: 'on'
  * });
  *
  * // Create a collection and set a query on it
@@ -80,38 +101,53 @@ import type {
 class Collection {
 	static EMPTY_OPTIONS = {};
 
+	_source: any;
+	_sourceDisposer: any;
 	_docLookup: { [string]: Document };
 	_ref: any;
+	_querySource: any;
+	_querySourceDisposer: any;
 	_query: any;
-	_realtimeUpdating: any;
+	_mode: any;
 	_fetching: any;
 	_docs: any;
 	_documentClass: any;
 	_onSnapshotUnsubscribe: any;
 	_observedRefCount: number;
 	_debug: boolean;
+	_debugName: ?string;
 
-	constructor(pathOrRef: CollectionReference | string | void, options: any) {
+	constructor(
+		source: CollectionReference | string | (() => string | void),
+		options: any
+	) {
 		const {
 			query,
 			DocumentClass = Document,
-			realtimeUpdating = 'auto',
-			debug
+			mode,
+			realtimeUpdating,
+			debug,
+			debugName
 		} =
 			options || Collection.EMPTY_OPTIONS;
 		this._documentClass = DocumentClass;
 		this._debug = debug || false;
+		this._debugName = debugName;
 		this._docLookup = {};
-		if (typeof pathOrRef === 'string') {
-			pathOrRef = getFirestore().collection(pathOrRef);
-		}
 		this._observedRefCount = 0;
-		this._ref = observable(pathOrRef);
-		this._query = observable(query);
-		this._realtimeUpdating = observable(realtimeUpdating);
+		this._source = source;
+		this._ref = observable(resolveRef(source));
+		this._querySource = query;
+		this._query = observable(resolveQuery(query));
+		if (realtimeUpdating) {
+			console.warn(
+				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
+			);
+		}
+		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
 		this._fetching = observable(false);
 		this._docs = enhancedObservable([], this);
-		if (realtimeUpdating === 'on') this._start();
+		if (mode === 'on') this._updateRealtimeUpdates();
 	}
 
 	/**
@@ -147,13 +183,7 @@ class Collection {
 		return this._ref.get();
 	}
 	set ref(ref: ?CollectionReference) {
-		if (this._ref.get() === ref) return;
-		transaction(() => {
-			this._ref.set(ref);
-			if (this._active && !this._query.get()) {
-				this._start();
-			}
-		});
+		this.source = ref;
 	}
 
 	/**
@@ -190,10 +220,26 @@ class Collection {
 		return path;
 	}
 	set path(collectionPath: ?string) {
-		if (this.path === collectionPath) return;
-		this.ref = collectionPath
-			? getFirestore().collection(collectionPath)
-			: undefined;
+		this.source = collectionPath;
+	}
+
+	/**
+	 * @private
+	 */
+	get source(): ?any {
+		return this._source.get();
+	}
+	set source(source: ?any) {
+		if (this._source === source) return;
+		if (this._sourceDisposer) {
+			this._sourceDisposer();
+			this._sourceDisposer = undefined;
+		}
+		transaction(() => {
+			this._source = source;
+			this._ref.set(resolveRef(source));
+			this._updateRealtimeUpdates(this._query.get() ? false : true);
+		});
 	}
 
 	/**
@@ -219,13 +265,26 @@ class Collection {
 	get query(): ?Query {
 		return this._query.get();
 	}
-	set query(query?: Query) {
-		if (this._query.get() === query) return;
+	set query(query?: Query | (() => Query)) {
+		this.querySource = query;
+	}
+
+	/**
+	 * @private
+	 */
+	get querySource(): ?any {
+		return this._querySource.get();
+	}
+	set querySource(source: ?any) {
+		if (this._querySource === source) return;
+		if (this._querySourceDisposer) {
+			this._querySourceDisposer();
+			this._querySourceDisposer = undefined;
+		}
 		transaction(() => {
-			this._query.set(query);
-			if (this._active) {
-				this._start();
-			}
+			this._querySource = source;
+			this._query.set(resolveQuery(source));
+			this._updateRealtimeUpdates(true);
 		});
 	}
 
@@ -237,35 +296,37 @@ class Collection {
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
 	 */
-	get realtimeUpdating(): string {
-		return this._realtimeUpdating.get();
+	get mode(): string {
+		return this._mode.get();
 	}
-	set realtimeUpdating(mode: string) {
-		if (this._realtimeUpdating.get() === mode) return;
-		switch (mode) {
-			case 'auto':
-			case 'off':
-			case 'on':
-				break;
-			default:
-				throw new Error('Invalid realtimeUpdating mode: ' + mode);
-		}
+	set mode(mode: string) {
+		if (this._mode.get() === mode) return;
+		verifyMode(mode);
 		transaction(() => {
-			const oldActive = this._active;
-			this._realtimeUpdating.set(mode);
-			const active = this._active;
-
-			if (!active && oldActive) {
-				this._stop();
-			} else if (active && !oldActive) {
-				this._start();
-			}
+			this._mode.set(mode);
+			this._updateRealtimeUpdates();
 		});
 	}
 
 	/**
+	 * @private
+	 */
+	get realtimeUpdating(): string {
+		console.warn(
+			'Collection.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
+		);
+		return this.mode;
+	}
+	set realtimeUpdating(mode: string) {
+		console.warn(
+			'Collection.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
+		);
+		this.mode = mode;
+	}
+
+	/**
 	 * Fetches new data from firestore. Use this to manually fetch
-	 * new data when `realtimeUpdating` is set to 'off'.
+	 * new data when `mode` is set to 'off'.
 	 *
 	 * @example
 	 * const col = new Collection('albums', 'off');
@@ -275,7 +336,7 @@ class Collection {
 	 */
 	fetch(): Promise<Collection> {
 		return new Promise((resolve, reject) => {
-			if (this._active)
+			if (this._onSnapshotUnsubscribe)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
@@ -358,13 +419,9 @@ class Collection {
 			console.debug(
 				`${this.debugName} - addRef (${this._observedRefCount + 1})`
 			);
-		if (
-			++this._observedRefCount === 1 &&
-			this._realtimeUpdating.get() === 'auto'
-		) {
-			this._start();
-		}
-		return this._observedRefCount;
+		const res = ++this._observedRefCount;
+		this._updateRealtimeUpdates();
+		return res;
 	}
 
 	/**
@@ -376,88 +433,9 @@ class Collection {
 			console.debug(
 				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
 			);
-		if (
-			--this._observedRefCount === 0 &&
-			this._realtimeUpdating.get() === 'auto'
-		) {
-			this._stop();
-		}
-		return this._observedRefCount;
-	}
-
-	/**
-	 * @private
-	 */
-	_start(): void {
-		if (this._onSnapshotUnsubscribe) {
-			this._onSnapshotUnsubscribe();
-		}
-		if (this._query.get()) {
-			if (this._debug)
-				console.debug(
-					`${
-						this.debugName
-					} - start (type: query, mode: ${this._realtimeUpdating.get()}, refCount: ${
-						this._observedRefCount
-					})`
-				);
-			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = this._query
-				.get()
-				.onSnapshot(snapshot => this._onSnapshot(snapshot));
-		} else if (this._ref.get()) {
-			if (this._debug)
-				console.debug(
-					`${
-						this.debugName
-					} - start (type: collection, mode: ${this._realtimeUpdating.get()}, refCount: ${
-						this._observedRefCount
-					})`
-				);
-			this._fetching.set(true);
-			this._onSnapshotUnsubscribe = this._ref
-				.get()
-				.onSnapshot(snapshot => this._onSnapshot(snapshot));
-		} else {
-			this._onSnapshotUnsubscribe = undefined;
-		}
-	}
-
-	/**
-	 * @private
-	 */
-	_stop(): void {
-		if (this._onSnapshotUnsubscribe) {
-			if (this._debug)
-				console.debug(
-					`${
-						this.debugName
-					} - stop (mode: ${this._realtimeUpdating.get()}, refCount: ${
-						this._observedRefCount
-					})`
-				);
-			this._onSnapshotUnsubscribe();
-			this._onSnapshotUnsubscribe = undefined;
-		}
-		if (this._fetching.get()) {
-			this._fetching.set(false);
-		}
-	}
-
-	/**
-	 * @private
-	 */
-	get _active(): boolean {
-		switch (this._realtimeUpdating.get()) {
-			case 'off':
-				return false;
-			case 'auto':
-				return this._observedRefCount >= 1;
-			case 'on':
-				return true;
-			default:
-				return false;
-		}
+		const res = --this._observedRefCount;
+		this._updateRealtimeUpdates();
+		return res;
 	}
 
 	/**
@@ -514,8 +492,94 @@ class Collection {
 	/**
 	 * @private
 	 */
+	_updateRealtimeUpdates(force?: boolean) {
+		let newActive = false;
+		switch (this._mode.get()) {
+			case 'auto':
+				newActive = !!this._observedRefCount;
+				break;
+			case 'off':
+				newActive = false;
+				break;
+			case 'on':
+				newActive = true;
+				break;
+		}
+
+		// Start/stop observing the source (ref/path) if neccessary
+		if (typeof this._source === 'function') {
+			if (newActive && !this._sourceDisposer) {
+				this._sourceDisposer = reaction(
+					() => this._source(),
+					value => {
+						transaction(() => {
+							this._ref.set(resolveRef(value));
+							this._updateRealtimeUpdates(true);
+						});
+					}
+				);
+			} else if (!newActive && this._sourceDisposer) {
+				this._sourceDisposer();
+				this._sourceDisposer = undefined;
+			}
+		}
+
+		// Start/stop observing the query-source if neccessary
+		if (typeof this._querySource === 'function') {
+			if (newActive && !this._querySourceDisposer) {
+				this._querySourceDisposer = reaction(
+					() => this._querySource(),
+					value => {
+						transaction(() => {
+							this._query.set(resolveQuery(value));
+							this._updateRealtimeUpdates(true);
+						});
+					}
+				);
+			} else if (!newActive && this._querySourceDisposer) {
+				this._querySourceDisposer();
+				this._querySourceDisposer = undefined;
+			}
+		}
+
+		// Start/stop listening for snapshot updates
+		const ref = this._ref.get();
+		if (!ref) {
+			newActive = false;
+		}
+		const active = !!this._onSnapshotUnsubscribe;
+		if (newActive && (!active || force)) {
+			if (this._debug)
+				console.debug(
+					`${this.debugName} - ${
+						active ? 're-' : ''
+					}start (${this._mode.get()}:${this._observedRefCount})`
+				);
+			this._fetching.set(true);
+			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
+			this._onSnapshotUnsubscribe = (this._query.get() || ref).onSnapshot(
+				snapshot => this._onSnapshot(snapshot)
+			);
+		} else if (!newActive && active) {
+			if (this._debug)
+				console.debug(
+					`${this.debugName} - stop (${this._mode.get()}:${
+						this._observedRefCount
+					})`
+				);
+			this._onSnapshotUnsubscribe();
+			this._onSnapshotUnsubscribe = undefined;
+			if (this._fetching.get()) {
+				this._fetching.set(false);
+			}
+		}
+	}
+
+	/**
+	 * @private
+	 */
 	get debugName(): string {
-		return `${this.constructor.name} (${this.id})`;
+		return `${this._debugName || this.constructor.name} (${this.path})`;
 	}
 }
 
