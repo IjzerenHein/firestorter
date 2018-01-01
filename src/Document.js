@@ -214,10 +214,6 @@ class Document {
 	get source(): ?any {
 		return this._source.get();
 	}
-
-	/**
-	 * @private
-	 */
 	set source(source: ?any) {
 		if (this._collectionRefCount)
 			throw new Error(

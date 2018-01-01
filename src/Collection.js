@@ -325,6 +325,14 @@ class Collection {
 	}
 
 	/**
+	 * Returns true when the Document is actively listening
+	 * for changes in the firestore back-end.
+	 */
+	get active(): boolean {
+		return !!this._onSnapshotUnsubscribe;
+	}
+
+	/**
 	 * Fetches new data from firestore. Use this to manually fetch
 	 * new data when `mode` is set to 'off'.
 	 *
@@ -336,7 +344,7 @@ class Collection {
 	 */
 	fetch(): Promise<Collection> {
 		return new Promise((resolve, reject) => {
-			if (this._onSnapshotUnsubscribe)
+			if (this.active)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
