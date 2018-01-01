@@ -39,4 +39,15 @@ function getFirestore() {
 	return globalFirestore;
 }
 
-export { initFirestorter, getFirestore };
+function verifyMode(mode: string) {
+	switch (mode) {
+		case 'auto':
+		case 'off':
+		case 'on':
+			return mode;
+		default:
+			throw new Error('Invalid mode mode: ' + mode);
+	}
+}
+
+export { initFirestorter, getFirestore, verifyMode };

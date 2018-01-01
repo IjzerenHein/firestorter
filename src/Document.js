@@ -1,7 +1,7 @@
 // @flow
 import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore } from './init';
+import { getFirestore, verifyMode } from './init';
 import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
@@ -28,7 +28,7 @@ function resolveRef(value) {
  *
  * @param {DocumentReference | string | () => string | void} [source] Ref, path or observable function
  * @param {Object} [options] Configuration options
- * @param {String} [options.realtimeUpdating] See `Document.realtimeUpdating` (default: auto)
+ * @param {String} [options.mode] See `Document.mode` (default: auto)
  * @param {Object} [options.schema] Superstruct schema for data validation
  * @param {DocumentSnapshot} [options.snapshot] Initial document snapshot
  * @param {Bool} [options.debug] Enables debug logging
@@ -50,7 +50,7 @@ class Document {
 	_updateTime: any;
 	_readTime: any;
 	_data: any;
-	_realtimeUpdating: any;
+	_mode: any;
 	_fetching: any;
 	_onSnapshotUnsubscribe: any;
 
@@ -58,7 +58,7 @@ class Document {
 		source: DocumentReference | string | (() => string | void),
 		options: any
 	) {
-		const { schema, snapshot, realtimeUpdating = 'auto', debug, debugName } =
+		const { schema, snapshot, mode, debug, debugName, realtimeUpdating } =
 			options || Document.EMPTY_OPTIONS;
 		this._source = source;
 		this._ref = observable(resolveRef(source));
@@ -83,9 +83,14 @@ class Document {
 		let data = snapshot ? snapshot.data() : undefined;
 		if (data) data = this._validateSchema(data);
 		this._data = enhancedObservable(data || Document.EMPTY_OPTIONS, this);
-		this._realtimeUpdating = observable(realtimeUpdating);
+		if (realtimeUpdating) {
+			console.warn(
+				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
+			);
+		}
+		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
 		this._fetching = observable(false);
-		if (realtimeUpdating === 'on') this._updateRealtimeUpdates();
+		if (mode === 'on') this._updateRealtimeUpdates();
 	}
 
 	/**
@@ -238,23 +243,40 @@ class Document {
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
 	 */
-	get realtimeUpdating(): string {
-		return this._realtimeUpdating.get();
+	get mode(): string {
+		return this._mode.get();
 	}
-	set realtimeUpdating(mode: string) {
-		if (this._realtimeUpdating.get() === mode) return;
-		switch (mode) {
-			case 'auto':
-			case 'off':
-			case 'on':
-				break;
-			default:
-				throw new Error('Invalid realtimeUpdating mode: ' + mode);
-		}
+	set mode(mode: string) {
+		if (this._mode.get() === mode) return;
+		verifyMode(mode);
 		transaction(() => {
-			this._realtimeUpdating.set(mode);
+			this._mode.set(mode);
 			this._updateRealtimeUpdates();
 		});
+	}
+
+	/**
+	 * @private
+	 */
+	get realtimeUpdating(): string {
+		console.warn(
+			'Document.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
+		);
+		return this.mode;
+	}
+	set realtimeUpdating(mode: string) {
+		console.warn(
+			'Document.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
+		);
+		this.mode = mode;
+	}
+
+	/**
+	 * Returns true when the Document is actively listening
+	 * for changes in the firestore back-end.
+	 */
+	get active(): boolean {
+		return !!this._onSnapshotUnsubscribe;
 	}
 
 	/**
@@ -404,7 +426,7 @@ class Document {
 
 	/**
 	 * Fetches new data from firestore. Use this to manually fetch
-	 * new data when `realtimeUpdating` is set to 'off'.
+	 * new data when `mode` is set to 'off'.
 	 *
 	 * @example
 	 * const col = new Document('albums/splinter', 'off');
@@ -420,7 +442,7 @@ class Document {
 						'Should not call fetch on Document that is controlled by a Collection'
 					)
 				);
-			if (this._onSnapshotUnsubscribe)
+			if (this.active)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
@@ -481,7 +503,7 @@ class Document {
 	 */
 	_updateRealtimeUpdates(force?: boolean) {
 		let newActive = false;
-		switch (this._realtimeUpdating.get()) {
+		switch (this._mode.get()) {
 			case 'auto':
 				newActive = !!this._observedRefCount;
 				break;
@@ -521,7 +543,7 @@ class Document {
 				console.debug(
 					`${this.debugName} - ${
 						active ? 're-' : ''
-					}start (${this._realtimeUpdating.get()}:${this._observedRefCount})`
+					}start (${this._mode.get()}:${this._observedRefCount})`
 				);
 			this._fetching.set(true);
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
@@ -531,12 +553,15 @@ class Document {
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
-					`${this.debugName} - stop (${this._realtimeUpdating.get()}:${
+					`${this.debugName} - stop (${this._mode.get()}:${
 						this._observedRefCount
 					})`
 				);
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
+			if (this._fetching.get()) {
+				this._fetching.set(false);
+			}
 		}
 	}
 
