@@ -53,6 +53,7 @@ class Document {
 	_mode: any;
 	_fetching: any;
 	_onSnapshotUnsubscribe: any;
+	_readyPromise: any;
 
 	constructor(
 		source: DocumentReference | string | (() => string | void),
@@ -90,6 +91,7 @@ class Document {
 		}
 		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
 		this._fetching = observable(false);
+		this._updateSourceObserver();
 		if (mode === 'on') this._updateRealtimeUpdates();
 	}
 
@@ -220,15 +222,34 @@ class Document {
 				'Cannot change source on Document that is controlled by a Collection'
 			);
 		if (this._source === source) return;
+		this._source = source;
+		this._updateSourceObserver();
+		transaction(() => {
+			this._ref.set(resolveRef(source));
+			this._updateRealtimeUpdates(true);
+		});
+	}
+
+	/**
+	 * @private
+	 */
+	_updateSourceObserver() {
 		if (this._sourceDisposer) {
 			this._sourceDisposer();
 			this._sourceDisposer = undefined;
 		}
-		transaction(() => {
-			this._source = source;
-			this._ref.set(resolveRef(source));
-			this._updateRealtimeUpdates(true);
-		});
+		if (typeof this._source === 'function') {
+			this._sourceDisposer = reaction(
+				() => this._source(),
+				value => {
+					transaction(() => {
+						// TODO, check whether path has changed
+						this._ref.set(resolveRef(value));
+						this._updateRealtimeUpdates(true);
+					});
+				}
+			);
+		}
 	}
 
 	/**
@@ -425,9 +446,9 @@ class Document {
 	 * new data when `mode` is set to 'off'.
 	 *
 	 * @example
-	 * const col = new Document('albums/splinter', 'off');
-	 * col.fetch().then(({docs}) => {
-	 *   docs.forEach(doc => console.log(doc));
+	 * const doc = new Document('albums/splinter', 'off');
+	 * doc.fetch().then(({data}) => {
+	 *   console.log('data: ', data);
 	 * });
 	 */
 	fetch(): Promise<Document> {
@@ -442,27 +463,33 @@ class Document {
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
+			if (this._fetching.get())
+				return reject(new Error('Fetch already in progress'));
+			const ref = this._ref.get();
+			if (!ref) {
+				return reject(new Error('No ref or path set on Document'));
+			}
+			this._ready(false);
 			this._fetching.set(true);
-			this._ref
-				.get()
-				.get()
-				.then(
-					snapshot => {
-						transaction(() => {
-							this._fetching.set(false);
-							try {
-								this._updateFromSnapshot(snapshot);
-							} catch (err) {
-								console.error(err.message);
-							}
-						});
-						resolve(this);
-					},
-					err => {
+			ref.get().then(
+				snapshot => {
+					transaction(() => {
 						this._fetching.set(false);
-						reject(err);
-					}
-				);
+						try {
+							this._updateFromSnapshot(snapshot);
+						} catch (err) {
+							console.error(err.message);
+						}
+					});
+					this._ready(true);
+					resolve(this);
+				},
+				err => {
+					this._fetching.set(false);
+					this._ready(true);
+					reject(err);
+				}
+			);
 		});
 	}
 
@@ -475,9 +502,72 @@ class Document {
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
 	 * - When `fetch` is explicitely called
+	 *
+	 * @example
+	 * const doc = new Document('albums/splinter', {mode: 'off'});
+	 * console.log(doc.fetching); 	// fetching: false
+	 * doc.fetch(); 								// start fetch
+	 * console.log(doc.fetching); 	// fetching: true
+	 * await doc.ready(); 					// wait for fetch to complete
+	 * console.log(doc.fetching); 	// fetching: false
+	 *
+	 * @example
+	 * const doc = new Document('albums/splinter');
+	 * console.log(doc.fetching); 	// fetching: false
+	 * const dispose = autorun(() => {
+	 *   console.log(doc.data);			// start observing document data
+	 * });
+	 * console.log(doc.fetching); 	// fetching: true
+	 * ...
+	 * dispose();										// stop observing document data
+	 * console.log(doc.fetching); 	// fetching: false
 	 */
 	get fetching(): boolean {
 		return this._fetching.get();
+	}
+
+	/**
+	 * Promise that is resolved when the Document has
+	 * data ready to be consumed.
+	 *
+	 * Use this function to for instance wait for
+	 * the initial snapshot update to complete, or to wait
+	 * for fresh data after changing the path/ref.
+	 *
+	 * @example
+	 * const doc = new Document('albums/splinter', {mode: 'on'});
+	 * await doc.ready();
+	 * console.log('data: ', doc.data);
+	 *
+	 * @example
+	 * const doc = new Document('albums/splinter', {mode: 'on'});
+	 * await doc.ready();
+	 * ...
+	 * // Changing the path causes a new snapshot update
+	 * doc.path = 'albums/americana';
+	 * await doc.ready();
+	 * console.log('data: ', doc.data);
+	 */
+	ready(): Promise<void> {
+		this._readyPromise = this._readyPromise || Promise.resolve(true);
+		return this._readyPromise;
+	}
+
+	/**
+	 * @private
+	 */
+	_ready(complete) {
+		if (complete) {
+			const readyResolve = this._readyResolve;
+			if (readyResolve) {
+				this._readyResolve = undefined;
+				readyResolve(true);
+			}
+		} else if (!this._readyResolve) {
+			this._readyPromise = new Promise(resolve => {
+				this._readyResolve = resolve;
+			});
+		}
 	}
 
 	/**
@@ -491,6 +581,7 @@ class Document {
 			} catch (err) {
 				console.error(err.message);
 			}
+			this._ready(true);
 		});
 	}
 
@@ -511,24 +602,6 @@ class Document {
 				break;
 		}
 
-		// Start/stop observing the source if neccessary
-		if (typeof this._source === 'function') {
-			if (newActive && !this._sourceDisposer) {
-				this._sourceDisposer = reaction(
-					() => this._source(),
-					value => {
-						transaction(() => {
-							this._ref.set(resolveRef(value));
-							this._updateRealtimeUpdates(true);
-						});
-					}
-				);
-			} else if (!newActive && this._sourceDisposer) {
-				this._sourceDisposer();
-				this._sourceDisposer = undefined;
-			}
-		}
-
 		// Start/stop listening for snapshot updates
 		if (this._collectionRefCount || !this._ref.get()) {
 			newActive = false;
@@ -541,6 +614,7 @@ class Document {
 						active ? 're-' : ''
 					}start (${this._mode.get()}:${this._observedRefCount})`
 				);
+			this._ready(false);
 			this._fetching.set(true);
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = this._ref
@@ -558,6 +632,7 @@ class Document {
 			if (this._fetching.get()) {
 				this._fetching.set(false);
 			}
+			this._ready(true);
 		}
 	}
 
