@@ -66,9 +66,29 @@ converted into a ref, and refs can be translated back into paths._
 
 ### Reactive Paths
 
-* work in progress
+Reactive paths are functions that depend on Documents (or other observables)
+and return a path. This makes it very easy to change the path of a Collection or
+Document, based on the `path` or `data` of another Document.
 
+#### Sub-collection example
 ```js
 const artist = new Document('artists/FooFighters');
+
+// Let albums depend on the path of the artist document (subcollection)
 const albums = new Collection(() => artist.path + '/albums');
+
+// Change path of artist
+artist.path = 'artists/Metallica';
+
+console.log()
 ```
+
+#### How do these reactive paths work?
+
+Whenever the reactive path function accesses an observable (e.g. the path or data
+of a Document), the Document/Collection to which the reactive path was assigned, starts
+listening for changes (observing) on that observable. 
+
+It is important to note that listening for changes is only started when the `mode` of the
+Collection/Document is set to `on` or `auto`
+

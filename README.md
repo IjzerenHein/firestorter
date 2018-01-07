@@ -93,6 +93,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Documentation
 
 * [API Reference](./docs/API.md)
+* [Introduction to Firestorter](https://medium.com/@hrutjes/building-a-react-firestore-app-with-zero-effort-and-mobx-525df611eabf)
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
@@ -123,7 +124,10 @@ Firestorter is being build as you read this. The API is pretty stable, but more 
 * [x] Custom Document classes
 * [x] Ability to set Document path, based on contents of another document
 * [x] Document.set
-* [ ] Ability to set Collection path, based on contents of a document
+* [x] Document.ready (Promise to check whether data is available)
+* [x] Collection.ready (Promise to check whether docs are available)
+* [x] Ability to set Collection path, based on contents of a document
+* [x] Ability to set reactive query on Collection
 * [ ] FieldPath notation for Document.update
 * [ ] Sub-collections in documents
 * [ ] Revise Collection.add

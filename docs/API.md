@@ -12,6 +12,7 @@
     -   [active](#active)
     -   [fetch](#fetch)
     -   [fetching](#fetching)
+    -   [ready](#ready)
     -   [add](#add)
     -   [deleteAll](#deleteall)
 -   [Document](#document)
@@ -31,6 +32,7 @@
     -   [delete](#delete)
     -   [fetch](#fetch-1)
     -   [fetching](#fetching-1)
+    -   [ready](#ready-1)
 -   [initFirestorter](#initfirestorter)
 
 ## Collection
@@ -243,7 +245,59 @@ Fetches are performed in these cases:
 -   When a `query` is set or cleared
 -   When `fetch` is explicitely called
 
+**Examples**
+
+```javascript
+const col = new Collection('albums', {mode: 'off'});
+console.log(col.fetching); 	// fetching: false
+col.fetch(); 								// start fetch
+console.log(col.fetching); 	// fetching: true
+await col.ready(); 					// wait for fetch to complete
+console.log(col.fetching); 	// fetching: false
+```
+
+```javascript
+const col = new Collection('albums');
+console.log(col.fetching); 	// fetching: false
+const dispose = autorun(() => {
+  console.log(col.docs);			// start observing collection data
+});
+console.log(col.fetching); 	// fetching: true
+...
+dispose();										// stop observing collection data
+console.log(col.fetching); 	// fetching: false
+```
+
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+### ready
+
+Promise that is resolved when the Collection has
+finished fetching its (initial) documents.
+
+Use this function to for instance wait for
+the initial snapshot update to complete, or to wait
+for fresh data after changing the path/ref.
+
+**Examples**
+
+```javascript
+const col = new Collection('albums', {mode: 'on'});
+await col.ready();
+console.log('albums: ', col.docs);
+```
+
+```javascript
+const col = new Collection('artists/FooFighters/albums', {mode: 'on'});
+await col.ready();
+...
+// Changing the path causes a new snapshot update
+col.path = 'artists/TheOffspring/albums';
+await col.ready();
+console.log('albums: ', col.docs);
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
 
 ### add
 
@@ -487,9 +541,9 @@ new data when `mode` is set to 'off'.
 **Examples**
 
 ```javascript
-const col = new Document('albums/splinter', 'off');
-col.fetch().then(({docs}) => {
-  docs.forEach(doc => console.log(doc));
+const doc = new Document('albums/splinter', 'off');
+doc.fetch().then(({data}) => {
+  console.log('data: ', data);
 });
 ```
 
@@ -506,7 +560,59 @@ Fetches are performed in these cases:
 -   When a `query` is set or cleared
 -   When `fetch` is explicitely called
 
+**Examples**
+
+```javascript
+const doc = new Document('albums/splinter', {mode: 'off'});
+console.log(doc.fetching); 	// fetching: false
+doc.fetch(); 								// start fetch
+console.log(doc.fetching); 	// fetching: true
+await doc.ready(); 					// wait for fetch to complete
+console.log(doc.fetching); 	// fetching: false
+```
+
+```javascript
+const doc = new Document('albums/splinter');
+console.log(doc.fetching); 	// fetching: false
+const dispose = autorun(() => {
+  console.log(doc.data);			// start observing document data
+});
+console.log(doc.fetching); 	// fetching: true
+...
+dispose();										// stop observing document data
+console.log(doc.fetching); 	// fetching: false
+```
+
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+### ready
+
+Promise that is resolved when the Document has
+data ready to be consumed.
+
+Use this function to for instance wait for
+the initial snapshot update to complete, or to wait
+for fresh data after changing the path/ref.
+
+**Examples**
+
+```javascript
+const doc = new Document('albums/splinter', {mode: 'on'});
+await doc.ready();
+console.log('data: ', doc.data);
+```
+
+```javascript
+const doc = new Document('albums/splinter', {mode: 'on'});
+await doc.ready();
+...
+// Changing the path causes a new snapshot update
+doc.path = 'albums/americana';
+await doc.ready();
+console.log('data: ', doc.data);
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
 
 ## initFirestorter
 
