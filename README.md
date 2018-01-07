@@ -97,7 +97,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
-* [Using Queries](./docs/Querues.md)
+* [Using Queries](./docs/Queries.md)
 * Real-time updating modes (coming soon)
 * Using Collection and Document inside a Component (coming soon)
 * Why you should create a component per document (coming soon)
