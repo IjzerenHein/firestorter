@@ -68,6 +68,7 @@ function resolveQuery(value) {
  * @param {String} [options.mode] See `Document.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
  * @param {Bool} [options.debug] Enables debug logging
+ * @param {String} [options.debugName] Name to use when debug logging is enabled
  *
  * @example
  * import {Collection} from 'firestorter';
@@ -365,7 +366,7 @@ class Collection {
 	}
 
 	/**
-	 * Returns true when the Document is actively listening
+	 * Returns true when the Collection is actively listening
 	 * for changes in the firestore back-end.
 	 */
 	get active(): boolean {
@@ -426,22 +427,22 @@ class Collection {
 	 *
 	 * @example
 	 * const col = new Collection('albums', {mode: 'off'});
-	 * console.log(col.fetching); 	// fetching: false
-	 * col.fetch(); 								// start fetch
-	 * console.log(col.fetching); 	// fetching: true
-	 * await col.ready(); 					// wait for fetch to complete
-	 * console.log(col.fetching); 	// fetching: false
+	 * console.log(col.fetching);   // fetching: false
+	 * col.fetch();                 // start fetch
+	 * console.log(col.fetching);   // fetching: true
+	 * await col.ready();           // wait for fetch to complete
+	 * console.log(col.fetching);   // fetching: false
 	 *
 	 * @example
 	 * const col = new Collection('albums');
-	 * console.log(col.fetching); 	// fetching: false
+	 * console.log(col.fetching);   // fetching: false
 	 * const dispose = autorun(() => {
-	 *   console.log(col.docs);			// start observing collection data
+	 *   console.log(col.docs);     // start observing collection data
 	 * });
-	 * console.log(col.fetching); 	// fetching: true
+	 * console.log(col.fetching);   // fetching: true
 	 * ...
-	 * dispose();										// stop observing collection data
-	 * console.log(col.fetching); 	// fetching: false
+	 * dispose();                   // stop observing collection data
+	 * console.log(col.fetching);   // fetching: false
 	 */
 	get fetching(): boolean {
 		return this._fetching.get();
@@ -451,7 +452,7 @@ class Collection {
 	 * Promise that is resolved when the Collection has
 	 * finished fetching its (initial) documents.
 	 *
-	 * Use this function to for instance wait for
+	 * Use this method to for instance wait for
 	 * the initial snapshot update to complete, or to wait
 	 * for fresh data after changing the path/ref.
 	 *
