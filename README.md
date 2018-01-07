@@ -98,6 +98,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
 * [Using Queries](./docs/Queries.md)
+* [Using Sub-collection](./docs/SubCollections.md)
 * Real-time updating modes (coming soon)
 * Using Collection and Document inside a Component (coming soon)
 * Why you should create a component per document (coming soon)
@@ -129,7 +130,7 @@ Firestorter is being build as you read this. The API is pretty stable, but more 
 * [x] Ability to set Collection path, based on contents of a document
 * [x] Ability to set reactive query on Collection
 * [ ] FieldPath notation for Document.update
-* [ ] Sub-collections in documents
+* [ ] Sub-collections howto
 * [ ] Revise Collection.add
 * [ ] Delete all documents in a collection or query
 * [ ] Blobs
