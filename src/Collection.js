@@ -147,6 +147,8 @@ class Collection {
 		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
 		this._fetching = observable(false);
 		this._docs = enhancedObservable([], this);
+		this._updateSourceObserver();
+		this._updateQuerySourceObserver();
 		if (mode === 'on') this._updateRealtimeUpdates();
 	}
 
@@ -231,15 +233,34 @@ class Collection {
 	}
 	set source(source: ?any) {
 		if (this._source === source) return;
+		this._source = source;
+		this._updateSourceObserver();
+		transaction(() => {
+			this._ref.set(resolveRef(source));
+			this._updateRealtimeUpdates(this._query.get() ? false : true);
+		});
+	}
+
+	/**
+	 * @private
+	 */
+	_updateSourceObserver() {
 		if (this._sourceDisposer) {
 			this._sourceDisposer();
 			this._sourceDisposer = undefined;
 		}
-		transaction(() => {
-			this._source = source;
-			this._ref.set(resolveRef(source));
-			this._updateRealtimeUpdates(this._query.get() ? false : true);
-		});
+		if (typeof this._source === 'function') {
+			this._sourceDisposer = reaction(
+				() => this._source(),
+				value => {
+					transaction(() => {
+						// TODO, check whether path has changed
+						this._ref.set(resolveRef(value));
+						this._updateRealtimeUpdates(this._query.get() ? false : true);
+					});
+				}
+			);
+		}
 	}
 
 	/**
@@ -277,15 +298,34 @@ class Collection {
 	}
 	set querySource(source: ?any) {
 		if (this._querySource === source) return;
+		this._querySource = source;
+		this._updateQuerySourceObserver();
+		transaction(() => {
+			this._query.set(resolveQuery(source));
+			this._updateRealtimeUpdates(true);
+		});
+	}
+
+	/**
+	 * @private
+	 */
+	_updateQuerySourceObserver() {
 		if (this._querySourceDisposer) {
 			this._querySourceDisposer();
 			this._querySourceDisposer = undefined;
 		}
-		transaction(() => {
-			this._querySource = source;
-			this._query.set(resolveQuery(source));
-			this._updateRealtimeUpdates(true);
-		});
+		if (typeof this._querySource === 'function') {
+			this._querySourceDisposer = reaction(
+				() => this._querySource(),
+				value => {
+					transaction(() => {
+						// TODO, check whether path has changed
+						this._query.set(resolveQuery(value));
+						this._updateRealtimeUpdates(true);
+					});
+				}
+			);
+		}
 	}
 
 	/**
@@ -348,18 +388,26 @@ class Collection {
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
-			this._fetching.set(true);
+			if (this._fetching.get())
+				return reject(new Error('Fetch already in progress'));
 			const ref = this._query.get() || this._ref.get();
-			ref.then(
+			if (!ref) {
+				return reject(new Error('No ref, path or query set on Collection'));
+			}
+			this._ready(false);
+			this._fetching.set(true);
+			ref.get().then(
 				snapshot => {
 					transaction(() => {
 						this._fetching.set(false);
 						this._updateFromSnapshot(snapshot);
 					});
+					this._ready(true);
 					resolve(this);
 				},
 				err => {
 					this._fetching.set(false);
+					this._ready(true);
 					reject(err);
 				}
 			);
@@ -375,9 +423,72 @@ class Collection {
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
 	 * - When `fetch` is explicitely called
+	 *
+	 * @example
+	 * const col = new Collection('albums', {mode: 'off'});
+	 * console.log(col.fetching); 	// fetching: false
+	 * col.fetch(); 								// start fetch
+	 * console.log(col.fetching); 	// fetching: true
+	 * await col.ready(); 					// wait for fetch to complete
+	 * console.log(col.fetching); 	// fetching: false
+	 *
+	 * @example
+	 * const col = new Collection('albums');
+	 * console.log(col.fetching); 	// fetching: false
+	 * const dispose = autorun(() => {
+	 *   console.log(col.docs);			// start observing collection data
+	 * });
+	 * console.log(col.fetching); 	// fetching: true
+	 * ...
+	 * dispose();										// stop observing collection data
+	 * console.log(col.fetching); 	// fetching: false
 	 */
 	get fetching(): boolean {
 		return this._fetching.get();
+	}
+
+	/**
+	 * Promise that is resolved when the Collection has
+	 * finished fetching its (initial) documents.
+	 *
+	 * Use this function to for instance wait for
+	 * the initial snapshot update to complete, or to wait
+	 * for fresh data after changing the path/ref.
+	 *
+	 * @example
+	 * const col = new Collection('albums', {mode: 'on'});
+	 * await col.ready();
+	 * console.log('albums: ', col.docs);
+	 *
+	 * @example
+	 * const col = new Collection('artists/FooFighters/albums', {mode: 'on'});
+	 * await col.ready();
+	 * ...
+	 * // Changing the path causes a new snapshot update
+	 * col.path = 'artists/TheOffspring/albums';
+	 * await col.ready();
+	 * console.log('albums: ', col.docs);
+	 */
+	ready(): Promise<void> {
+		this._readyPromise = this._readyPromise || Promise.resolve(true);
+		return this._readyPromise;
+	}
+
+	/**
+	 * @private
+	 */
+	_ready(complete) {
+		if (complete) {
+			const readyResolve = this._readyResolve;
+			if (readyResolve) {
+				this._readyResolve = undefined;
+				readyResolve(true);
+			}
+		} else if (!this._readyResolve) {
+			this._readyPromise = new Promise(resolve => {
+				this._readyResolve = resolve;
+			});
+		}
 	}
 
 	/**
@@ -414,6 +525,8 @@ class Collection {
 	 * TODO - Not implemented yet
 	 */
 	deleteAll(): Promise<void> {
+		const ref = this.ref;
+		if (!ref) throw new Error('No valid collection reference');
 		// TODO
 		return Promise.resolve(undefined);
 	}
@@ -454,6 +567,7 @@ class Collection {
 			if (this._debug) console.debug(`${this.debugName} - onSnapshot`);
 			this._fetching.set(false);
 			this._updateFromSnapshot(snapshot);
+			this._ready(true);
 		});
 	}
 
@@ -514,42 +628,6 @@ class Collection {
 				break;
 		}
 
-		// Start/stop observing the source (ref/path) if neccessary
-		if (typeof this._source === 'function') {
-			if (newActive && !this._sourceDisposer) {
-				this._sourceDisposer = reaction(
-					() => this._source(),
-					value => {
-						transaction(() => {
-							this._ref.set(resolveRef(value));
-							this._updateRealtimeUpdates(true);
-						});
-					}
-				);
-			} else if (!newActive && this._sourceDisposer) {
-				this._sourceDisposer();
-				this._sourceDisposer = undefined;
-			}
-		}
-
-		// Start/stop observing the query-source if neccessary
-		if (typeof this._querySource === 'function') {
-			if (newActive && !this._querySourceDisposer) {
-				this._querySourceDisposer = reaction(
-					() => this._querySource(),
-					value => {
-						transaction(() => {
-							this._query.set(resolveQuery(value));
-							this._updateRealtimeUpdates(true);
-						});
-					}
-				);
-			} else if (!newActive && this._querySourceDisposer) {
-				this._querySourceDisposer();
-				this._querySourceDisposer = undefined;
-			}
-		}
-
 		// Start/stop listening for snapshot updates
 		const ref = this._ref.get();
 		if (!ref) {
@@ -563,6 +641,7 @@ class Collection {
 						active ? 're-' : ''
 					}start (${this._mode.get()}:${this._observedRefCount})`
 				);
+			this._ready(false);
 			this._fetching.set(true);
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = (this._query.get() || ref).onSnapshot(
@@ -580,6 +659,7 @@ class Collection {
 			if (this._fetching.get()) {
 				this._fetching.set(false);
 			}
+			this._ready(true);
 		}
 	}
 
