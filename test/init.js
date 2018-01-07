@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
 import { initFirestorter, Collection, Document } from '../src';
-import { autorun, reaction } from 'mobx';
+import { autorun, reaction, observable } from 'mobx';
 
 let firebaseApp;
 
@@ -22,4 +22,4 @@ afterAll(() => {
 	firebaseApp.delete();
 });
 
-export { firebase, initFirestorter, Collection, Document, autorun, reaction };
+export { firebase, initFirestorter, Collection, Document, autorun, reaction, observable };
