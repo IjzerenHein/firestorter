@@ -105,8 +105,8 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 ## Work in progress
 
-Hi ✋, and thanks for visiting this project in it's early stages.
-Firestorter is being build as you read this. The API is pretty stable, but more testing and documentation is still needed. Let me know if you run into problems or have requests 🤘
+Hi ✋, and thanks for visiting this project in its early stages.
+Firestorter is being built as you read this. The API is pretty stable, but more testing and documentation is still needed. Let me know if you run into problems or have requests 🤘
 
 * [x] Collection class
 * [x] Document class
