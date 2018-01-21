@@ -75,6 +75,7 @@ created or modified.
     -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.mode`
     -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
     -   `options.debug` **Bool?** Enables debug logging
+    -   `options.debugName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Name to use when debug logging is enabled
 
 **Examples**
 
@@ -213,7 +214,7 @@ Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ### active
 
-Returns true when the Document is actively listening
+Returns true when the Collection is actively listening
 for changes in the firestore back-end.
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
@@ -249,23 +250,23 @@ Fetches are performed in these cases:
 
 ```javascript
 const col = new Collection('albums', {mode: 'off'});
-console.log(col.fetching); 	// fetching: false
-col.fetch(); 								// start fetch
-console.log(col.fetching); 	// fetching: true
-await col.ready(); 					// wait for fetch to complete
-console.log(col.fetching); 	// fetching: false
+console.log(col.fetching);   // fetching: false
+col.fetch();                 // start fetch
+console.log(col.fetching);   // fetching: true
+await col.ready();           // wait for fetch to complete
+console.log(col.fetching);   // fetching: false
 ```
 
 ```javascript
 const col = new Collection('albums');
-console.log(col.fetching); 	// fetching: false
+console.log(col.fetching);   // fetching: false
 const dispose = autorun(() => {
-  console.log(col.docs);			// start observing collection data
+  console.log(col.docs);     // start observing collection data
 });
-console.log(col.fetching); 	// fetching: true
+console.log(col.fetching);   // fetching: true
 ...
-dispose();										// stop observing collection data
-console.log(col.fetching); 	// fetching: false
+dispose();                   // stop observing collection data
+console.log(col.fetching);   // fetching: false
 ```
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
@@ -275,7 +276,7 @@ Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 Promise that is resolved when the Collection has
 finished fetching its (initial) documents.
 
-Use this function to for instance wait for
+Use this method to for instance wait for
 the initial snapshot update to complete, or to wait
 for fresh data after changing the path/ref.
 
