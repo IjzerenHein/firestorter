@@ -511,10 +511,14 @@ class Collection {
 			if (!ref) throw new Error('No valid collection reference');
 			ref.add(data).then(ref => {
 				ref.get().then(snapshot => {
-					const doc = new this._documentClass(snapshot.ref, {
-						snapshot: snapshot
-					});
-					resolve(doc);
+					try {
+						const doc = new this._documentClass(snapshot.ref, {
+							snapshot: snapshot
+						});
+						resolve(doc);
+					} catch (err) {
+						reject(err);
+					}
 				}, reject);
 			}, reject);
 		});
