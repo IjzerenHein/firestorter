@@ -22,6 +22,11 @@ let globalFirestore;
  * ...
  */
 function initFirestorter(config: any) {
+	/* if (globalFirestore) {
+		throw new Error(
+			'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
+		);
+	}*/
 	globalFirestore = config.firebase.firestore();
 	if (!globalFirestore) {
 		throw new Error(
@@ -33,7 +38,7 @@ function initFirestorter(config: any) {
 function getFirestore() {
 	if (!globalFirestore) {
 		throw new Error(
-			'No firestore reference, did you forget to call `setFirebaseApp(firebase);` ?'
+			'No firestore reference, did you forget to call `initFirestorter({firebase: firebase})` ?'
 		);
 	}
 	return globalFirestore;
