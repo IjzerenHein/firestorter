@@ -29,7 +29,6 @@
 		"doc": "documentation build src/** -f md > ./docs/API.md"
 	},
 	"peerDependencies": {
-		"firebase": "^4.6.0",
 		"mobx": "^3.4.1"
 	},
 	"devDependencies": {
