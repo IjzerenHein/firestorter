@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <h1 align="center">
-  <img src="./logo2.jpg" /><br>
+  <img src="./logo3.jpg" /><br>
   Firestorter
 </h1>
 
