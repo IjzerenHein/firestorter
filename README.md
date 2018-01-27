@@ -90,7 +90,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Examples
 
 * TodoApp [(view)](https://react-firestore-todo-app.stackblitz.io) [(source)](./examples/todoApp/src) [(Playground on StackBlitz)](https://stackblitz.com/edit/react-firestore-todo-app?file=Todos.js)
-* [ImportCSV](./examples/importCSV) (example that shows how to import a CSV file into firestore)
+* [ImportCLI](./examples/importCLI) (example that shows how to import a CSV file into firestore from the command line)
 
 ## Documentation
 
