@@ -1,3 +1,4 @@
+<!-- prettier-ignore -->
 <h1 align="center">
   <img src="./logo2.jpg" /><br>
   Firestorter
@@ -89,6 +90,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Examples
 
 * TodoApp [(view)](https://react-firestore-todo-app.stackblitz.io) [(source)](./examples/todoApp/src) [(Playground on StackBlitz)](https://stackblitz.com/edit/react-firestore-todo-app?file=Todos.js)
+* [ImportCSV](./examples/importCSV) (example that shows how to import a CSV file into firestore)
 
 ## Documentation
 
@@ -129,6 +131,7 @@ Firestorter is being built as you read this. The API is pretty stable, but more 
 * [x] Collection.ready (Promise to check whether docs are available)
 * [x] Ability to set Collection path, based on contents of a document
 * [x] Ability to set reactive query on Collection
+* [ ] Collection pagination
 * [ ] FieldPath notation for Document.update
 * [ ] Sub-collections howto
 * [ ] Revise Collection.add
