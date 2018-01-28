@@ -3,6 +3,10 @@
 /* eslint-env node */
 /* eslint no-console:0 */
 
+/**
+ Small node example that shows how to import a CSV file into firestore.
+ */
+
 const fs = require('fs');
 const csvParse = require('csv-parse');
 const firebase = require('firebase');
