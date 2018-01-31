@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import List from './List';
+import ListFilters from './ListFilters';
 
 const styles = {
 	container: {
@@ -16,22 +17,21 @@ const styles = {
 	header: {
 		padding: 20,
 		paddingBottom: 0,
-		paddingRight: 10
-	},
-	headerRow: {
+		paddingRight: 10,
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
-	h1: {
-		margin: 0,
-		padding: 0
+	headerRow: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center'
 	},
 	h3: {
 		marginBottom: 0
 	},
 	logo: {
-		height: 50,
+		height: 66,
 		marginRight: 10
 	},
 	add: {
@@ -49,11 +49,16 @@ class App extends Component {
 			<MuiThemeProvider muiTheme={muiTheme}>
 				<div style={styles.container}>
 					<div style={styles.header}>
+						<img
+							src={require('./cocoa-bean.jpg')}
+							alt="logo"
+							style={styles.logo}
+						/>
 						<div style={styles.headerRow}>
-							<img src={require('./logo.jpg')} alt="logo" style={styles.logo} />
-							<h1 style={styles.h1}>Firestorter Pagination Demo</h1>
+							<h1 style={styles.h1}>Flavours of cacao</h1>
+							<h3 style={styles.h3}>Firestorter Pagination Demo</h3>
 						</div>
-						<h3 style={styles.h3}>Firestore & React, using MobX</h3>
+						<ListFilters />
 					</div>
 					<List />
 				</div>
