@@ -1,12 +1,31 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 // import { chocolateBars } from './store';
-import { TableHeader, TableRow, TableHeaderColumn } from 'material-ui/Table';
+import { TableHeader, TableRow } from 'material-ui/Table';
+import ListHeaderColumn from './ListHeaderColumn';
+
+const COLUMNS = [
+	{ field: 'id', text: 'ID' },
+	{ field: 'company', text: 'Company name' },
+	{ field: 'companyLocation', text: 'Company location' },
+	{ field: 'origin', text: 'Origin' },
+	{ field: 'reviewDate', text: 'Review date' },
+	{ field: 'rating', text: 'Rating' },
+	{ field: 'beanType', text: 'Bean type' },
+	{ field: 'broadBeanOrigin', text: 'Broad bean origin' }
+];
 
 const ListHeader = observer(
 	class ListHeader extends Component {
 		static muiName = 'TableHeader';
+
+		state = {
+			sortColumn: undefined,
+			sortDirection: undefined
+		};
+
 		render() {
+			const { sortColumn, sortDirection } = this.state;
 			// const { docs } = chocolateBars;
 			// console.log('ListContent.render, fetching: ', fetching);
 			return (
@@ -16,25 +35,30 @@ const ListHeader = observer(
 					{...this.props}
 				>
 					<TableRow>
-						<TableHeaderColumn tooltip="Unique Id">ID</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Company name">
-							Company
-						</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Company location">
-							Location
-						</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Origin">Origin</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Review date">
-							Review date
-						</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Rating">Rating</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Bean type">Bean type</TableHeaderColumn>
-						<TableHeaderColumn tooltip="Broad bean origin">
-							Broad bean origin
-						</TableHeaderColumn>
+						{COLUMNS.map(({ field, text, tooltip }) => (
+							<ListHeaderColumn
+								key={field}
+								tooltip={tooltip}
+								onSortClick={() => this.onClickColumn(field)}
+								sortOrder={sortColumn === field ? sortDirection : undefined}
+							>
+								{text}
+							</ListHeaderColumn>
+						))}
 					</TableRow>
 				</TableHeader>
 			);
+		}
+
+		onClickColumn(field) {
+			const { sortColumn, sortDirection } = this.state;
+			this.setState({
+				sortColumn: field,
+				sortDirection:
+					field === sortColumn && sortDirection === 'ascending'
+						? 'descending'
+						: 'ascending'
+			});
 		}
 	}
 );

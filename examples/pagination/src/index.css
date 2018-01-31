@@ -1,10 +1,10 @@
 body {
- 	font-family: sans-serif;
+	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
- 	margin: 0;
- 	padding: 0 0;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	margin: 0;
+	padding: 0 0;
 }
 
 h1 {
@@ -25,4 +25,16 @@ h3 {
 	.mobile-margins {
 		padding: 20px;
 	}
+}
+
+.column-header {
+	cursor: pointer;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.column-header.selected,
+.column-header:hover {
+	color: black;
 }
