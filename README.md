@@ -147,4 +147,5 @@ Firestorter is being built as you read this. The API is pretty stable, but more 
 
 ## Acknowledgements
 
+* Thanks to all [sponsors](./sponsors.md) supporting this project
 * Logo design by [Alex Prodrom](https://github.com/AlexProdrom)
