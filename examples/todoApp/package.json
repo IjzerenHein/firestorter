@@ -4,12 +4,12 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "firebase": "^4.6.0",
+    "firebase": "^4.11.0",
     "material-ui": "^0.19.4",
-    "mobx": "^3.4.1",
-    "mobx-react": "^4.3.5",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "mobx": "^4.1.0",
+    "mobx-react": "^5.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-flip-move": "^2.9.17"
   },
   "devDependencies": {
