@@ -15,7 +15,7 @@ test('invalid document path', () => {
 });
 
 test('observable', () => {
-	const name = observable('FooFighters');
+	const name = observable.box('FooFighters');
 	const col = new Collection(() => 'artists/' + name.get() + '/albums');
 	expect(col.path).toBe('artists/FooFighters/albums');
 	name.set('TheOffspring');

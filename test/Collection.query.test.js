@@ -94,7 +94,7 @@ test('re-fetch', async () => {
 
 test('observable', async () => {
 	expect.assertions(2);
-	const genre = observable('punk');
+	const genre = observable.box('punk');
 	const col = new Collection('artists');
 	col.query = () => col.ref.where('genre', '==', genre.get());
 	await col.fetch();

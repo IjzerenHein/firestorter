@@ -15,7 +15,7 @@ test('invalid collection path', () => {
 });
 
 test('observable', () => {
-	const name = observable('todo');
+	const name = observable.box('todo');
 	const doc = new Document(() => 'todos/' + name.get());
 	expect(doc.path).toBe('todos/todo');
 	name.set('todo2');
