@@ -137,16 +137,16 @@ class Collection {
 		this._docLookup = {};
 		this._observedRefCount = 0;
 		this._source = source;
-		this._ref = observable(resolveRef(source));
+		this._ref = observable.box(resolveRef(source));
 		this._querySource = query;
-		this._query = observable(resolveQuery(query));
+		this._query = observable.box(resolveQuery(query));
 		if (realtimeUpdating) {
 			console.warn(
 				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
 			);
 		}
-		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
-		this._fetching = observable(false);
+		this._mode = observable.box(verifyMode(mode || realtimeUpdating || 'auto'));
+		this._fetching = observable.box(false);
 		this._docs = enhancedObservable([], this);
 		this._updateSourceObserver();
 		this._updateQuerySourceObserver();

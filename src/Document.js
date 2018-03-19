@@ -62,11 +62,11 @@ class Document {
 		const { schema, snapshot, mode, debug, debugName, realtimeUpdating } =
 			options || Document.EMPTY_OPTIONS;
 		this._source = source;
-		this._ref = observable(resolveRef(source));
+		this._ref = observable.box(resolveRef(source));
 		this._schema = schema;
 		this._debug = debug || false;
 		this._debugName = debugName;
-		this._snapshot = observable(snapshot);
+		this._snapshot = observable.box(snapshot);
 		this._collectionRefCount = 0;
 		this._observedRefCount = 0;
 		this._createTime = enhancedObservable(
@@ -89,8 +89,8 @@ class Document {
 				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
 			);
 		}
-		this._mode = observable(verifyMode(mode || realtimeUpdating || 'auto'));
-		this._fetching = observable(false);
+		this._mode = observable.box(verifyMode(mode || realtimeUpdating || 'auto'));
+		this._fetching = observable.box(false);
 		this._updateSourceObserver();
 		if (mode === 'on') this._updateRealtimeUpdates();
 	}
