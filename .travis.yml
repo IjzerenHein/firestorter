@@ -8,4 +8,4 @@ script:
 - yarn build
 - yarn doc
 - yarn codecov
-- yarn release-notes publish --scope IjzerenHein --name Firestorter --token RELEASE_NOTES_TOKEN ./CHANGELOG.md
+- yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
