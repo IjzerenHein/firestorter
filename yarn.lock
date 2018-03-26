@@ -90,6 +90,33 @@
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.2.5.tgz#11ccb45505cb56d4bc0a9a09712b14585248e784"
 
+"@release-notes/changelog-parser@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@release-notes/changelog-parser/-/changelog-parser-0.1.2.tgz#15fe8ae9b103b4890e370b1a5a2f0e735d992667"
+  dependencies:
+    "@release-notes/node" "^0.3.0"
+
+"@release-notes/cli@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@release-notes/cli/-/cli-0.3.0.tgz#ace2c434273420ecb32b3cfc56880a0782792be3"
+  dependencies:
+    "@release-notes/changelog-parser" "^0.1.2"
+    "@release-notes/node" "^0.3.0"
+    request "^2.83.0"
+    yargs "^10.0.3"
+
+"@release-notes/node@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@release-notes/node/-/node-0.3.0.tgz#7c833c9916ac3ae414e46c9bd983e0c42b867fab"
+  dependencies:
+    "@release-notes/schema" "^0.2.0"
+    ajv "^5.5.2"
+    js-yaml "^3.10.0"
+
+"@release-notes/schema@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@release-notes/schema/-/schema-0.2.0.tgz#16b7f551f3f09397cec5b432a1e357334f986fe2"
+
 "@types/node@*":
   version "8.5.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.5.2.tgz#83b8103fa9a2c2e83d78f701a9aa7c9539739aa5"
@@ -148,7 +175,7 @@ ajv@^4.9.1:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
-ajv@^5.1.0:
+ajv@^5.1.0, ajv@^5.5.2:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
   dependencies:
@@ -3399,6 +3426,13 @@ jest@^22.0.4:
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
+
+js-yaml@^3.10.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
 
 js-yaml@^3.7.0, js-yaml@^3.8.4, js-yaml@^3.9.1:
   version "3.10.0"

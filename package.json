@@ -34,6 +34,7 @@
 		"mobx": "^4.1.0"
 	},
 	"devDependencies": {
+		"@release-notes/cli": "^0.3.0",
 		"babel-eslint": "^8.0.1",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
 		"babel-preset-es2015-rollup": "^3.0.0",
