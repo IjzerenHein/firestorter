@@ -19,10 +19,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 - Added code coverage
 - Added additional unit tests
 
-## Fixed
+### Fixed
 - Fixed Promise not rejected on `Collection.add`, when invalid doc-data was specified
 
-## Changed
+### Changed
 - Removed firebase as a peer dependency
 - Various updates to docs
 
@@ -32,7 +32,7 @@ Use Firestore in React with zero effort, using MobX 🤘
 - Added `Document.ready` and `Collection.ready` 
 - Added lots of unit tests
 
-## Changed
+### Changed
 - Path observations are now immediate
 - Updated docs
 
@@ -44,9 +44,9 @@ Use Firestore in React with zero effort, using MobX 🤘
 - Added `Document.set` operation
 - Added unit tests for Document & Collection (wip)
 
-## Changed
+### Changed
 - The realtimeUpdating property has been renamed to mode (realtimeUpdating has been deprecated and will be removed soon)
 - Many documentation updates
 
-#Fixed
+### Fixed
 - Minor fixes
