@@ -2,7 +2,6 @@ import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import filesize from 'rollup-plugin-filesize';
-import progress from 'rollup-plugin-progress';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 export default {
@@ -46,7 +45,6 @@ export default {
 			main: true
 		}),
 		commonjs(),
-		filesize(),
-		progress()
+		filesize()
 	]
 };
