@@ -2,6 +2,7 @@
 import { observable, getAtom, _isComputingDerivation } from 'mobx';
 
 /**
+ * @private
  * Creates an observable which calls addObserverRef &
  * releaseObserverRef methods on the passed-in delegate class.
  * Effecitively, this allows Firestorter to track whether
