@@ -3,34 +3,13 @@ import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, verifyMode } from './init';
 import Document from './Document';
+import Query from './Query';
 
 import type {
 	QuerySnapshot,
-	Query,
 	DocumentSnapshot,
 	CollectionReference
 } from 'firebase/firestore';
-
-/**
- * @private
- */
-function resolveRef(value) {
-	if (typeof value === 'string') {
-		return getFirestore().collection(value);
-	} else if (typeof value === 'function') {
-		return resolveRef(value());
-	} else {
-		return value;
-	}
-}
-
-function resolveQuery(value) {
-	if (typeof value === 'function') {
-		return resolveQuery(value());
-	} else {
-		return value;
-	}
-}
 
 /**
  * The Collection class lays at the heart of `firestorter`.
@@ -104,11 +83,17 @@ class Collection {
 
 	_source: any;
 	_sourceDisposer: any;
+	_sourceCache: any;
+	_sourceCacheRef: any;
 	_docLookup: { [string]: Document };
 	_ref: any;
-	_querySource: any;
-	_querySourceDisposer: any;
 	_query: any;
+	_queryRef: any;
+	_queryDisposer: any;
+	_queryCache: any;
+	_queryCacheRef: any;
+	_queryCacheCollectionRef: any;
+	_activeRef: any;
 	_mode: any;
 	_fetching: any;
 	_docs: any;
@@ -117,6 +102,7 @@ class Collection {
 	_observedRefCount: number;
 	_debug: boolean;
 	_debugName: ?string;
+	_cursorQuery: any;
 
 	constructor(
 		source: CollectionReference | string | (() => string | void),
@@ -137,9 +123,9 @@ class Collection {
 		this._docLookup = {};
 		this._observedRefCount = 0;
 		this._source = source;
-		this._ref = observable.box(resolveRef(source));
-		this._querySource = query;
-		this._query = observable.box(resolveQuery(query));
+		this._ref = observable.box(undefined);
+		this._query = query;
+		this._queryRef = observable.box(undefined);
 		if (realtimeUpdating) {
 			console.warn(
 				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
@@ -148,9 +134,7 @@ class Collection {
 		this._mode = observable.box(verifyMode(mode || realtimeUpdating || 'auto'));
 		this._fetching = observable.box(false);
 		this._docs = enhancedObservable([], this);
-		this._updateSourceObserver();
-		this._updateQuerySourceObserver();
-		if (mode === 'on') this._updateRealtimeUpdates();
+		this._updateRealtimeUpdates(true, true);
 	}
 
 	/**
@@ -183,7 +167,15 @@ class Collection {
 	 * col.ref = firebase.firestore().collection('albums/americana/tracks');
 	 */
 	get ref(): ?CollectionReference {
-		return this._ref.get();
+		let ref = this._ref.get();
+		if (!this._sourceDisposer) {
+			const newRef = this._resolveRef(this._source);
+			if (ref !== newRef) {
+				ref = newRef;
+				this._ref.set(newRef);
+			}
+		}
+		return ref;
 	}
 	set ref(ref: ?CollectionReference) {
 		this.source = ref;
@@ -195,7 +187,7 @@ class Collection {
 	 * To get the full-path of the collection, use `path`.
 	 */
 	get id(): ?string {
-		const ref = this._ref.get();
+		const ref = this.ref;
 		return ref ? ref.id : undefined;
 	}
 
@@ -213,7 +205,7 @@ class Collection {
 	 * col.path = 'artists/EaglesOfDeathMetal/albums';
 	 */
 	get path(): ?string {
-		let ref = this._ref.get();
+		let ref = this.ref;
 		if (!ref) return undefined;
 		let path = ref.id;
 		while (ref.parent) {
@@ -234,34 +226,18 @@ class Collection {
 	}
 	set source(source: ?any) {
 		if (this._source === source) return;
-		this._source = source;
-		this._updateSourceObserver();
 		transaction(() => {
-			this._ref.set(resolveRef(source));
-			this._updateRealtimeUpdates(this._query.get() ? false : true);
-		});
-	}
+			this._source = source;
 
-	/**
-	 * @private
-	 */
-	_updateSourceObserver() {
-		if (this._sourceDisposer) {
-			this._sourceDisposer();
-			this._sourceDisposer = undefined;
-		}
-		if (typeof this._source === 'function') {
-			this._sourceDisposer = reaction(
-				() => this._source(),
-				value => {
-					transaction(() => {
-						// TODO, check whether path has changed
-						this._ref.set(resolveRef(value));
-						this._updateRealtimeUpdates(this._query.get() ? false : true);
-					});
-				}
-			);
-		}
+			// Stop any reactions
+			if (this._sourceDisposer) {
+				this._sourceDisposer();
+				this._sourceDisposer = undefined;
+			}
+
+			// Update real-time updating
+			this._updateRealtimeUpdates(true);
+		});
 	}
 
 	/**
@@ -285,48 +261,29 @@ class Collection {
 	 * todos.query = undefined;
 	 */
 	get query(): ?Query {
-		return this._query.get();
+		return this._query;
 	}
 	set query(query?: Query | (() => Query)) {
-		this.querySource = query;
-	}
-
-	/**
-	 * @private
-	 */
-	get querySource(): ?any {
-		return this._querySource.get();
-	}
-	set querySource(source: ?any) {
-		if (this._querySource === source) return;
-		this._querySource = source;
-		this._updateQuerySourceObserver();
+		if (this._query === query) return;
 		transaction(() => {
-			this._query.set(resolveQuery(source));
-			this._updateRealtimeUpdates(true);
+			this._query = query;
+
+			// Stop any reactions
+			if (this._queryDisposer) {
+				this._queryDisposer();
+				this._queryDisposer = undefined;
+			}
+
+			// Update real-time updating
+			this._updateRealtimeUpdates(undefined, true);
 		});
 	}
 
 	/**
 	 * @private
 	 */
-	_updateQuerySourceObserver() {
-		if (this._querySourceDisposer) {
-			this._querySourceDisposer();
-			this._querySourceDisposer = undefined;
-		}
-		if (typeof this._querySource === 'function') {
-			this._querySourceDisposer = reaction(
-				() => this._querySource(),
-				value => {
-					transaction(() => {
-						// TODO, check whether path has changed
-						this._query.set(resolveQuery(value));
-						this._updateRealtimeUpdates(true);
-					});
-				}
-			);
-		}
+	get queryRef() {
+		return this._queryRef.get();
 	}
 
 	/**
@@ -374,6 +331,51 @@ class Collection {
 	}
 
 	/**
+	 * @private
+	 */
+	_resolveRef(source) {
+		if (this._sourceCache === source) {
+			return this._sourceCacheRef;
+		}
+		let ref;
+		if (typeof source === 'string') {
+			ref = getFirestore().collection(source);
+		} else if (typeof source === 'function') {
+			ref = this._resolveRef(source());
+			return ref; // don't set cache in this case
+		} else {
+			ref = source;
+		}
+		this._sourceCache = source;
+		this._sourceCacheRef = ref;
+		return ref;
+	}
+
+	/**
+	 * @private
+	 */
+	_resolveQuery(collectionRef, query) {
+		if ((this._queryCache === query) &&
+			(this._queryCacheCollectionRef === collectionRef)) {
+			return this._queryCacheRef;
+		}
+		let ref;
+		if (query instanceof Query.constructor) {
+			ref = query.resolveRef(collectionRef);
+			return ref;
+		} else if (typeof query === 'function') {
+			ref =  this._resolveQuery(collectionRef, query());
+			return ref;
+		} else {
+			ref =  query;
+		}
+		this._queryCache = query;
+		this._queryCacheCollectionRef = collectionRef;
+		this._queryCacheRef = ref;
+		return ref;
+	}
+
+	/**
 	 * Fetches new data from firestore. Use this to manually fetch
 	 * new data when `mode` is set to 'off'.
 	 *
@@ -391,7 +393,10 @@ class Collection {
 				);
 			if (this._fetching.get())
 				return reject(new Error('Fetch already in progress'));
-			const ref = this._query.get() || this._ref.get();
+
+			const colRef = this._resolveRef(this._source);
+			const queryRef = this._resolveQuery(colRef, this._query);
+			const ref = queryRef || colRef;
 			if (!ref) {
 				return reject(new Error('No ref, path or query set on Collection'));
 			}
@@ -537,6 +542,55 @@ class Collection {
 	}
 
 	/**
+	 * @private
+	 * Moves the query cursor towards the start of end.
+	 *
+	 * Use this function to paginate through the documents when
+	 * a query is set.
+	 *
+	 * @example
+	 * const col = new Collection('users');
+	 * col.query = col.ref.where('name', '>=', 'H').limit(20);
+	 * if (col.canPaginate(true)) {
+	 *   col.paginateTowardsEnd();
+	 * }
+	 * ...
+	 * col.next();
+	 * col.previous();
+	 * col.start();
+	 * ...
+	 * col.nextPage();
+	 * col.previousPage();
+	 * col.firstPage();
+	 * ...
+	 * col.paginateTowardsEnd();
+	 * col.paginateTowardsStart();
+	 * col.paginateBackward(true/false);
+	 * col.canPaginate(backward);
+	 * col.paginateToStart();
+	 * ...
+	 * col.moveToNext();
+	 * col.moveToPrevious();
+	 * col.moveToStart();
+	 * ...
+	 * col.moveTowardsEnd();
+	 * col.moveTowardsStart();
+	 * col.moveToStart();
+	 *
+	 */
+	/* paginateForward() {
+
+	}
+
+	paginateBackward(towardsStart) {
+
+	}
+
+	canPaginate(backward) {
+
+	}*/
+
+	/**
 	 * Called whenever a property of this class becomes observed.
 	 * @private
 	 */
@@ -546,7 +600,7 @@ class Collection {
 				`${this.debugName} - addRef (${this._observedRefCount + 1})`
 			);
 		const res = ++this._observedRefCount;
-		this._updateRealtimeUpdates();
+		if (res === 1) this._updateRealtimeUpdates();
 		return res;
 	}
 
@@ -560,7 +614,7 @@ class Collection {
 				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
 			);
 		const res = --this._observedRefCount;
-		this._updateRealtimeUpdates();
+		if (!res) this._updateRealtimeUpdates();
 		return res;
 	}
 
@@ -619,8 +673,9 @@ class Collection {
 	/**
 	 * @private
 	 */
-	_updateRealtimeUpdates(force?: boolean) {
+	_updateRealtimeUpdates(updateSourceRef, updateQueryRef) {
 		let newActive = false;
+		const active = !!this._onSnapshotUnsubscribe;
 		switch (this._mode.get()) {
 			case 'auto':
 				newActive = !!this._observedRefCount;
@@ -633,39 +688,117 @@ class Collection {
 				break;
 		}
 
-		// Start/stop listening for snapshot updates
-		const ref = this._ref.get();
-		if (!ref) {
-			newActive = false;
+		// Update source & query ref if needed
+		if (newActive && !active) {
+			updateSourceRef = true;
+			updateQueryRef = true;
 		}
-		const active = !!this._onSnapshotUnsubscribe;
-		if (newActive && (!active || force)) {
-			if (this._debug)
-				console.debug(
-					`${this.debugName} - ${
-						active ? 're-' : ''
-					}start (${this._mode.get()}:${this._observedRefCount})`
-				);
-			this._ready(false);
-			this._fetching.set(true);
-			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
-			this._onSnapshotUnsubscribe = (this._query.get() || ref).onSnapshot(
-				snapshot => this._onSnapshot(snapshot)
+		if (updateSourceRef) {
+			this._ref.set(this._resolveRef(this._source));
+		}
+		if (updateQueryRef) {
+			this._queryRef.set(this._resolveQuery(this._ref.get(), this._query));
+		}
+
+		// Upon de-activation, stop any observed reactions or
+		// snapshot listeners.
+		if (!newActive) {
+			if (this._sourceDisposer) {
+				this._sourceDisposer();
+				this._sourceDisposer = undefined;
+			}
+			if (this._queryDisposer) {
+				this._queryDisposer();
+				this._queryDisposer = undefined;
+			}
+			this._activeRef = undefined;
+			if (this._onSnapshotUnsubscribe) {
+				if (this._debug)
+					console.debug(
+						`${this.debugName} - stop (${this._mode.get()}:${
+							this._observedRefCount
+						})`
+					);
+				this._onSnapshotUnsubscribe();
+				this._onSnapshotUnsubscribe = undefined;
+				if (this._fetching.get()) {
+					this._fetching.set(false);
+				}
+				this._ready(true);
+			}
+			return;
+		}
+
+		// Start listening for ref-changes
+		if (!this._sourceDisposer) {
+			let initialRef = this._ref.get();
+			this._sourceDisposer = reaction(
+				() => {
+					let ref = this._resolveRef(this._source);
+					if (initialRef) {
+						ref = initialRef;
+						initialRef = undefined;
+					}
+					return ref;
+				},
+				value => {
+					transaction(() => {
+						if (this._ref.get() !== value) {
+							this._ref.set(value);
+							this._updateRealtimeUpdates();
+						}
+					});
+				}
 			);
-		} else if (!newActive && active) {
-			if (this._debug)
-				console.debug(
-					`${this.debugName} - stop (${this._mode.get()}:${
-						this._observedRefCount
-					})`
-				);
+		}
+		if (!this._queryDisposer) {
+			let initialRef = this._queryRef.get();
+			this._queryDisposer = reaction(
+				() => {
+					let ref = this._resolveQuery(this._ref.get(), this._query);
+					if (initialRef) {
+						ref = initialRef;
+						initialRef = undefined;
+					}
+					return ref;
+				},
+				value => {
+					transaction(() => {
+						if (this._queryRef.get() !== value) {
+							this._queryRef.set(value);
+							this._updateRealtimeUpdates();
+						}
+					});
+				}
+			);
+		}
+
+		// Resolve ref and check whether it has changed
+		const ref = this._queryRef.get() || this._ref.get();
+		if (this._activeRef === ref) return;
+		this._activeRef = ref;
+
+		// Stop any existing listener
+		if (this._onSnapshotUnsubscribe) {
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
-			if (this._fetching.get()) {
-				this._fetching.set(false);
-			}
-			this._ready(true);
 		}
+
+		// Check whether any ref exists
+		if (!ref) return;
+
+		// Start listener
+		if (this._debug)
+			console.debug(
+				`${this.debugName} - ${
+					active ? 're-' : ''
+				}start (${this._mode.get()}:${this._observedRefCount})`
+			);
+		this._ready(false);
+		this._fetching.set(true);
+		this._onSnapshotUnsubscribe = ref.onSnapshot(
+			snapshot => this._onSnapshot(snapshot)
+		);
 	}
 
 	/**

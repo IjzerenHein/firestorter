@@ -29,24 +29,30 @@ test('document path', () => {
 	expect(doc.active).toBe(false);
 	expect(col.path).toBe('artists/FooFighters/albums');
 	doc.path = 'artists/TheOffspring';
+	const dispose = autorun(() => {
+		col.docs.length;
+	});
 	expect(col.path).toBe('artists/TheOffspring/albums');
+	dispose();
 });
 
 test('document data', async () => {
-	expect.assertions(7);
+	expect.assertions(9);
 	const doc = new Document('settings/setting');
 	expect(doc.active).toBe(false);
 	const col = new Collection(() => `artists/${doc.data.topArtistId}/albums`);
-	expect(doc.active).toBe(true);
+	expect(doc.active).toBe(false);
 	expect(col.active).toBe(false);
 	const dispose = autorun(() => {
 		col.docs.length;
 	});
+	expect(doc.active).toBe(true);
 	expect(col.active).toBe(true);
 	await col.ready();
 	expect(col.path).toBe('artists/FooFighters/albums');
 	dispose();
 	expect(col.active).toBe(false);
+	expect(doc.active).toBe(false);
 	col.path = undefined;
 	expect(doc.active).toBe(false);
 });
