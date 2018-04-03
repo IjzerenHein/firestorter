@@ -242,12 +242,14 @@ class Collection {
 	}
 
 	/**
-	 * Firestore query.
-	 *
 	 * Use this property to set any order-by, where,
 	 * limit or start/end criteria. When set, that query
 	 * is used to retrieve any data. When cleared, the collection
 	 * reference is used.
+	 *
+	 * The query can be either a Function of the form
+	 * `(CollectionReference) => Query` (preferred), or a direct
+	 * Firestore Query object.
 	 *
 	 * @example
 	 * const todos = new Collection('todos');
