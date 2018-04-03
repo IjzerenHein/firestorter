@@ -3,9 +3,9 @@ import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, verifyMode } from './init';
 import Document from './Document';
-import Query from './Query';
 
 import type {
+	Query,
 	QuerySnapshot,
 	DocumentSnapshot,
 	CollectionReference
@@ -43,8 +43,8 @@ import type {
  *
  * @param {Object} [options] Configuration options
  * @param
- * @param {Query} [options.query] See `Document.query`
- * @param {String} [options.mode] See `Document.mode`
+ * @param {Function|Query} [options.query] See `Collection.query`
+ * @param {String} [options.mode] See `Collection.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
@@ -63,9 +63,10 @@ import type {
  *   mode: 'on'
  * });
  *
- * // Create a collection and set a query on it
- * const col3 = new Collection('artists');
- * col3.query = col3.ref.orderBy('name', 'asc');
+ * // Create a collection with a query on it
+ * const col3 = new Collection('artists', {
+ *   query: (ref) => ref.orderBy('name', 'asc')
+ * });
  *
  * @example
  * // In manual mode, just call `fetch` explicitely
@@ -252,18 +253,18 @@ class Collection {
 	 * const todos = new Collection('todos');
 	 *
 	 * // Sort the collection
-	 * todos.query = todos.ref.orderBy('text', 'asc');
+	 * todos.query = (ref) => ref.orderBy('text', 'asc');
 	 *
 	 * // Order, filter & limit
-	 * todos.query = todos.ref.where('finished', '==', false).orderBy('finished', 'asc').limit(20);
+	 * todos.query = (ref) => ref.where('finished', '==', false).orderBy('finished', 'asc').limit(20);
 	 *
 	 * // Clear the query, will cause whole collection to be fetched
 	 * todos.query = undefined;
 	 */
-	get query(): ?Query {
+	get query(): ?((CollectionReference) => Query) | Query {
 		return this._query;
 	}
-	set query(query?: Query | (() => Query)) {
+	set query(query?: ((CollectionReference) => Query) | Query) {
 		if (this._query === query) return;
 		transaction(() => {
 			this._query = query;
@@ -360,11 +361,8 @@ class Collection {
 			return this._queryCacheRef;
 		}
 		let ref;
-		if (query instanceof Query.constructor) {
-			ref = query.resolveRef(collectionRef);
-			return ref;
-		} else if (typeof query === 'function') {
-			ref =  this._resolveQuery(collectionRef, query());
+		if (typeof query === 'function') {
+			ref =  this._resolveQuery(collectionRef, query(collectionRef));
 			return ref;
 		} else {
 			ref =  query;
@@ -600,7 +598,11 @@ class Collection {
 				`${this.debugName} - addRef (${this._observedRefCount + 1})`
 			);
 		const res = ++this._observedRefCount;
-		if (res === 1) this._updateRealtimeUpdates();
+		if (res === 1) {
+			transaction(() => {
+				this._updateRealtimeUpdates();
+			});
+		}
 		return res;
 	}
 
@@ -614,7 +616,11 @@ class Collection {
 				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
 			);
 		const res = --this._observedRefCount;
-		if (!res) this._updateRealtimeUpdates();
+		if (!res) {
+			transaction(() => {
+				this._updateRealtimeUpdates();
+			});
+		}
 		return res;
 	}
 

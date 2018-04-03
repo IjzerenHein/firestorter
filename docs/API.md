@@ -71,8 +71,8 @@ created or modified.
 
 -   `source` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
-    -   `options.query` **Query?** See `Document.query`
-    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.mode`
+    -   `options.query` **([Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function) | Query)?** See `Collection.query`
+    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Collection.mode`
     -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
     -   `options.debug` **Bool?** Enables debug logging
     -   `options.debugName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Name to use when debug logging is enabled
@@ -93,9 +93,10 @@ const col2 = new Collection('artists', {
   mode: 'on'
 });
 
-// Create a collection and set a query on it
-const col3 = new Collection('artists');
-col3.query = col3.ref.orderBy('name', 'asc');
+// Create a collection with a query on it
+const col3 = new Collection('artists', {
+  query: (ref) => ref.orderBy('name', 'asc')
+});
 ```
 
 ```javascript
@@ -189,16 +190,16 @@ reference is used.
 const todos = new Collection('todos');
 
 // Sort the collection
-todos.query = todos.ref.orderBy('text', 'asc');
+todos.query = (ref) => ref.orderBy('text', 'asc');
 
 // Order, filter & limit
-todos.query = todos.ref.where('finished', '==', false).orderBy('finished', 'asc').limit(20);
+todos.query = (ref) => ref.where('finished', '==', false).orderBy('finished', 'asc').limit(20);
 
 // Clear the query, will cause whole collection to be fetched
 todos.query = undefined;
 ```
 
-Returns **Query?** 
+Returns **(function (CollectionReference): Query? | Query)** 
 
 ### mode
 
