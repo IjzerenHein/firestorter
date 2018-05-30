@@ -4,6 +4,11 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.11.0] - 2018-05-30
+### Added
+- Added new method for defining queries using an observed function (e.g. `col.query = (ref) => ref.orderBy('text', 'asc')`). This is now the new recommended way for defining queries.
+
+
 ## [0.10.0] - 2018-03-27
 ### Added
 - Added support for MobX 4 (for MobX 3.x, use 0.9.3 or lower)
