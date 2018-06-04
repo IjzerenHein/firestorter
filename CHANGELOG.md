@@ -4,6 +4,11 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.11.1] - 2018-06-04
+### Fixed
+- Fixed `Document.update` throwing exception when schema was used.
+
+
 ## [0.11.0] - 2018-05-30
 ### Added
 - Added new method for defining queries using an observed function (e.g. `col.query = (ref) => ref.orderBy('text', 'asc')`). This is now the new recommended way for defining queries.
