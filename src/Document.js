@@ -345,7 +345,7 @@ class Document {
 			// Todo - support fieldPath
 			this._validateSchema({
 				...this.data,
-				fields
+				...fields
 			});
 		}
 		return this._ref.get().update(fields);
