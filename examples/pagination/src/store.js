@@ -14,6 +14,6 @@ firebase.initializeApp({
 initFirestorter({ firebase: firebase });
 
 const chocolateBars = new Collection('chocolateBars');
-chocolateBars.query = chocolateBars.ref.limit(50);
+chocolateBars.limit = 5;
 
 export { chocolateBars };

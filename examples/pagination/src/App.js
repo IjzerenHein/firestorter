@@ -3,6 +3,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import List from './List';
 import ListFilters from './ListFilters';
+import ListPaginators from './ListPaginators';
 
 const styles = {
 	container: {
@@ -58,6 +59,7 @@ class App extends Component {
 							<h1 style={styles.h1}>Flavours of cacao</h1>
 							<h3 style={styles.h3}>Firestorter Pagination Demo</h3>
 						</div>
+						<ListPaginators />
 						<ListFilters />
 					</div>
 					<List />

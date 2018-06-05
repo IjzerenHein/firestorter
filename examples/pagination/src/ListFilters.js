@@ -6,6 +6,7 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import ArrowDropLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import Chip from 'material-ui/Chip';
+import { chocolateBars } from './store';
 
 const styles = {
 	container: {
@@ -62,7 +63,8 @@ const FILTERS = {
 class ListFilters extends Component {
 	state = {
 		anchorEl: undefined,
-		menuOpen: false
+		menuOpen: false,
+		filters: []
 	};
 
 	createMenuItems(type) {
@@ -74,7 +76,13 @@ class ListFilters extends Component {
 					key={key}
 					primaryText={key}
 					onClick={() => {
-						console.log('TODO');
+						this.setFilters([
+							...this.state.filters,
+							{
+								type,
+								key,
+							}
+						]);
 						this.handleRequestClose();
 					}}
 				/>
@@ -85,7 +93,7 @@ class ListFilters extends Component {
 
 	render() {
 		// console.log('ListItem.render: ', doc.path, ', id: ', id);
-		const { menuOpen, anchorEl } = this.state;
+		const { menuOpen, anchorEl, filters } = this.state;
 
 		return (
 			<div style={styles.container}>
@@ -116,30 +124,17 @@ class ListFilters extends Component {
 				</Popover>
 				<RaisedButton onClick={this.onClickFilter} label="Add Filter" />
 				<div style={styles.filters}>
-					<Chip
-						onRequestDelete={() => this.handleRequestDelete()}
-						style={styles.chip}
-					>
-						2014
-					</Chip>
-					<Chip
-						onRequestDelete={() => this.handleRequestDelete()}
-						style={styles.chip}
-					>
-						2014
-					</Chip>
-					<Chip
-						onRequestDelete={() => this.handleRequestDelete()}
-						style={styles.chip}
-					>
-						2014
-					</Chip>
-					<Chip
-						onRequestDelete={() => this.handleRequestDelete()}
-						style={styles.chip}
-					>
-						2014
-					</Chip>
+					{filters.map((filter) => {
+						const {type, key} = filter;
+						return (
+							<Chip
+								key={`${type}.${key}`}
+								onRequestDelete={() => this.onDeleteFilter(filter)}
+								style={styles.chip}>
+								{key}
+							</Chip>
+						);
+					})}
 				</div>
 			</div>
 		);
@@ -160,6 +155,26 @@ class ListFilters extends Component {
 			menuOpen: false
 		});
 	};
+
+	onDeleteFilter(filter) {
+		const filters = this.state.filters.slice();
+		filters.splice(filters.indexOf(filter), 1);
+		this.setFilters(filters);
+	}
+
+	setFilters(filters) {
+		this.setState({
+			filters
+		});
+		chocolateBars.query = (ref) => {
+			filters.forEach(({type, key}) => {
+				FILTERS[type][key].forEach((where) => {
+					ref = ref.where(where[0], where[1], where[2]);
+				});
+			});
+			return ref;
+		};
+	}
 }
 
 export default ListFilters;

@@ -1,18 +1,23 @@
 {
 	"name": "firestorter-pagination",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"private": true,
 	"homepage": ".",
 	"dependencies": {
-		"firebase": "^4.6.0",
+		"@firebase/app": "^0.3.3",
+		"@firebase/app-types": "^0.3.2",
+		"@firebase/firestore": "^0.5.4",
+		"@firebase/firestore-types": "^0.4.3",
+		"firestorter": "^0.11.1",
 		"material-ui": "^0.19.4",
-		"mobx-react": "^4.3.5",
-		"react": "^16.0.0",
-		"react-dom": "^16.0.0"
+		"mobx": "^4.3.1",
+		"mobx-react": "^5.2.0",
+		"react": "^16.4.0",
+		"react-dom": "^16.4.0"
 	},
 	"devDependencies": {
-		"eslint": "^4.10.0",
-		"eslint-plugin-react": "^7.4.0",
+		"eslint": "^4.19.1",
+		"eslint-plugin-react": "^7.9.1",
 		"react-scripts": "1.0.14"
 	},
 	"scripts": {

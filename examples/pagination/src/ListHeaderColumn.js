@@ -17,14 +17,14 @@ class ListHeaderColumn extends Component {
 		const { sortOrder, children, onSortClick, ...props } = this.props;
 		let icon;
 		switch (sortOrder) {
-			case 'ascending':
-				icon = <DownIcon color={black} />;
-				break;
-			case 'descending':
-				icon = <UpIcon color={black} />;
-				break;
-			default:
-				break;
+		case 'ascending':
+			icon = <DownIcon color={black} />;
+			break;
+		case 'descending':
+			icon = <UpIcon color={black} />;
+			break;
+		default:
+			break;
 		}
 		return (
 			<TableHeaderColumn {...props}>

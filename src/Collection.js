@@ -46,6 +46,7 @@ import type {
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
+ * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  *
@@ -91,9 +92,7 @@ class Collection {
 	_query: any;
 	_queryRef: any;
 	_queryDisposer: any;
-	_queryCache: any;
-	_queryCacheRef: any;
-	_queryCacheCollectionRef: any;
+	_limit: any;
 	_activeRef: any;
 	_mode: any;
 	_fetching: any;
@@ -114,6 +113,7 @@ class Collection {
 			DocumentClass = Document,
 			mode,
 			realtimeUpdating,
+			limit,
 			debug,
 			debugName
 		} =
@@ -127,6 +127,8 @@ class Collection {
 		this._ref = observable.box(undefined);
 		this._query = query;
 		this._queryRef = observable.box(undefined);
+		this._limit = observable.box(limit || undefined);
+		this._cursor = observable.box(undefined);
 		if (realtimeUpdating) {
 			console.warn(
 				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
@@ -358,20 +360,29 @@ class Collection {
 	 * @private
 	 */
 	_resolveQuery(collectionRef, query) {
-		if ((this._queryCache === query) &&
-			(this._queryCacheCollectionRef === collectionRef)) {
-			return this._queryCacheRef;
-		}
-		let ref;
+		let ref = query;
 		if (typeof query === 'function') {
-			ref =  this._resolveQuery(collectionRef, query(collectionRef));
-			return ref;
-		} else {
-			ref =  query;
+			ref = query(collectionRef);
 		}
-		this._queryCache = query;
-		this._queryCacheCollectionRef = collectionRef;
-		this._queryCacheRef = ref;
+
+		// Apply pagination cursor
+		const cursor = this._cursor.get();
+		if (cursor) {
+			ref = ref || collectionRef;
+			switch (cursor.type) {
+				case 'startAfter': ref = ref.startAfter(cursor.value); break;
+				case 'startAt': ref = ref.startAt(cursor.value); break;
+				case 'endBefore': ref = ref.endBefore(cursor.value); break;
+				case 'endAt': ref = ref.endAt(cursor.value); break;
+			}
+		}
+
+		// Apply fetch limit
+		const limit = this.limit;
+		if (limit) {
+			ref = ref || collectionRef;
+			ref = ref.limit(limit);
+		}
 		return ref;
 	}
 
@@ -542,53 +553,66 @@ class Collection {
 	}
 
 	/**
-	 * @private
-	 * Moves the query cursor towards the start of end.
-	 *
-	 * Use this function to paginate through the documents when
-	 * a query is set.
-	 *
-	 * @example
-	 * const col = new Collection('users');
-	 * col.query = col.ref.where('name', '>=', 'H').limit(20);
-	 * if (col.canPaginate(true)) {
-	 *   col.paginateTowardsEnd();
-	 * }
-	 * ...
-	 * col.next();
-	 * col.previous();
-	 * col.start();
-	 * ...
-	 * col.nextPage();
-	 * col.previousPage();
-	 * col.firstPage();
-	 * ...
-	 * col.paginateTowardsEnd();
-	 * col.paginateTowardsStart();
-	 * col.paginateBackward(true/false);
-	 * col.canPaginate(backward);
-	 * col.paginateToStart();
-	 * ...
-	 * col.moveToNext();
-	 * col.moveToPrevious();
-	 * col.moveToStart();
-	 * ...
-	 * col.moveTowardsEnd();
-	 * col.moveTowardsStart();
-	 * col.moveToStart();
-	 *
+	 * Limit used for query pagination.
 	 */
-	/* paginateForward() {
-
+	get limit(): ?number {
+		return this._limit.get();
+	}
+	set limit(val: ?number) {
+		this._limit.set(val || undefined);
 	}
 
-	paginateBackward(towardsStart) {
-
+	/**
+	 * Paginates to the start of the collection,
+	 * resetting any pagination cursor that exists.
+	 */
+	paginateToStart() {
+		this._cursor.set(undefined);
 	}
 
-	canPaginate(backward) {
+	/**
+	 * Paginates to the next page. This sets the cursor
+	 * to `startAfter` the last document.
+	 *
+	 * @return {Boolean} False in case pagination was not possible
+	 */
+	paginateNext(): boolean {
+		if (!this.canPaginateNext) return false;
+		this._cursor.set({
+			type: 'startAfter',
+			value: this.docs[this.docs.length - 1].ref
+		});
+		return true;
+	}
 
-	}*/
+	/**
+	 * Paginates to the previous page. This sets the cursor
+	 * to `endBefore` the first document in `docs`.
+	 *
+	 * @return {Boolean} False in case pagination was not possible
+	 */
+	paginatePrevious(): boolean {
+		if (!this.canPaginatePrevious) return false;
+		if (!this.docs.length) {
+			this._cursor.set(undefined);
+			return true;
+		}
+		this._cursor.set({
+			type: 'endBefore',
+			value: this.docs[0].ref
+		});
+		return true;
+	}
+
+	get canPaginateNext(): boolean {
+		if (!this.limit) return false;
+		return this.docs.length >= this.limit;
+	}
+
+	get canPaginatePrevious(): boolean {
+		if (!this.limit) return false;
+		return this._cursor.get() ? true : false;
+	}
 
 	/**
 	 * Called whenever a property of this class becomes observed.

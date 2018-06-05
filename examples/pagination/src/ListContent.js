@@ -8,7 +8,7 @@ const ListContent = observer(
 	class ListContent extends Component {
 		static muiName = 'TableBody';
 		render() {
-			const { docs, fetching } = chocolateBars;
+			const { docs } = chocolateBars;
 			// console.log('ListContent.render, fetching: ', fetching);
 			return (
 				<TableBody {...this.props}>

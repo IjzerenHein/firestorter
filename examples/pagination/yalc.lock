@@ -1,0 +1,8 @@
+{
+  "version": "v1",
+  "packages": {
+    "firestorter": {
+      "signature": "61fe641eb4f224ef31af4f327307a750"
+    }
+  }
+}
