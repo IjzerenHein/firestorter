@@ -26,10 +26,10 @@
         -   [Parameters][22]
         -   [Examples][23]
     -   [deleteAll][24]
-    -   [limit][25]
-    -   [paginateToStart][26]
-    -   [paginateNext][27]
-    -   [paginatePrevious][28]
+    -   [addObserverRef][25]
+    -   [addObserverRef][26]
+    -   [addObserverRef][27]
+    -   [addObserverRef][28]
 -   [Document][29]
     -   [Parameters][30]
     -   [schema][31]
@@ -43,25 +43,22 @@
     -   [mode][39]
     -   [isActive][40]
     -   [snapshot][41]
-    -   [createTime][42]
-    -   [updateTime][43]
-    -   [readTime][44]
-    -   [update][45]
+    -   [update][42]
+        -   [Parameters][43]
+        -   [Examples][44]
+    -   [set][45]
         -   [Parameters][46]
         -   [Examples][47]
-    -   [set][48]
-        -   [Parameters][49]
+    -   [delete][48]
+    -   [fetch][49]
         -   [Examples][50]
-    -   [delete][51]
-    -   [fetch][52]
-        -   [Examples][53]
-    -   [isLoading][54]
-        -   [Examples][55]
-    -   [ready][56]
-        -   [Examples][57]
--   [initFirestorter][58]
-    -   [Parameters][59]
-    -   [Examples][60]
+    -   [isLoading][51]
+        -   [Examples][52]
+    -   [ready][53]
+        -   [Examples][54]
+-   [initFirestorter][55]
+    -   [Parameters][56]
+    -   [Examples][57]
 
 ## Collection
 
@@ -97,14 +94,13 @@ created or modified.
 
 ### Parameters
 
--   `source` **(CollectionReference | [string][61] | function (): ([string][61] | void))** 
--   `options` **[Object][62]?** Configuration options
-    -   `options.query` **([Function][63] | Query)?** See `Collection.query`
-    -   `options.mode` **[String][61]?** See `Collection.mode`
-    -   `options.DocumentClass` **[String][61]?** Document classes to create (must be inherited from Document)
-    -   `options.limit` **[Number][64]?** Maximum number of documents to fetch (see `Collection.limit`)
+-   `source` **(CollectionReference | [string][58] | function (): ([string][58] | void))** 
+-   `options` **[Object][59]?** Configuration options
+    -   `options.query` **([Function][60] | Query)?** See `Collection.query`
+    -   `options.mode` **[String][58]?** See `Collection.mode`
+    -   `options.DocumentClass` **[String][58]?** Document classes to create (must be inherited from Document)
     -   `options.debug` **Bool?** Enables debug logging
-    -   `options.debugName` **[String][61]?** Name to use when debug logging is enabled
+    -   `options.debugName` **[String][58]?** Name to use when debug logging is enabled
 
 ### Examples
 
@@ -153,7 +149,7 @@ collection.docs.forEach((doc) => {
 });
 ```
 
-Returns **[Array][65]&lt;[Document][66]>** 
+Returns **[Array][61]&lt;[Document][62]>** 
 
 ### ref
 
@@ -183,7 +179,7 @@ Id of the Firestore collection (e.g. 'tracks').
 
 To get the full-path of the collection, use `path`.
 
-Returns **[string][61]?** 
+Returns **[string][58]?** 
 
 ### path
 
@@ -202,7 +198,7 @@ const col = new Collection('artists/Metallica/albums');
 col.path = 'artists/EaglesOfDeathMetal/albums';
 ```
 
-Returns **[string][61]?** 
+Returns **[string][58]?** 
 
 ### query
 
@@ -242,14 +238,14 @@ Can be set to any of the following values:
 -   "off" (no real-time updating, you need to call fetch explicitly)
 -   "on" (real-time updating is permanently enabled)
 
-Returns **[string][61]** 
+Returns **[string][58]** 
 
 ### isActive
 
 Returns true when the Collection is actively listening
 for changes in the firestore back-end.
 
-Returns **[boolean][67]** 
+Returns **[boolean][63]** 
 
 ### fetch
 
@@ -265,7 +261,7 @@ col.fetch().then(({docs}) => {
 });
 ```
 
-Returns **[Promise][68]&lt;[Collection][69]>** 
+Returns **[Promise][64]&lt;[Collection][65]>** 
 
 ### isLoading
 
@@ -301,7 +297,7 @@ dispose();                   // stop observing collection data
 console.log(col.isLoading);  // false
 ```
 
-Returns **[boolean][67]** 
+Returns **[boolean][63]** 
 
 ### ready
 
@@ -330,7 +326,7 @@ await col.ready();
 console.log('albums: ', col.docs);
 ```
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
 ### add
 
@@ -353,7 +349,7 @@ const doc = await collection.add({
 });
 ```
 
-Returns **[Promise][68]&lt;[Document][66]>** 
+Returns **[Promise][64]&lt;[Document][62]>** 
 
 ### deleteAll
 
@@ -361,32 +357,34 @@ Deletes all the documents in the collection or query.
 
 TODO - Not implemented yet
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
-### limit
+### addObserverRef
 
 Limit used for query pagination.
 
-Returns **[number][64]?** 
+Returns **[number][66]** 
 
-### paginateToStart
+### addObserverRef
 
 Paginates to the start of the collection,
 resetting any pagination cursor that exists.
 
-### paginateNext
+Returns **[number][66]** 
+
+### addObserverRef
 
 Paginates to the next page. This sets the cursor
 to `startAfter` the last document.
 
-Returns **[Boolean][67]** False in case pagination was not possible
+Returns **[Boolean][63]** False in case pagination was not possible
 
-### paginatePrevious
+### addObserverRef
 
 Paginates to the previous page. This sets the cursor
 to `endBefore` the first document in `docs`.
 
-Returns **[Boolean][67]** False in case pagination was not possible
+Returns **[Boolean][63]** False in case pagination was not possible
 
 ## Document
 
@@ -398,13 +396,13 @@ function has changed.
 
 ### Parameters
 
--   `source` **(DocumentReference | [string][61] | function (): ([string][61] | void))** 
--   `options` **[Object][62]?** Configuration options
-    -   `options.mode` **[String][61]?** See `Document.mode` (default: auto)
-    -   `options.schema` **[Object][62]?** Superstruct schema for data validation
+-   `source` **(DocumentReference | [string][58] | function (): ([string][58] | void))** 
+-   `options` **[Object][59]?** Configuration options
+    -   `options.mode` **[String][58]?** See `Document.mode` (default: auto)
+    -   `options.schema` **[Object][59]?** Superstruct schema for data validation
     -   `options.snapshot` **DocumentSnapshot?** Initial document snapshot
     -   `options.debug` **Bool?** Enables debug logging
-    -   `options.debugName` **[String][61]?** Name to use when debug logging is enabled
+    -   `options.debugName` **[String][58]?** Name to use when debug logging is enabled
 
 ### schema
 
@@ -461,7 +459,7 @@ Id of the firestore document.
 
 To get the full-path of the document, use `path`.
 
-Returns **[string][61]?** 
+Returns **[string][58]?** 
 
 ### path
 
@@ -485,7 +483,7 @@ const doc2 = new Document('settings/activeArtist');
 doc.path = () => 'artists/' + doc2.data.artistId;
 ```
 
-Returns **[string][61]?** 
+Returns **[string][58]?** 
 
 ### mode
 
@@ -497,38 +495,20 @@ Can be set to any of the following values:
 -   "off" (no real-time updating, you need to call fetch explicitly)
 -   "on" (real-time updating is permanently enabled)
 
-Returns **[string][61]** 
+Returns **[string][58]** 
 
 ### isActive
 
 Returns true when the Document is actively listening
 for changes in the firestore back-end.
 
-Returns **[boolean][67]** 
+Returns **[boolean][63]** 
 
 ### snapshot
 
 Underlying firestore snapshot.
 
 Returns **DocumentSnapshot** 
-
-### createTime
-
-Time the document was created in firestore.
-
-Returns **[string][61]** 
-
-### updateTime
-
-Time the document was last updated in firestore.
-
-Returns **[string][61]** 
-
-### readTime
-
-Time this document was last read from firestore.
-
-Returns **[string][61]** 
 
 ### update
 
@@ -553,7 +533,7 @@ await todoDoc.update({
 });
 ```
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
 ### set
 
@@ -565,9 +545,9 @@ the existing document.
 
 #### Parameters
 
--   `data` **[Object][62]** An object of the fields and values for the document
--   `options` **[Object][62]?** Set behaviour options
-    -   `options.merge` **[Boolean][67]?** Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
+-   `data` **[Object][59]** An object of the fields and values for the document
+-   `options` **[Object][59]?** Set behaviour options
+    -   `options.merge` **[Boolean][63]?** Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
 
 #### Examples
 
@@ -579,7 +559,7 @@ await todo.set({
 });
 ```
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
 ### delete
 
@@ -589,7 +569,7 @@ Returns a promise that resolves once the document has been
 successfully deleted from the backend (Note that it won't
 resolve while you're offline).
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
 ### fetch
 
@@ -605,7 +585,7 @@ doc.fetch().then(({data}) => {
 });
 ```
 
-Returns **[Promise][68]&lt;[Document][66]>** 
+Returns **[Promise][64]&lt;[Document][62]>** 
 
 ### isLoading
 
@@ -641,7 +621,7 @@ dispose();										// stop observing document data
 console.log(doc.isLoading); 	// false
 ```
 
-Returns **[boolean][67]** 
+Returns **[boolean][63]** 
 
 ### ready
 
@@ -670,7 +650,7 @@ await doc.ready();
 console.log('data: ', doc.data);
 ```
 
-Returns **[Promise][68]&lt;void>** 
+Returns **[Promise][64]&lt;void>** 
 
 ## initFirestorter
 
@@ -748,13 +728,13 @@ const album = new Document('artists/Metallica/albums/BlackAlbum');
 
 [24]: #deleteall
 
-[25]: #limit
+[25]: #addobserverref
 
-[26]: #paginatetostart
+[26]: #addobserverref-1
 
-[27]: #paginatenext
+[27]: #addobserverref-2
 
-[28]: #paginateprevious
+[28]: #addobserverref-3
 
 [29]: #document
 
@@ -782,58 +762,52 @@ const album = new Document('artists/Metallica/albums/BlackAlbum');
 
 [41]: #snapshot
 
-[42]: #createtime
+[42]: #update
 
-[43]: #updatetime
+[43]: #parameters-3
 
-[44]: #readtime
+[44]: #examples-12
 
-[45]: #update
+[45]: #set
 
-[46]: #parameters-3
+[46]: #parameters-4
 
-[47]: #examples-12
+[47]: #examples-13
 
-[48]: #set
+[48]: #delete
 
-[49]: #parameters-4
+[49]: #fetch-1
 
-[50]: #examples-13
+[50]: #examples-14
 
-[51]: #delete
+[51]: #isloading-1
 
-[52]: #fetch-1
+[52]: #examples-15
 
-[53]: #examples-14
+[53]: #ready-1
 
-[54]: #isloading-1
+[54]: #examples-16
 
-[55]: #examples-15
+[55]: #initfirestorter
 
-[56]: #ready-1
+[56]: #parameters-5
 
-[57]: #examples-16
+[57]: #examples-17
 
-[58]: #initfirestorter
+[58]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[59]: #parameters-5
+[59]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[60]: #examples-17
+[60]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[61]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[61]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[62]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[62]: #document
 
-[63]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[63]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[64]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[64]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
-[65]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[65]: #collection
 
-[66]: #document
-
-[67]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-
-[68]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
-
-[69]: #collection
+[66]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
