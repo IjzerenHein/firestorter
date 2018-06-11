@@ -24,9 +24,9 @@ test('observable', () => {
 
 test('document path', () => {
 	const doc = new Document('artists/FooFighters');
-	expect(doc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
 	const col = new Collection(() => `${doc.path}/albums`);
-	expect(doc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
 	expect(col.path).toBe('artists/FooFighters/albums');
 	doc.path = 'artists/TheOffspring';
 	const dispose = autorun(() => {
@@ -39,20 +39,20 @@ test('document path', () => {
 test('document data', async () => {
 	expect.assertions(9);
 	const doc = new Document('settings/setting');
-	expect(doc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
 	const col = new Collection(() => `artists/${doc.data.topArtistId}/albums`);
-	expect(doc.active).toBe(false);
-	expect(col.active).toBe(false);
+	expect(doc.isActive).toBe(false);
+	expect(col.isActive).toBe(false);
 	const dispose = autorun(() => {
 		col.docs.length;
 	});
-	expect(doc.active).toBe(true);
-	expect(col.active).toBe(true);
+	expect(doc.isActive).toBe(true);
+	expect(col.isActive).toBe(true);
 	await col.ready();
 	expect(col.path).toBe('artists/FooFighters/albums');
 	dispose();
-	expect(col.active).toBe(false);
-	expect(doc.active).toBe(false);
+	expect(col.isActive).toBe(false);
+	expect(doc.isActive).toBe(false);
 	col.path = undefined;
-	expect(doc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
 });

@@ -4,25 +4,25 @@ describe('construct', () => {
 	test('default is auto', () => {
 		const col = new Collection();
 		expect(col.mode).toBe('auto');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 
 	test('auto', () => {
 		const col = new Collection(undefined, { mode: 'auto' });
 		expect(col.mode).toBe('auto');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 
 	test('on', () => {
 		const col = new Collection(undefined, { mode: 'on' });
 		expect(col.mode).toBe('on');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 
 	test('off', () => {
 		const col = new Collection(undefined, { mode: 'off' });
 		expect(col.mode).toBe('off');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 
 	test('bogus', () => {
@@ -35,19 +35,19 @@ describe('get/set', () => {
 		const col = new Collection();
 		col.mode = 'on';
 		expect(col.mode).toBe('on');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 	test('off', () => {
 		const col = new Collection();
 		col.mode = 'off';
 		expect(col.mode).toBe('off');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 	test('auto', () => {
 		const col = new Collection(undefined, { mode: 'off' });
 		col.mode = 'auto';
 		expect(col.mode).toBe('auto');
-		expect(col.active).toBe(false);
+		expect(col.isActive).toBe(false);
 	});
 	test('bogus', () => {
 		const col = new Collection();

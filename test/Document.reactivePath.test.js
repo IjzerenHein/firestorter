@@ -24,9 +24,9 @@ test('observable', () => {
 
 test('collection path', () => {
 	const col = new Collection('todos');
-	expect(col.active).toBe(false);
+	expect(col.isActive).toBe(false);
 	const doc = new Document(() => `${col.path}/todo`);
-	expect(col.active).toBe(false);
+	expect(col.isActive).toBe(false);
 	expect(doc.path).toBe('todos/todo');
 	col.path = 'todos2';
 	expect(doc.path).toBe('todos2/todo');
@@ -35,8 +35,8 @@ test('collection path', () => {
 test('document path', () => {
 	const doc = new Document('artists/FooFighters');
 	const subDoc = new Document(() => `${doc.path}/albums/test`);
-	expect(doc.active).toBe(false);
-	expect(subDoc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
+	expect(subDoc.isActive).toBe(false);
 	expect(subDoc.path).toBe('artists/FooFighters/albums/test');
 	doc.path = 'artists/Metallica';
 	expect(subDoc.path).toBe('artists/Metallica/albums/test');
@@ -48,8 +48,8 @@ test('document data', async () => {
 	const subDoc = new Document(
 		() => `${doc.path}/albums/${doc.data.topAlbumId}`
 	);
-	expect(doc.active).toBe(false);
-	expect(subDoc.active).toBe(false);
+	expect(doc.isActive).toBe(false);
+	expect(subDoc.isActive).toBe(false);
 	await doc.fetch();
 	expect(subDoc.path).toBe('artists/FooFighters/albums/TheColourAndTheShape');
 });
@@ -60,8 +60,8 @@ test('document data 2', async () => {
 	const subDoc = new Document(
 		() => `${doc.path}/albums/${doc.data.topAlbumId}`
 	);
-	expect(doc.active).toBe(true);
-	expect(subDoc.active).toBe(false);
+	expect(doc.isActive).toBe(true);
+	expect(subDoc.isActive).toBe(false);
 	await doc.ready();
 	expect(subDoc.path).toBe('artists/FooFighters/albums/TheColourAndTheShape');
 });

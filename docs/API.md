@@ -15,7 +15,7 @@
     -   [query][11]
         -   [Examples][12]
     -   [mode][13]
-    -   [active][14]
+    -   [isActive][14]
     -   [fetch][15]
         -   [Examples][16]
     -   [isLoading][17]
@@ -41,7 +41,7 @@
     -   [path][37]
         -   [Examples][38]
     -   [mode][39]
-    -   [active][40]
+    -   [isActive][40]
     -   [snapshot][41]
     -   [createTime][42]
     -   [updateTime][43]
@@ -244,7 +244,7 @@ Can be set to any of the following values:
 
 Returns **[string][61]** 
 
-### active
+### isActive
 
 Returns true when the Collection is actively listening
 for changes in the firestore back-end.
@@ -499,7 +499,7 @@ Can be set to any of the following values:
 
 Returns **[string][61]** 
 
-### active
+### isActive
 
 Returns true when the Document is actively listening
 for changes in the firestore back-end.
@@ -726,7 +726,7 @@ const album = new Document('artists/Metallica/albums/BlackAlbum');
 
 [13]: #mode
 
-[14]: #active
+[14]: #isactive
 
 [15]: #fetch
 
@@ -778,7 +778,7 @@ const album = new Document('artists/Metallica/albums/BlackAlbum');
 
 [39]: #mode-1
 
-[40]: #active-1
+[40]: #isactive-1
 
 [41]: #snapshot
 

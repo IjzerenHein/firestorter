@@ -294,8 +294,18 @@ class Document {
 	 * Returns true when the Document is actively listening
 	 * for changes in the firestore back-end.
 	 */
-	get active(): boolean {
+	get isActive(): boolean {
 		return !!this._onSnapshotUnsubscribe;
+	}
+
+	/**
+	 * @private
+	 */
+	get active(): boolean {
+		console.warn(
+			'Document.active has been deprecated and will be removed soon, use `isActive` instead'
+		);
+		return this.isActive;
 	}
 
 	/**
@@ -461,7 +471,7 @@ class Document {
 						'Should not call fetch on Document that is controlled by a Collection'
 					)
 				);
-			if (this.active)
+			if (this.isActive)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);

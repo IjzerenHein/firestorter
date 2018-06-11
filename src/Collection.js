@@ -333,8 +333,18 @@ class Collection {
 	 * Returns true when the Collection is actively listening
 	 * for changes in the firestore back-end.
 	 */
-	get active(): boolean {
+	get isActive(): boolean {
 		return !!this._onSnapshotUnsubscribe;
+	}
+
+	/**
+	 * @private
+	 */
+	get active(): boolean {
+		console.warn(
+			'Collection.active has been deprecated and will be removed soon, use `isActive` instead'
+		);
+		return this.isActive;
 	}
 
 	/**
@@ -400,7 +410,7 @@ class Collection {
 	 */
 	fetch(): Promise<Collection> {
 		return new Promise((resolve, reject) => {
-			if (this.active)
+			if (this.isActive)
 				return reject(
 					new Error('Should not call fetch when real-time updating is active')
 				);
