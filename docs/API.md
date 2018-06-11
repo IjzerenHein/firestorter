@@ -2,38 +2,66 @@
 
 ### Table of Contents
 
--   [Collection](#collection)
-    -   [docs](#docs)
-    -   [ref](#ref)
-    -   [id](#id)
-    -   [path](#path)
-    -   [query](#query)
-    -   [mode](#mode)
-    -   [active](#active)
-    -   [fetch](#fetch)
-    -   [fetching](#fetching)
-    -   [ready](#ready)
-    -   [add](#add)
-    -   [deleteAll](#deleteall)
--   [Document](#document)
-    -   [schema](#schema)
-    -   [data](#data)
-    -   [ref](#ref-1)
-    -   [id](#id-1)
-    -   [path](#path-1)
-    -   [mode](#mode-1)
-    -   [active](#active-1)
-    -   [snapshot](#snapshot)
-    -   [createTime](#createtime)
-    -   [updateTime](#updatetime)
-    -   [readTime](#readtime)
-    -   [update](#update)
-    -   [set](#set)
-    -   [delete](#delete)
-    -   [fetch](#fetch-1)
-    -   [fetching](#fetching-1)
-    -   [ready](#ready-1)
--   [initFirestorter](#initfirestorter)
+-   [Collection][1]
+    -   [Parameters][2]
+    -   [Examples][3]
+    -   [docs][4]
+        -   [Examples][5]
+    -   [ref][6]
+        -   [Examples][7]
+    -   [id][8]
+    -   [path][9]
+        -   [Examples][10]
+    -   [query][11]
+        -   [Examples][12]
+    -   [mode][13]
+    -   [active][14]
+    -   [fetch][15]
+        -   [Examples][16]
+    -   [isLoading][17]
+        -   [Examples][18]
+    -   [ready][19]
+        -   [Examples][20]
+    -   [add][21]
+        -   [Parameters][22]
+        -   [Examples][23]
+    -   [deleteAll][24]
+    -   [limit][25]
+    -   [paginateToStart][26]
+    -   [paginateNext][27]
+    -   [paginatePrevious][28]
+-   [Document][29]
+    -   [Parameters][30]
+    -   [schema][31]
+    -   [data][32]
+        -   [Examples][33]
+    -   [ref][34]
+        -   [Examples][35]
+    -   [id][36]
+    -   [path][37]
+        -   [Examples][38]
+    -   [mode][39]
+    -   [active][40]
+    -   [snapshot][41]
+    -   [createTime][42]
+    -   [updateTime][43]
+    -   [readTime][44]
+    -   [update][45]
+        -   [Parameters][46]
+        -   [Examples][47]
+    -   [set][48]
+        -   [Parameters][49]
+        -   [Examples][50]
+    -   [delete][51]
+    -   [fetch][52]
+        -   [Examples][53]
+    -   [isLoading][54]
+        -   [Examples][55]
+    -   [ready][56]
+        -   [Examples][57]
+-   [initFirestorter][58]
+    -   [Parameters][59]
+    -   [Examples][60]
 
 ## Collection
 
@@ -67,17 +95,18 @@ manually. This will update the Collection as efficiently as possible.
 If nothing has changed on the back-end, no new Documents would be
 created or modified.
 
-**Parameters**
+### Parameters
 
--   `source` **(CollectionReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
--   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
-    -   `options.query` **([Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function) | Query)?** See `Collection.query`
-    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Collection.mode`
-    -   `options.DocumentClass` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Document classes to create (must be inherited from Document)
+-   `source` **(CollectionReference | [string][61] | function (): ([string][61] | void))** 
+-   `options` **[Object][62]?** Configuration options
+    -   `options.query` **([Function][63] | Query)?** See `Collection.query`
+    -   `options.mode` **[String][61]?** See `Collection.mode`
+    -   `options.DocumentClass` **[String][61]?** Document classes to create (must be inherited from Document)
+    -   `options.limit` **[Number][64]?** Maximum number of documents to fetch (see `Collection.limit`)
     -   `options.debug` **Bool?** Enables debug logging
-    -   `options.debugName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Name to use when debug logging is enabled
+    -   `options.debugName` **[String][61]?** Name to use when debug logging is enabled
 
-**Examples**
+### Examples
 
 ```javascript
 import {Collection} from 'firestorter';
@@ -106,9 +135,9 @@ col.fetch().then((collection) => {
  collection.docs.forEach((doc) => console.log(doc));
 });
 
-// Yo can use the `fetching` property to see whether a fetch
+// Yo can use the `isLoading` property to see whether a fetch
 // is in progress
-console.log(col.fetching);
+console.log(col.isLoading);
 ```
 
 ### docs
@@ -116,7 +145,7 @@ console.log(col.fetching);
 Array of all the documents that have been fetched
 from firestore.
 
-**Examples**
+#### Examples
 
 ```javascript
 collection.docs.forEach((doc) => {
@@ -124,7 +153,7 @@ collection.docs.forEach((doc) => {
 });
 ```
 
-Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Document](#document)>** 
+Returns **[Array][65]&lt;[Document][66]>** 
 
 ### ref
 
@@ -137,7 +166,7 @@ is performed.
 Alternatively, you can also use `path` to change the
 reference in more a readable way.
 
-**Examples**
+#### Examples
 
 ```javascript
 const col = new Collection(firebase.firestore().collection('albums/splinter/tracks'));
@@ -154,7 +183,7 @@ Id of the Firestore collection (e.g. 'tracks').
 
 To get the full-path of the collection, use `path`.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+Returns **[string][61]?** 
 
 ### path
 
@@ -164,7 +193,7 @@ Use this property to switch to another collection in
 the back-end. Effectively, it is a more compact
 and readable way of setting a new ref.
 
-**Examples**
+#### Examples
 
 ```javascript
 const col = new Collection('artists/Metallica/albums');
@@ -173,7 +202,7 @@ const col = new Collection('artists/Metallica/albums');
 col.path = 'artists/EaglesOfDeathMetal/albums';
 ```
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+Returns **[string][61]?** 
 
 ### query
 
@@ -184,9 +213,9 @@ reference is used.
 
 The query can be either a Function of the form
 `(CollectionReference) => Query` (preferred), or a direct
-Firestore Query.
+Firestore Query object.
 
-**Examples**
+#### Examples
 
 ```javascript
 const todos = new Collection('todos');
@@ -213,21 +242,21 @@ Can be set to any of the following values:
 -   "off" (no real-time updating, you need to call fetch explicitly)
 -   "on" (real-time updating is permanently enabled)
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string][61]** 
 
 ### active
 
 Returns true when the Collection is actively listening
 for changes in the firestore back-end.
 
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean][67]** 
 
 ### fetch
 
 Fetches new data from firestore. Use this to manually fetch
 new data when `mode` is set to 'off'.
 
-**Examples**
+#### Examples
 
 ```javascript
 const col = new Collection('albums', 'off');
@@ -236,11 +265,11 @@ col.fetch().then(({docs}) => {
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Collection](#collection)>** 
+Returns **[Promise][68]&lt;[Collection][69]>** 
 
-### fetching
+### isLoading
 
-True when a fetch is in progress.
+True when new data is being loaded.
 
 Fetches are performed in these cases:
 
@@ -249,30 +278,30 @@ Fetches are performed in these cases:
 -   When a `query` is set or cleared
 -   When `fetch` is explicitely called
 
-**Examples**
+#### Examples
 
 ```javascript
 const col = new Collection('albums', {mode: 'off'});
-console.log(col.fetching);   // fetching: false
+console.log(col.isLoading);  // false
 col.fetch();                 // start fetch
-console.log(col.fetching);   // fetching: true
+console.log(col.isLoading);  // true
 await col.ready();           // wait for fetch to complete
-console.log(col.fetching);   // fetching: false
+console.log(col.isLoading);  // false
 ```
 
 ```javascript
 const col = new Collection('albums');
-console.log(col.fetching);   // fetching: false
+console.log(col.isLoading);  // false
 const dispose = autorun(() => {
   console.log(col.docs);     // start observing collection data
 });
-console.log(col.fetching);   // fetching: true
+console.log(col.isLoading);  // true
 ...
 dispose();                   // stop observing collection data
-console.log(col.fetching);   // fetching: false
+console.log(col.isLoading);  // false
 ```
 
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean][67]** 
 
 ### ready
 
@@ -283,7 +312,7 @@ Use this method to for instance wait for
 the initial snapshot update to complete, or to wait
 for fresh data after changing the path/ref.
 
-**Examples**
+#### Examples
 
 ```javascript
 const col = new Collection('albums', {mode: 'on'});
@@ -301,18 +330,18 @@ await col.ready();
 console.log('albums: ', col.docs);
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
 
 ### add
 
 Add a new document to this collection with the specified
 data, assigning it a document ID automatically.
 
-**Parameters**
+#### Parameters
 
 -   `data` **any** 
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = await collection.add({
@@ -324,7 +353,7 @@ const doc = await collection.add({
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
+Returns **[Promise][68]&lt;[Document][66]>** 
 
 ### deleteAll
 
@@ -332,7 +361,32 @@ Deletes all the documents in the collection or query.
 
 TODO - Not implemented yet
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
+
+### limit
+
+Limit used for query pagination.
+
+Returns **[number][64]?** 
+
+### paginateToStart
+
+Paginates to the start of the collection,
+resetting any pagination cursor that exists.
+
+### paginateNext
+
+Paginates to the next page. This sets the cursor
+to `startAfter` the last document.
+
+Returns **[Boolean][67]** False in case pagination was not possible
+
+### paginatePrevious
+
+Paginates to the previous page. This sets the cursor
+to `endBefore` the first document in `docs`.
+
+Returns **[Boolean][67]** False in case pagination was not possible
 
 ## Document
 
@@ -342,15 +396,15 @@ Component using `mobx-react`'s `observer` pattern. This ensures that a
 component is only re-rendered when data that is accessed in the `render`
 function has changed.
 
-**Parameters**
+### Parameters
 
--   `source` **(DocumentReference | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | function (): ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | void))** 
--   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Configuration options
-    -   `options.mode` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** See `Document.mode` (default: auto)
-    -   `options.schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Superstruct schema for data validation
+-   `source` **(DocumentReference | [string][61] | function (): ([string][61] | void))** 
+-   `options` **[Object][62]?** Configuration options
+    -   `options.mode` **[String][61]?** See `Document.mode` (default: auto)
+    -   `options.schema` **[Object][62]?** Superstruct schema for data validation
     -   `options.snapshot` **DocumentSnapshot?** Initial document snapshot
     -   `options.debug` **Bool?** Enables debug logging
-    -   `options.debugName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Name to use when debug logging is enabled
+    -   `options.debugName` **[String][61]?** Name to use when debug logging is enabled
 
 ### schema
 
@@ -363,7 +417,7 @@ Returns **any**
 
 Returns the data inside the firestore document.
 
-**Examples**
+#### Examples
 
 ```javascript
 todos.docs.map((doc) => {
@@ -387,7 +441,7 @@ underlying document reference.
 Alternatively, you can also use `path` to change the
 reference in more a readable way.
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = new Document('albums/splinter');
@@ -407,7 +461,7 @@ Id of the firestore document.
 
 To get the full-path of the document, use `path`.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+Returns **[string][61]?** 
 
 ### path
 
@@ -417,7 +471,7 @@ Use this property to switch to another document in
 the back-end. Effectively, it is a more compact
 and readable way of setting a new ref.
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = new Document('artists/Metallica');
@@ -431,7 +485,7 @@ const doc2 = new Document('settings/activeArtist');
 doc.path = () => 'artists/' + doc2.data.artistId;
 ```
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+Returns **[string][61]?** 
 
 ### mode
 
@@ -443,14 +497,14 @@ Can be set to any of the following values:
 -   "off" (no real-time updating, you need to call fetch explicitly)
 -   "on" (real-time updating is permanently enabled)
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string][61]** 
 
 ### active
 
 Returns true when the Document is actively listening
 for changes in the firestore back-end.
 
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean][67]** 
 
 ### snapshot
 
@@ -462,19 +516,19 @@ Returns **DocumentSnapshot**
 
 Time the document was created in firestore.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string][61]** 
 
 ### updateTime
 
 Time the document was last updated in firestore.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string][61]** 
 
 ### readTime
 
 Time this document was last read from firestore.
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string][61]** 
 
 ### update
 
@@ -483,11 +537,11 @@ Updates one or more fields in the document.
 The update will fail if applied to a document that does
 not exist.
 
-**Parameters**
+#### Parameters
 
 -   `fields` **any** 
 
-**Examples**
+#### Examples
 
 ```javascript
 await todoDoc.update({
@@ -499,7 +553,7 @@ await todoDoc.update({
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
 
 ### set
 
@@ -509,13 +563,13 @@ If the document does not exist yet, it will be created.
 If you pass options, the provided data can be merged into
 the existing document.
 
-**Parameters**
+#### Parameters
 
--   `data` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** An object of the fields and values for the document
--   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Set behaviour options
-    -   `options.merge` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
+-   `data` **[Object][62]** An object of the fields and values for the document
+-   `options` **[Object][62]?** Set behaviour options
+    -   `options.merge` **[Boolean][67]?** Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
 
-**Examples**
+#### Examples
 
 ```javascript
 const todo = new Document('todos/mynewtodo');
@@ -525,7 +579,7 @@ await todo.set({
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
 
 ### delete
 
@@ -535,14 +589,14 @@ Returns a promise that resolves once the document has been
 successfully deleted from the backend (Note that it won't
 resolve while you're offline).
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
 
 ### fetch
 
 Fetches new data from firestore. Use this to manually fetch
 new data when `mode` is set to 'off'.
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = new Document('albums/splinter', 'off');
@@ -551,43 +605,43 @@ doc.fetch().then(({data}) => {
 });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Document](#document)>** 
+Returns **[Promise][68]&lt;[Document][66]>** 
 
-### fetching
+### isLoading
 
-True when a fetch is in progress.
+True when new data is being loaded.
 
-Fetches are performed in these cases:
+Loads are performed in these cases:
 
 -   When real-time updating is started
 -   When a different `ref` or `path` is set
 -   When a `query` is set or cleared
 -   When `fetch` is explicitely called
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = new Document('albums/splinter', {mode: 'off'});
-console.log(doc.fetching); 	// fetching: false
+console.log(doc.isLoading); 	// false
 doc.fetch(); 								// start fetch
-console.log(doc.fetching); 	// fetching: true
+console.log(doc.isLoading); 	// true
 await doc.ready(); 					// wait for fetch to complete
-console.log(doc.fetching); 	// fetching: false
+console.log(doc.isLoading); 	// false
 ```
 
 ```javascript
 const doc = new Document('albums/splinter');
-console.log(doc.fetching); 	// fetching: false
+console.log(doc.isLoading); 	// false
 const dispose = autorun(() => {
   console.log(doc.data);			// start observing document data
 });
-console.log(doc.fetching); 	// fetching: true
+console.log(doc.isLoading); 	// true
 ...
 dispose();										// stop observing document data
-console.log(doc.fetching); 	// fetching: false
+console.log(doc.isLoading); 	// false
 ```
 
-Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean][67]** 
 
 ### ready
 
@@ -598,7 +652,7 @@ Use this function to for instance wait for
 the initial snapshot update to complete, or to wait
 for fresh data after changing the path/ref.
 
-**Examples**
+#### Examples
 
 ```javascript
 const doc = new Document('albums/splinter', {mode: 'on'});
@@ -616,17 +670,17 @@ await doc.ready();
 console.log('data: ', doc.data);
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
+Returns **[Promise][68]&lt;void>** 
 
 ## initFirestorter
 
 Initializes `firestorter` with the firebase-app.
 
-**Parameters**
+### Parameters
 
 -   `config` **any** 
 
-**Examples**
+### Examples
 
 ```javascript
 import firebase from 'firebase';
@@ -645,3 +699,141 @@ const albums = new Collection('artists/Metallica/albums');
 const album = new Document('artists/Metallica/albums/BlackAlbum');
 ...
 ```
+
+[1]: #collection
+
+[2]: #parameters
+
+[3]: #examples
+
+[4]: #docs
+
+[5]: #examples-1
+
+[6]: #ref
+
+[7]: #examples-2
+
+[8]: #id
+
+[9]: #path
+
+[10]: #examples-3
+
+[11]: #query
+
+[12]: #examples-4
+
+[13]: #mode
+
+[14]: #active
+
+[15]: #fetch
+
+[16]: #examples-5
+
+[17]: #isloading
+
+[18]: #examples-6
+
+[19]: #ready
+
+[20]: #examples-7
+
+[21]: #add
+
+[22]: #parameters-1
+
+[23]: #examples-8
+
+[24]: #deleteall
+
+[25]: #limit
+
+[26]: #paginatetostart
+
+[27]: #paginatenext
+
+[28]: #paginateprevious
+
+[29]: #document
+
+[30]: #parameters-2
+
+[31]: #schema
+
+[32]: #data
+
+[33]: #examples-9
+
+[34]: #ref-1
+
+[35]: #examples-10
+
+[36]: #id-1
+
+[37]: #path-1
+
+[38]: #examples-11
+
+[39]: #mode-1
+
+[40]: #active-1
+
+[41]: #snapshot
+
+[42]: #createtime
+
+[43]: #updatetime
+
+[44]: #readtime
+
+[45]: #update
+
+[46]: #parameters-3
+
+[47]: #examples-12
+
+[48]: #set
+
+[49]: #parameters-4
+
+[50]: #examples-13
+
+[51]: #delete
+
+[52]: #fetch-1
+
+[53]: #examples-14
+
+[54]: #isloading-1
+
+[55]: #examples-15
+
+[56]: #ready-1
+
+[57]: #examples-16
+
+[58]: #initfirestorter
+
+[59]: #parameters-5
+
+[60]: #examples-17
+
+[61]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[62]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[63]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+
+[64]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[65]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[66]: #document
+
+[67]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[68]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[69]: #collection

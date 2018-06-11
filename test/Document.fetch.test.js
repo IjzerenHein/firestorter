@@ -32,8 +32,8 @@ test('ready', async () => {
 	expect.assertions(3);
 	const doc = new Document('artists/FooFighters');
 	doc.fetch();
-	expect(doc.fetching).toBe(true);
+	expect(doc.isLoading).toBe(true);
 	await doc.ready();
-	expect(doc.fetching).toBe(false);
+	expect(doc.isLoading).toBe(false);
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
 });

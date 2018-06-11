@@ -14,6 +14,8 @@ beforeAll(() => {
 		storageBucket: 'firestorter-tests.appspot.com',
 		messagingSenderId: '667453207099'
 	});
+	const firestore = firebase.firestore();
+	firestore.settings({ timestampsInSnapshots: true });
 
 	initFirestorter({ firebase: firebase });
 });

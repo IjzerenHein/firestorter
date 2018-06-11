@@ -76,9 +76,9 @@ import type {
  *	 collection.docs.forEach((doc) => console.log(doc));
  * });
  *
- * // Yo can use the `fetching` property to see whether a fetch
+ * // Yo can use the `isLoading` property to see whether a fetch
  * // is in progress
- * console.log(col.fetching);
+ * console.log(col.isLoading);
  */
 class Collection {
 	static EMPTY_OPTIONS = {};
@@ -432,7 +432,7 @@ class Collection {
 	}
 
 	/**
-	 * True when a fetch is in progress.
+	 * True when new data is being loaded.
 	 *
 	 * Fetches are performed in these cases:
 	 *
@@ -443,24 +443,35 @@ class Collection {
 	 *
 	 * @example
 	 * const col = new Collection('albums', {mode: 'off'});
-	 * console.log(col.fetching);   // fetching: false
+	 * console.log(col.isLoading);  // false
 	 * col.fetch();                 // start fetch
-	 * console.log(col.fetching);   // fetching: true
+	 * console.log(col.isLoading);  // true
 	 * await col.ready();           // wait for fetch to complete
-	 * console.log(col.fetching);   // fetching: false
+	 * console.log(col.isLoading);  // false
 	 *
 	 * @example
 	 * const col = new Collection('albums');
-	 * console.log(col.fetching);   // fetching: false
+	 * console.log(col.isLoading);  // false
 	 * const dispose = autorun(() => {
 	 *   console.log(col.docs);     // start observing collection data
 	 * });
-	 * console.log(col.fetching);   // fetching: true
+	 * console.log(col.isLoading);  // true
 	 * ...
 	 * dispose();                   // stop observing collection data
-	 * console.log(col.fetching);   // fetching: false
+	 * console.log(col.isLoading);  // false
+	 */
+	get isLoading(): boolean {
+		this._docs.get(); // access data
+		return this._fetching.get();
+	}
+
+	/**
+	 * @private
 	 */
 	get fetching(): boolean {
+		console.warn(
+			'Collection.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
+		);
 		return this._fetching.get();
 	}
 

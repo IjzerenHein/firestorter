@@ -494,9 +494,9 @@ class Document {
 	}
 
 	/**
-	 * True when a fetch is in progress.
+	 * True when new data is being loaded.
 	 *
-	 * Fetches are performed in these cases:
+	 * Loads are performed in these cases:
 	 *
 	 * - When real-time updating is started
 	 * - When a different `ref` or `path` is set
@@ -505,24 +505,35 @@ class Document {
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'off'});
-	 * console.log(doc.fetching); 	// fetching: false
+	 * console.log(doc.isLoading); 	// false
 	 * doc.fetch(); 								// start fetch
-	 * console.log(doc.fetching); 	// fetching: true
+	 * console.log(doc.isLoading); 	// true
 	 * await doc.ready(); 					// wait for fetch to complete
-	 * console.log(doc.fetching); 	// fetching: false
+	 * console.log(doc.isLoading); 	// false
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
-	 * console.log(doc.fetching); 	// fetching: false
+	 * console.log(doc.isLoading); 	// false
 	 * const dispose = autorun(() => {
 	 *   console.log(doc.data);			// start observing document data
 	 * });
-	 * console.log(doc.fetching); 	// fetching: true
+	 * console.log(doc.isLoading); 	// true
 	 * ...
 	 * dispose();										// stop observing document data
-	 * console.log(doc.fetching); 	// fetching: false
+	 * console.log(doc.isLoading); 	// false
+	 */
+	get isLoading(): boolean {
+		this._data.get(); // access data
+		return this._fetching.get();
+	}
+
+	/**
+	 * @private
 	 */
 	get fetching(): boolean {
+		console.warn(
+			'Document.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
+		);
 		return this._fetching.get();
 	}
 

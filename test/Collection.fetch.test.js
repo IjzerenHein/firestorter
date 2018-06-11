@@ -32,8 +32,8 @@ test('ready', async () => {
 	expect.assertions(3);
 	const col = new Collection('artists');
 	col.fetch();
-	expect(col.fetching).toBe(true);
+	expect(col.isLoading).toBe(true);
 	await col.ready();
-	expect(col.fetching).toBe(false);
+	expect(col.isLoading).toBe(false);
 	expect(col.docs.length).toBe(2);
 });
