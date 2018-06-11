@@ -61,7 +61,7 @@ class Document {
 		source: DocumentReference | string | (() => string | void),
 		options: any
 	) {
-		const { schema, snapshot, mode, debug, debugName, realtimeUpdating } =
+		const { schema, snapshot, mode, debug, debugName } =
 			options || Document.EMPTY_OPTIONS;
 		this._source = source;
 		this._ref = observable.box(resolveRef(source));
@@ -86,12 +86,7 @@ class Document {
 		let data = snapshot ? snapshot.data() : undefined;
 		if (data) data = this._validateSchema(data);
 		this._data = enhancedObservable(data || Document.EMPTY_OPTIONS, this);
-		if (realtimeUpdating) {
-			console.warn(
-				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
-			);
-		}
-		this._mode = observable.box(verifyMode(mode || realtimeUpdating || 'auto'));
+		this._mode = observable.box(verifyMode(mode || 'auto'));
 		this._fetching = observable.box(false);
 		this._updateSourceObserver();
 		if (mode === 'on') this._updateRealtimeUpdates();
@@ -272,22 +267,6 @@ class Document {
 			this._mode.set(mode);
 			this._updateRealtimeUpdates();
 		});
-	}
-
-	/**
-	 * @private
-	 */
-	get realtimeUpdating(): string {
-		console.warn(
-			'Document.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
-		);
-		return this.mode;
-	}
-	set realtimeUpdating(mode: string) {
-		console.warn(
-			'Document.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
-		);
-		this.mode = mode;
 	}
 
 	/**

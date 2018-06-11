@@ -20,10 +20,10 @@ firebase.initializeApp({
 initFirestorter({firebase: firebase});
 
 const store = {
-  artists: new Collection('artists'),		 // by default, realtimeUpdating is set to `auto`
+  artists: new Collection('artists'),		 // by default, mode is set to `auto`
   settings: new Collection('settings', { // permanently enable real-time updating
-  	realtimeUpdating: 'on'						   // regardless of whether the collection is being
-  }), 																	 // used or rendered.
+  	mode: 'on'						               // regardless of whether the collection
+  }), 																	 // is being used or rendered.
   albums: new Collection(),           	 // uninitialized collection
   currentUser: new Document()
   ...
@@ -35,7 +35,7 @@ export store;
 #### Artists.js
 
 When `ArtistsView` is mounted, real-time updating is automatically enabled on the `artists` collection
-because its `realtimeUpdating` property is set to `auto` (=default).
+because its `mode` property is set to `auto` (=default).
 
 ```js
 import { artists, albums } from './store';

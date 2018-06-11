@@ -114,7 +114,6 @@ class Collection {
 			query,
 			DocumentClass = Document,
 			mode,
-			realtimeUpdating,
 			limit,
 			debug,
 			debugName
@@ -131,12 +130,7 @@ class Collection {
 		this._queryRef = observable.box(undefined);
 		this._limit = observable.box(limit || undefined);
 		this._cursor = observable.box(undefined);
-		if (realtimeUpdating) {
-			console.warn(
-				'realtimeUpdating option has been deprecated and will be removed soon, please use `mode` instead'
-			);
-		}
-		this._mode = observable.box(verifyMode(mode || realtimeUpdating || 'auto'));
+		this._mode = observable.box(verifyMode(mode || 'auto'));
 		this._fetching = observable.box(false);
 		this._docs = enhancedObservable([], this);
 		this._updateRealtimeUpdates(true, true);
@@ -311,22 +305,6 @@ class Collection {
 			this._mode.set(mode);
 			this._updateRealtimeUpdates();
 		});
-	}
-
-	/**
-	 * @private
-	 */
-	get realtimeUpdating(): string {
-		console.warn(
-			'Collection.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
-		);
-		return this.mode;
-	}
-	set realtimeUpdating(mode: string) {
-		console.warn(
-			'Collection.realtimeUpdating has been deprecated and will be removed soon, please use `mode` instead'
-		);
-		this.mode = mode;
 	}
 
 	/**
