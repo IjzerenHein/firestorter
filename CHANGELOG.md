@@ -4,7 +4,7 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
-## [0.12.0] - 2018-06-11
+## [0.12.1] - 2018-06-11
 ### Changed
 - Replaced `fetching` with the `isLoading` property (better name + isLoading also causes realtime updates to become active, fixes #18)
 - Renamed `active` prop to `isActive` (active still supported but shows deprecation warning)
