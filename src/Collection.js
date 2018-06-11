@@ -320,7 +320,7 @@ class Collection {
 	 */
 	get active(): boolean {
 		console.warn(
-			'Collection.active has been deprecated and will be removed soon, use `isActive` instead'
+			'Collection.active has been renamed `isActive`, please update as the method will be removed in the near future'
 		);
 		return this.isActive;
 	}
