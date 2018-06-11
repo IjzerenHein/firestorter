@@ -6,6 +6,8 @@ import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
 
+let fetchingDeprecationWarningCount = 0;
+
 /**
  * @private
  */
@@ -531,9 +533,12 @@ class Document {
 	 * @private
 	 */
 	get fetching(): boolean {
-		console.warn(
-			'Document.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
-		);
+		if ((fetchingDeprecationWarningCount % 100) === 0) {
+			console.warn(
+				'Document.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
+			);
+		}
+		fetchingDeprecationWarningCount++;
 		return this._fetching.get();
 	}
 

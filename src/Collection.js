@@ -11,6 +11,8 @@ import type {
 	CollectionReference
 } from 'firebase/firestore';
 
+let fetchingDeprecationWarningCount = 0;
+
 /**
  * The Collection class lays at the heart of `firestorter`.
  * It represents a collection in Firestore and its queried data. It is
@@ -461,7 +463,7 @@ class Collection {
 	 * console.log(col.isLoading);  // false
 	 */
 	get isLoading(): boolean {
-		this._docs.get(); // access data
+		this._docs.length; // access data
 		return this._fetching.get();
 	}
 
@@ -469,9 +471,12 @@ class Collection {
 	 * @private
 	 */
 	get fetching(): boolean {
-		console.warn(
-			'Collection.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
-		);
+		if ((fetchingDeprecationWarningCount % 100) === 0) {
+			console.warn(
+				'Collection.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
+			);
+		}
+		fetchingDeprecationWarningCount++;
 		return this._fetching.get();
 	}
 
