@@ -4,6 +4,15 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.12.0] - 2018-06-11
+### Changed
+- Replaced `fetching` with the `isLoading` property (better name + isLoading also causes realtime updates to become active, fixes #18)
+- Renamed `active` prop to `isActive` (active still supported but shows deprecation warning)
+### Fixed
+- Fixed `Collection.add` still writing to firestore when schema didn't validate
+### Removed
+- Removed obsolete firestore snapshot fields `Document.createTime`, `Document.updateTime` and `Document.readTime`
+
 ## [0.11.1] - 2018-06-04
 ### Fixed
 - Fixed `Document.update` throwing exception when schema was used.
