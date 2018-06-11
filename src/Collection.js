@@ -13,6 +13,8 @@ import type {
 
 let fetchingDeprecationWarningCount = 0;
 
+// * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
+
 /**
  * The Collection class lays at the heart of `firestorter`.
  * It represents a collection in Firestore and its queried data. It is
@@ -48,7 +50,6 @@ let fetchingDeprecationWarningCount = 0;
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
- * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  *
@@ -94,7 +95,7 @@ class Collection {
 	_query: any;
 	_queryRef: any;
 	_queryDisposer: any;
-	_limit: any;
+	// _limit: any;
 	_activeRef: any;
 	_mode: any;
 	_fetching: any;
@@ -104,7 +105,7 @@ class Collection {
 	_observedRefCount: number;
 	_debug: boolean;
 	_debugName: ?string;
-	_cursorQuery: any;
+	// _cursor: any;
 
 	constructor(
 		source: CollectionReference | string | (() => string | void),
@@ -114,7 +115,7 @@ class Collection {
 			query,
 			DocumentClass = Document,
 			mode,
-			limit,
+			// limit,
 			debug,
 			debugName
 		} =
@@ -128,8 +129,8 @@ class Collection {
 		this._ref = observable.box(undefined);
 		this._query = query;
 		this._queryRef = observable.box(undefined);
-		this._limit = observable.box(limit || undefined);
-		this._cursor = observable.box(undefined);
+		// this._limit = observable.box(limit || undefined);
+		// this._cursor = observable.box(undefined);
 		this._mode = observable.box(verifyMode(mode || 'auto'));
 		this._fetching = observable.box(false);
 		this._docs = enhancedObservable([], this);
@@ -356,7 +357,7 @@ class Collection {
 		}
 
 		// Apply pagination cursor
-		const cursor = this._cursor.get();
+		/* const cursor = this._cursor.get();
 		if (cursor) {
 			ref = ref || collectionRef;
 			switch (cursor.type) {
@@ -372,7 +373,7 @@ class Collection {
 		if (limit) {
 			ref = ref || collectionRef;
 			ref = ref.limit(limit);
-		}
+		}*/
 		return ref;
 	}
 
@@ -573,20 +574,20 @@ class Collection {
 	/**
 	 * Limit used for query pagination.
 	 */
-	get limit(): ?number {
+	/* get limit(): ?number {
 		return this._limit.get();
 	}
 	set limit(val: ?number) {
 		this._limit.set(val || undefined);
-	}
+	}*/
 
 	/**
 	 * Paginates to the start of the collection,
 	 * resetting any pagination cursor that exists.
 	 */
-	paginateToStart() {
+	/* paginateToStart() {
 		this._cursor.set(undefined);
-	}
+	}*/
 
 	/**
 	 * Paginates to the next page. This sets the cursor
@@ -594,14 +595,14 @@ class Collection {
 	 *
 	 * @return {Boolean} False in case pagination was not possible
 	 */
-	paginateNext(): boolean {
+	/* paginateNext(): boolean {
 		if (!this.canPaginateNext) return false;
 		this._cursor.set({
 			type: 'startAfter',
 			value: this.docs[this.docs.length - 1].ref
 		});
 		return true;
-	}
+	}*/
 
 	/**
 	 * Paginates to the previous page. This sets the cursor
@@ -609,7 +610,7 @@ class Collection {
 	 *
 	 * @return {Boolean} False in case pagination was not possible
 	 */
-	paginatePrevious(): boolean {
+	/* paginatePrevious(): boolean {
 		if (!this.canPaginatePrevious) return false;
 		if (!this.docs.length) {
 			this._cursor.set(undefined);
@@ -630,7 +631,7 @@ class Collection {
 	get canPaginatePrevious(): boolean {
 		if (!this.limit) return false;
 		return this._cursor.get() ? true : false;
-	}
+	}*/
 
 	/**
 	 * Called whenever a property of this class becomes observed.
