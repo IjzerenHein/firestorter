@@ -528,7 +528,21 @@ class Collection {
 	add(data: any): Promise<Document> {
 		return new Promise((resolve, reject) => {
 			const ref = this.ref;
-			if (!ref) throw new Error('No valid collection reference');
+			if (!ref) return reject(new Error('No valid collection reference'));
+
+			// Validate schema
+			try {
+				new this._documentClass(undefined, {
+					snapshot: {
+						data: () => data
+					}
+				});
+			}
+			catch (err) {
+				return reject(err);
+			}
+
+			// Add to firestore
 			ref.add(data).then(ref => {
 				ref.get().then(snapshot => {
 					try {
