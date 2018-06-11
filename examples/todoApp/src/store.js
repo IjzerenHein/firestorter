@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from '@firebase/app';
+import '@firebase/firestore';
 import { initFirestorter, Collection } from 'firestorter';
 
 firebase.initializeApp({
@@ -10,6 +10,9 @@ firebase.initializeApp({
 	storageBucket: 'firestore-mobx-todo.appspot.com',
 	messagingSenderId: '680642766706'
 });
+
+const firestore = firebase.firestore();
+firestore.settings({ timestampsInSnapshots: true });
 
 initFirestorter({ firebase: firebase });
 

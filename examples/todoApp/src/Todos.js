@@ -63,8 +63,8 @@ const Todos = observer(class Todos extends Component {
 		}
 		const {docs, query} = todos;
 		const children = docs.map((todo) => <TodoItem key={todo.id} todo={todo} />);
-		const {fetching} = todos;
-		console.log('Todos.render, fetching: ', fetching);
+		const {isLoading} = todos;
+		console.log('Todos.render, isLoading: ', isLoading);
 		return (
 			<div style={styles.container}>
 				<div style={styles.header}>
@@ -82,7 +82,7 @@ const Todos = observer(class Todos extends Component {
 						{children}
 					</FlipMove>
 				</div>
-				{fetching ? <div style={styles.loader}><CircularProgress /></div> : undefined}
+				{isLoading ? <div style={styles.loader}><CircularProgress /></div> : undefined}
 			</div>
 		);
 	}
