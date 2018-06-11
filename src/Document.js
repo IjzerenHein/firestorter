@@ -48,9 +48,6 @@ class Document {
 	_debugName: ?string;
 	_collectionRefCount: number;
 	_observedRefCount: number;
-	_createTime: any;
-	_updateTime: any;
-	_readTime: any;
 	_data: any;
 	_mode: any;
 	_fetching: any;
@@ -71,18 +68,6 @@ class Document {
 		this._snapshot = observable.box(snapshot);
 		this._collectionRefCount = 0;
 		this._observedRefCount = 0;
-		this._createTime = enhancedObservable(
-			snapshot ? snapshot.createTime : '',
-			this
-		);
-		this._updateTime = enhancedObservable(
-			snapshot ? snapshot.updateTime : '',
-			this
-		);
-		this._readTime = enhancedObservable(
-			snapshot ? snapshot.readTime : '',
-			this
-		);
 		let data = snapshot ? snapshot.data() : undefined;
 		if (data) data = this._validateSchema(data);
 		this._data = enhancedObservable(data || Document.EMPTY_OPTIONS, this);
@@ -295,27 +280,6 @@ class Document {
 	}
 
 	/**
-	 * Time the document was created in firestore.
-	 */
-	get createTime(): string {
-		return this._readTime.get();
-	}
-
-	/**
-	 * Time the document was last updated in firestore.
-	 */
-	get updateTime(): string {
-		return this._updateTime.get();
-	}
-
-	/**
-	 * Time this document was last read from firestore.
-	 */
-	get readTime(): string {
-		return this._readTime.get();
-	}
-
-	/**
 	 * Updates one or more fields in the document.
 	 *
 	 * The update will fail if applied to a document that does
@@ -419,9 +383,6 @@ class Document {
 	_updateFromSnapshot(snapshot: DocumentSnapshot) {
 		const data = this._validateSchema(snapshot.data());
 		this._snapshot.set(snapshot);
-		this._createTime.set(snapshot.createTime);
-		this._updateTime.set(snapshot.updateTime);
-		this._readTime.set(snapshot.readTime);
 
 		if (!isEqual(data, this._data.get())) {
 			this._data.set(data);
