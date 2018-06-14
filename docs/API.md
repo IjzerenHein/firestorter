@@ -99,6 +99,7 @@ created or modified.
     -   `options.query` **([Function][60] | Query)?** See `Collection.query`
     -   `options.mode` **[String][58]?** See `Collection.mode`
     -   `options.DocumentClass` **[String][58]?** Document classes to create (must be inherited from Document)
+    -   `options.minimizeUpdates` **Bool?** Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)
     -   `options.debug` **Bool?** Enables debug logging
     -   `options.debugName` **[String][58]?** Name to use when debug logging is enabled
 

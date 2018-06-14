@@ -50,6 +50,7 @@ let fetchingDeprecationWarningCount = 0;
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
  * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
+ * @param {Bool} [options.minimizeUpdates] Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  *
@@ -95,7 +96,6 @@ class Collection {
 	_query: any;
 	_queryRef: any;
 	_queryDisposer: any;
-	// _limit: any;
 	_activeRef: any;
 	_mode: any;
 	_fetching: any;
@@ -105,6 +105,8 @@ class Collection {
 	_observedRefCount: number;
 	_debug: boolean;
 	_debugName: ?string;
+	_minimizeUpdates: boolean;
+	// _limit: any;
 	// _cursor: any;
 
 	constructor(
@@ -117,12 +119,18 @@ class Collection {
 			mode,
 			// limit,
 			debug,
-			debugName
+			debugName,
+			minimizeUpdates = false,
+			initialLocalSnapshotDetectTime = 50,
+			initialLocalSnapshotDebounceTime = 1000
 		} =
 			options || Collection.EMPTY_OPTIONS;
 		this._documentClass = DocumentClass;
 		this._debug = debug || false;
 		this._debugName = debugName;
+		this._minimizeUpdates = minimizeUpdates;
+		this._initialLocalSnapshotDetectTime = initialLocalSnapshotDetectTime;
+		this._initialLocalSnapshotDebounceTime = initialLocalSnapshotDebounceTime;
 		this._docLookup = {};
 		this._observedRefCount = 0;
 		this._source = source;
@@ -673,6 +681,35 @@ class Collection {
 	 * @private
 	 */
 	_onSnapshot(snapshot: QuerySnapshot) {
+
+		// Firestore sometimes returns multiple snapshots initially.
+		// The first one containing cached results, followed by a second
+		// snapshot which was fetched from the cloud.
+		if (this._initialLocalSnapshotDebounceTimer) {
+			clearTimeout(this._initialLocalSnapshotDebounceTimer);
+			this._initialLocalSnapshotDebounceTimer = undefined;
+			if (this._debug)
+				console.debug(
+					`${this.debugName} - cancelling initial debounced snapshot, because a newer snapshot has been received`
+				);
+		}
+		if (this._minimizeUpdates) {
+			const timeElapsed = Date.now() - this._initialLocalSnapshotStartTime;
+			this._initialLocalSnapshotStartTime = 0;
+			if ((timeElapsed >= 0) && (timeElapsed < this._initialLocalSnapshotDetectTime)) {
+				if (this._debug)
+					console.debug(
+						`${this.debugName} - local snapshot detected (${timeElapsed}ms < ${this._initialLocalSnapshotDetectTime}ms threshold), debouncing ${this._initialLocalSnapshotDebounceTime} msec...`
+					);
+				this._initialLocalSnapshotDebounceTimer = setTimeout(() => {
+					this._initialLocalSnapshotDebounceTimer = undefined;
+					this._onSnapshot(snapshot);
+				}, this._initialLocalSnapshotDebounceTime);
+				return;
+			}
+		}
+
+		// Process snapshot
 		transaction(() => {
 			if (this._debug) console.debug(`${this.debugName} - onSnapshot`);
 			this._fetching.set(false);
@@ -847,6 +884,7 @@ class Collection {
 			);
 		this._ready(false);
 		this._fetching.set(true);
+		this._initialLocalSnapshotStartTime = Date.now();
 		this._onSnapshotUnsubscribe = ref.onSnapshot(
 			snapshot => this._onSnapshot(snapshot)
 		);
