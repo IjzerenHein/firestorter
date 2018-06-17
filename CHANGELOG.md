@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.14.0] - 2018-06-17
+### Added
+- Added `Collection.minimizeUpdates` option to prevent multiple updates when starting real-time updates on a Collection. This happens when some of the query results are loally cached, causing Firestore to fire multiple `onSnapshot` events. Enabling this option causes Firestorter to skip/debounce the first local snapshot, in favor of the full result received from the cloud.
+### Fixed
+- Fixed unneccessary re-start of real-time updates on `Collection` when the query changes.
+
 ## [0.12.1] - 2018-06-11
 ### Changed
 - Replaced `fetching` with the `isLoading` property (better name + isLoading also causes realtime updates to become active, fixes #18)
