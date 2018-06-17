@@ -88,14 +88,13 @@ class Collection {
 	static EMPTY_OPTIONS = {};
 
 	_source: any;
-	_sourceDisposer: any;
+	_refDisposer: any;
 	_sourceCache: any;
 	_sourceCacheRef: any;
 	_docLookup: { [string]: Document };
 	_ref: any;
 	_query: any;
 	_queryRef: any;
-	_queryDisposer: any;
 	_activeRef: any;
 	_mode: any;
 	_fetching: any;
@@ -176,7 +175,7 @@ class Collection {
 	 */
 	get ref(): ?CollectionReference {
 		let ref = this._ref.get();
-		if (!this._sourceDisposer) {
+		if (!this._refDisposer) {
 			const newRef = this._resolveRef(this._source);
 			if (ref !== newRef) {
 				ref = newRef;
@@ -238,9 +237,9 @@ class Collection {
 			this._source = source;
 
 			// Stop any reactions
-			if (this._sourceDisposer) {
-				this._sourceDisposer();
-				this._sourceDisposer = undefined;
+			if (this._refDisposer) {
+				this._refDisposer();
+				this._refDisposer = undefined;
 			}
 
 			// Update real-time updating
@@ -279,9 +278,9 @@ class Collection {
 			this._query = query;
 
 			// Stop any reactions
-			if (this._queryDisposer) {
-				this._queryDisposer();
-				this._queryDisposer = undefined;
+			if (this._refDisposer) {
+				this._refDisposer();
+				this._refDisposer = undefined;
 			}
 
 			// Update real-time updating
@@ -791,13 +790,9 @@ class Collection {
 		// Upon de-activation, stop any observed reactions or
 		// snapshot listeners.
 		if (!newActive) {
-			if (this._sourceDisposer) {
-				this._sourceDisposer();
-				this._sourceDisposer = undefined;
-			}
-			if (this._queryDisposer) {
-				this._queryDisposer();
-				this._queryDisposer = undefined;
+			if (this._refDisposer) {
+				this._refDisposer();
+				this._refDisposer = undefined;
 			}
 			this._activeRef = undefined;
 			if (this._onSnapshotUnsubscribe) {
@@ -818,42 +813,29 @@ class Collection {
 		}
 
 		// Start listening for ref-changes
-		if (!this._sourceDisposer) {
-			let initialRef = this._ref.get();
-			this._sourceDisposer = reaction(
+		if (!this._refDisposer) {
+			let initialSourceRef = this._ref.get();
+			let initialQueryRef = this._queryRef.get();
+			this._refDisposer = reaction(
 				() => {
-					let ref = this._resolveRef(this._source);
-					if (initialRef) {
-						ref = initialRef;
-						initialRef = undefined;
+					let sourceRef = this._resolveRef(this._source);
+					let queryRef = this._resolveQuery(sourceRef, this._query);
+					if (initialSourceRef) {
+						sourceRef = initialSourceRef;
+						queryRef = initialQueryRef;
+						initialSourceRef = undefined;
+						initialQueryRef = undefined;
 					}
-					return ref;
+					return {
+						sourceRef,
+						queryRef
+					};
 				},
-				value => {
+				({sourceRef, queryRef}) => {
 					transaction(() => {
-						if (this._ref.get() !== value) {
-							this._ref.set(value);
-							this._updateRealtimeUpdates();
-						}
-					});
-				}
-			);
-		}
-		if (!this._queryDisposer) {
-			let initialRef = this._queryRef.get();
-			this._queryDisposer = reaction(
-				() => {
-					let ref = this._resolveQuery(this._ref.get(), this._query);
-					if (initialRef) {
-						ref = initialRef;
-						initialRef = undefined;
-					}
-					return ref;
-				},
-				value => {
-					transaction(() => {
-						if (this._queryRef.get() !== value) {
-							this._queryRef.set(value);
+						if ((this._ref.get() !== sourceRef) || (this._queryRef.get() !== queryRef)) {
+							this._ref.set(sourceRef);
+							this._queryRef.set(queryRef);
 							this._updateRealtimeUpdates();
 						}
 					});
