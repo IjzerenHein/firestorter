@@ -1,4 +1,5 @@
 // @flow
+let globalFirebase;
 let globalFirestore;
 
 /**
@@ -27,12 +28,22 @@ function initFirestorter(config: any) {
 			'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
 		);
 	}*/
-	globalFirestore = config.firebase.firestore();
+	globalFirebase = config.firebase;
+	globalFirestore = globalFirebase.firestore();
 	if (!globalFirestore) {
 		throw new Error(
 			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"
 		);
 	}
+}
+
+function getFirebase() {
+	if (!globalFirebase) {
+		throw new Error(
+			'No firebase reference, did you forget to call `initFirestorter({firebase: firebase})` ?'
+		);
+	}
+	return globalFirebase;
 }
 
 function getFirestore() {
@@ -55,4 +66,4 @@ function verifyMode(mode: string) {
 	}
 }
 
-export { initFirestorter, getFirestore, verifyMode };
+export { initFirestorter, getFirestore, getFirebase, verifyMode };

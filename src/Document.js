@@ -1,7 +1,7 @@
 // @flow
 import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore, verifyMode } from './init';
+import { getFirestore, getFirebase, verifyMode } from './init';
 import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
@@ -280,6 +280,45 @@ class Document {
 	}
 
 	/**
+	 * Helper function which merges data into the source
+	 * and returns the new object.
+	 *
+	 * @param {Object} data - JSON data
+	 * @param {Object} fields - JSON data that supports field-paths
+	 * @return {Object} Result
+	 */
+	static mergeUpdateData(data, fields) {
+		const res = {
+			...data
+		};
+		for (const key in fields) {
+			const val = fields[key];
+			const isDelete = val === getFirebase().firestore.FieldValue.delete();
+			const paths = key.split('.');
+			let dataVal = res;
+			for (let i = 0; i < (paths.length - 1); i++) {
+				if (dataVal[paths[i]] === undefined) {
+					if (isDelete) {
+						dataVal = undefined;
+						break;
+					}
+					dataVal[paths[i]] = {};
+				}
+				dataVal = dataVal[paths[i]];
+			}
+			if (isDelete) {
+				if (dataVal) {
+					delete dataVal[paths[paths.length - 1]];
+				}
+			}
+			else {
+				dataVal[paths[paths.length - 1]] = val;
+			}
+		}
+		return res;
+	}
+
+	/**
 	 * Updates one or more fields in the document.
 	 *
 	 * The update will fail if applied to a document that does
@@ -295,15 +334,11 @@ class Document {
 	 * });
 	 */
 	update(fields: any): Promise<void> {
+		const ref = this._ref.get();
 		if (this._schema) {
-			// Todo - investigate this deeper
-			// Todo - support fieldPath
-			this._validateSchema({
-				...this.data,
-				...fields
-			});
+			this._validateSchema(Document.mergeUpdateData(this.data, fields));
 		}
-		return this._ref.get().update(fields);
+		return ref.update(fields);
 	}
 
 	/**
@@ -327,10 +362,7 @@ class Document {
 	set(data: any, options: any): Promise<void> {
 		if (this._schema) {
 			if (options && options.merge) {
-				this._validateSchema({
-					...this.data,
-					...data
-				});
+				this._validateSchema(Document.mergeUpdateData(this.data, data));
 			} else {
 				this._validateSchema(data);
 			}

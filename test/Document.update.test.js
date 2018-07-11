@@ -1,10 +1,11 @@
-import { Document } from './init';
+import { Document, firebase } from './init';
 import { struct } from 'superstruct';
 
 const ArtistSchema = struct({
 	genre: 'string',
 	topAlbumId: 'string',
-	memberCount: 'number?'
+	memberCount: 'number?',
+	members: 'object?'
 });
 
 test('update field', async () => {
@@ -29,6 +30,45 @@ test('update field with schema', async () => {
 	});
 	await doc.fetch();
 	expect(doc.data.memberCount).toBe(3);
+});
+
+test('update field-path with schema', async () => {
+	expect.assertions(1);
+	const doc = new Document('artists/FooFighters', {
+		schema: ArtistSchema
+	});
+	await doc.fetch();
+	await doc.update({
+		'members.leadVocalist': 'Dave Grohl'
+	});
+	await doc.fetch();
+	expect(doc.data.members.leadVocalist).toBe('Dave Grohl');
+});
+
+test('delete field with schema', async () => {
+	expect.assertions(1);
+	const doc = new Document('artists/FooFighters', {
+		schema: ArtistSchema
+	});
+	await doc.fetch();
+	await doc.update({
+		memberCount: firebase.firestore.FieldValue.delete()
+	});
+	await doc.fetch();
+	expect(doc.data.memberCount).toBeUndefined();
+});
+
+test('delete field-path with schema', async () => {
+	expect.assertions(1);
+	const doc = new Document('artists/FooFighters', {
+		schema: ArtistSchema
+	});
+	await doc.fetch();
+	await doc.update({
+		'members.leadVocalist': firebase.firestore.FieldValue.delete()
+	});
+	await doc.fetch();
+	expect(doc.data.members.leadVocalist).toBeUndefined();
 });
 
 test('update field with invalid schema', async () => {
