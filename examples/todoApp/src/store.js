@@ -1,6 +1,7 @@
 import firebase from '@firebase/app';
 import '@firebase/firestore';
-import { initFirestorter, Collection } from 'firestorter';
+import { initFirestorter, Collection, Document } from 'firestorter';
+import { struct } from 'superstruct';
 
 firebase.initializeApp({
 	apiKey: 'AIzaSyBiY-6xQrji8oe5E90d1P8J8OvfIo3F6kE',
@@ -16,6 +17,20 @@ firestore.settings({ timestampsInSnapshots: true });
 
 initFirestorter({ firebase: firebase });
 
-const todos = new Collection('todos');
+class Todo extends Document {
+	constructor(source, options) {
+		super(source, {
+			...(options || {}),
+			schema: struct({
+				text: 'string',
+				finished: 'boolean?'
+			})
+		});
+	}
+}
+
+const todos = new Collection('todos', {
+	DocumentClass: Todo
+});
 
 export { todos };
