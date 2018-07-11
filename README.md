@@ -134,8 +134,8 @@ Firestorter is being built as you read this. The API is pretty stable, but more 
 * [x] Collection.ready (Promise to check whether docs are available)
 * [x] Ability to set Collection path, based on contents of a document
 * [x] Ability to set reactive query on Collection
+* [X] FieldPath notation for Document.update
 * [ ] Collection pagination (in progress)
-* [ ] FieldPath notation for Document.update
 * [ ] Sub-collections howto
 * [ ] Revise Collection.add
 * [ ] Delete all documents in a collection or query

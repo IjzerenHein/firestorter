@@ -4,6 +4,11 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.14.1] - 2018-07-11
+### Fixed
+- Fixed schema violation in `Document.update/set` when using a dotted FieldPath.
+- Fixed schema violation in `Document.update/set` when deleting fields using FieldValue.delete().
+
 ## [0.14.0] - 2018-06-17
 ### Added
 - Added `Collection.minimizeUpdates` option to prevent multiple updates when starting real-time updates on a Collection. This happens when some of the query results are loally cached, causing Firestore to fire multiple `onSnapshot` events. Enabling this option causes Firestorter to skip/debounce the first local snapshot, in favor of the full result received slightly later from the cloud.
