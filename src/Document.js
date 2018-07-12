@@ -304,6 +304,11 @@ class Document {
 					}
 					dataVal[paths[i]] = {};
 				}
+				else {
+					dataVal[paths[i]] = {
+						...dataVal[paths[i]]
+					};
+				}
 				dataVal = dataVal[paths[i]];
 			}
 			if (isDelete) {
