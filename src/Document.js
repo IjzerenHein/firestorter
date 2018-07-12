@@ -578,6 +578,7 @@ class Document {
 	 */
 	_onSnapshot(snapshot: DocumentSnapshot) {
 		transaction(() => {
+			if (this._debug) console.debug(`${this.debugName} - onSnapshot`);
 			this._fetching.set(false);
 			try {
 				this._updateFromSnapshot(snapshot);
