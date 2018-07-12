@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.14.2] - 2018-07-12
+### Fixed
+- Fixed Document not triggering a reaction after calling `Document.update` with a field-path
+### Added
+- Added debug statement to log `Document` snapshot updates
+
 ## [0.14.1] - 2018-07-11
 ### Fixed
 - Fixed schema violation in `Document.update/set` when using a dotted FieldPath.
