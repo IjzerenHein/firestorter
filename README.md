@@ -64,7 +64,7 @@ const Todos = observer(class Todos extends Component {
     return <div>
       {todos.docs.map((doc) => (
         <TodoItem
-          key={todo.id}
+          key={doc.id}
           doc={doc} />
       ))}
     </div>;
