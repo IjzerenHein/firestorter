@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "name": "todoApp-vue",
+  "productName": "todoApp-vue",
+  "description": "My exquisite Vue project",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "poi",
+    "build": "poi build",
+    "report": "poi build --bundle-report",
+    "serve": "serve dist --single",
+    "test": "tyu"
+  },
+  "author": {
+    "name": "IjzerenHein",
+    "email": "hrutjes@gmail.com"
+  },
+  "dependencies": {
+    "@firebase/app": "^0.3.3",
+    "@firebase/app-types": "^0.3.2",
+    "@firebase/firestore": "^0.6.0",
+    "@firebase/firestore-types": "^0.5.0",
+    "bootstrap-vue": "^2.0.0-rc.11",
+    "firestorter": "^0.14.2",
+    "mobx": "^5.0.3",
+    "mobx-vue": "^2.0.7",
+    "normalize.css": "^7.0.0",
+    "object-assign": "^4.1.1",
+    "offline-plugin": "^4.8.0",
+    "promise-polyfill": "^6.0.2"
+  },
+  "devDependencies": {
+    "poi": "^9.0.0",
+    "poi-preset-bundle-report": "^2.0.0",
+    "poi-preset-offline": "^9.0.0",
+    "serve": "^6.1.0",
+    "tyu": "^1.0.4"
+  }
+}
