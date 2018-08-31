@@ -16,6 +16,7 @@
 	],
 	"main": "dist/firestorter.js",
 	"module": "dist/firestorter.module.js",
+	"react-native": "src/index.js",
 	"repository": "https://github.com/IjzerenHein/firestorter",
 	"author": "IjzerenHein <hrutjes@gmail.com>",
 	"license": "MIT",
