@@ -4,6 +4,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.15.0] - 2018-08-31
+- Added support for code-debugging and smaller bundles on react-native (`react-native` entry in package.json)
+- Added support for specifying a specific firebase-app to use, instead of always using the default firebase app (`initFirestorter({firebase, app})`)
+
 ## [0.14.2] - 2018-07-12
 ### Fixed
 - Fixed Document not triggering a reaction after calling `Document.update` with a field-path
