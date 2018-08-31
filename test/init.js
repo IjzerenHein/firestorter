@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
-import { initFirestorter, getFirestore, Collection, Document } from '../src';
+import { initFirestorter, getFirestore, getFirebase, getFirebaseApp, Collection, Document } from '../src';
 import { autorun, reaction, observable } from 'mobx';
 
 let firebaseApp;
@@ -17,7 +17,11 @@ beforeAll(() => {
 	const firestore = firebase.firestore();
 	firestore.settings({ timestampsInSnapshots: true });
 
-	initFirestorter({ firebase: firebase });
+	initFirestorter({ firebase: firebase, app: firebaseApp });
+
+	if(!getFirebase()) throw new Error('getFirebase');
+	if(!getFirebaseApp()) throw new Error('getFirebaseApp');
+	if(!getFirestore()) throw new Error('getFirestore');
 });
 
 afterAll(() => {

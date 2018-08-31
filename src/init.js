@@ -1,9 +1,14 @@
 // @flow
 let globalFirebase;
+let globalFirebaseApp;
 let globalFirestore;
 
 /**
  * Initializes `firestorter` with the firebase-app.
+ *
+ * @param {Object} config - Configuration options
+ * @param {Firebase} config.firebase - Firebase reference
+ * @param {String|FirebaseApp} [config.app] - FirebaseApp to use (when omitted the default app is used)
  *
  * @example
  * import firebase from 'firebase';
@@ -29,7 +34,8 @@ function initFirestorter(config: any) {
 		);
 	}*/
 	globalFirebase = config.firebase;
-	globalFirestore = globalFirebase.firestore();
+	globalFirebaseApp = config.app ? ((typeof config.app === 'string') ? globalFirebase.app(config.app) : config.app) : globalFirebase.app();
+	globalFirestore = globalFirebaseApp.firestore();
 	if (!globalFirestore) {
 		throw new Error(
 			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"
@@ -40,16 +46,25 @@ function initFirestorter(config: any) {
 function getFirebase() {
 	if (!globalFirebase) {
 		throw new Error(
-			'No firebase reference, did you forget to call `initFirestorter({firebase: firebase})` ?'
+			'No firebase reference, did you forget to call `initFirestorter` ?'
 		);
 	}
 	return globalFirebase;
 }
 
+function getFirebaseApp() {
+	if (!globalFirebaseApp) {
+		throw new Error(
+			'No firebase app, did you forget to call `initFirestorter` ?'
+		);
+	}
+	return globalFirebaseApp;
+}
+
 function getFirestore() {
 	if (!globalFirestore) {
 		throw new Error(
-			'No firestore reference, did you forget to call `initFirestorter({firebase: firebase})` ?'
+			'No firestore reference, did you forget to call `initFirestorter` ?'
 		);
 	}
 	return globalFirestore;
@@ -66,4 +81,4 @@ function verifyMode(mode: string) {
 	}
 }
 
-export { initFirestorter, getFirestore, getFirebase, verifyMode };
+export { initFirestorter, getFirestore, getFirebase, getFirebaseApp, verifyMode };
