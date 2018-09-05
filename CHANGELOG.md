@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.15.1] - 2018-09-05
+### Added
+- Added log-message when Document snapshot failed
+### Fixed
+- Fixed schema validation error not using the `debugName` when specified to constructor
+
 ## [0.15.0] - 2018-08-31
 ### Added
 - Added support for code-debugging and smaller bundles on react-native (`react-native` entry in package.json)
