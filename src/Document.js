@@ -592,6 +592,13 @@ class Document {
 	/**
 	 * @private
 	 */
+	_onSnaphotError = (error) => {
+		console.warn(error);
+	};
+
+	/**
+	 * @private
+	 */
 	_updateRealtimeUpdates(force?: boolean) {
 		let newActive = false;
 		switch (this._mode.get()) {
@@ -623,7 +630,7 @@ class Document {
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = this._ref
 				.get()
-				.onSnapshot(snapshot => this._onSnapshot(snapshot));
+				.onSnapshot(snapshot => this._onSnapshot(snapshot), undefined, this.onSnapshotError);
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
