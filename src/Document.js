@@ -99,7 +99,7 @@ class Document {
 				'Invalid value at "' +
 					err.path +
 					'" for ' +
-					this.constructor.name +
+					(this._debugName || this.constructor.name) +
 					' with id "' +
 					this.id +
 					'": ' +
