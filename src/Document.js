@@ -418,16 +418,18 @@ class Document {
 	 * @private
 	 */
 	_updateFromSnapshot(snapshot: DocumentSnapshot) {
-		const data = this._validateSchema(snapshot.data());
+		let data = snapshot.data();
+		if (data) {
+			data = this._validateSchema(data);
+		}
+		else {
+			data = {};
+		}
 		this._snapshot.set(snapshot);
 
 		if (!isEqual(data, this._data.get())) {
 			this._data.set(data);
 		}
-
-		/* for (const key in data) {
-			this._data[key] = data[key];
-		}*/
 	}
 
 	/**
