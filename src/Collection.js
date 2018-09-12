@@ -720,6 +720,13 @@ class Collection {
 	/**
 	 * @private
 	 */
+	_onSnapshotError(error) {
+		console.warn(error);
+	}
+
+	/**
+	 * @private
+	 */
 	_updateFromSnapshot(snapshot: QuerySnapshot) {
 		const newDocs = [];
 		snapshot.docs.forEach((snapshot: DocumentSnapshot) => {
@@ -868,7 +875,8 @@ class Collection {
 		this._fetching.set(true);
 		this._initialLocalSnapshotStartTime = Date.now();
 		this._onSnapshotUnsubscribe = ref.onSnapshot(
-			snapshot => this._onSnapshot(snapshot)
+			snapshot => this._onSnapshot(snapshot),
+			err => this._onSnapshotError(err)
 		);
 	}
 

@@ -592,9 +592,9 @@ class Document {
 	/**
 	 * @private
 	 */
-	_onSnaphotError = (error) => {
+	_onSnapshotError(error) {
 		console.warn(error);
-	};
+	}
 
 	/**
 	 * @private
@@ -630,7 +630,7 @@ class Document {
 			if (this._onSnapshotUnsubscribe) this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = this._ref
 				.get()
-				.onSnapshot(snapshot => this._onSnapshot(snapshot), undefined, this.onSnapshotError);
+				.onSnapshot(snapshot => this._onSnapshot(snapshot), err => this._onSnapshotError(err));
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
