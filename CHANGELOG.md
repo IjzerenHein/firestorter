@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.15.2] - 2018-09-12
+### Added
+- Added logging of `onSnapshot` errors
+### Fixed
+- Fixed exception when fetching a Document which doesn’t exist and which has a schema defined
+
 ## [0.15.1] - 2018-09-05
 ### Added
 - Added log-message when Document snapshot failed
