@@ -4,6 +4,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.15.3] - 2018-09-13
+### Fixed
+- Fixed `lodash.isequal` not defined as a direct dependency
+
 ## [0.15.2] - 2018-09-12
 ### Added
 - Added logging of `onSnapshot` errors
