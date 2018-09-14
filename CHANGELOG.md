@@ -4,6 +4,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.15.4] - 2018-09-14
+### Fixed
+- Fixed exception when calling `.update()` on a document with a schema, that has not yet been fetched
+
 ## [0.15.3] - 2018-09-13
 ### Fixed
 - Fixed `lodash.isequal` not defined as a direct dependency
