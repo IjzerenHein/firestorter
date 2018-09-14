@@ -341,7 +341,12 @@ class Document {
 	update(fields: any): Promise<void> {
 		const ref = this._ref.get();
 		if (this._schema) {
-			this._validateSchema(Document.mergeUpdateData(this.data, fields));
+			if (!this.snapshot) {
+				console.warn(`${this.debugName} - Unable to verify schema in .update() because the document has not been fetched yet`);
+			}
+			else {
+				this._validateSchema(Document.mergeUpdateData(this.data, fields));
+			}
 		}
 		return ref.update(fields);
 	}
