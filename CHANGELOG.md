@@ -4,6 +4,13 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.16.0] - 2018-09-24
+### Added
+- Added ability to disable the Collection by returning `null` from a query function (this may break some things)
+- Added automatic removal of all documents from a Collection when it is disabled (when `path` or `ref` is cleared or query is set to `null`)
+### Changed
+- Made snapshot errors more verbose so simplify debugging
+
 ## [0.15.4] - 2018-09-14
 ### Fixed
 - Fixed exception when calling `.update()` on a document with a schema, that has not yet been fetched
