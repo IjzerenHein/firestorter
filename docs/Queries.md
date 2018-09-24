@@ -69,6 +69,33 @@ autorun(() => {
 });
 ```
 
+### Disabling the Collection from within a Query
+
+In some cases, the observed data inside the Query function indicates that the Collection should not query any data. In that case the query function may return `null` to disable the Collection.
+
+```js
+const userId = observable.box(undefined);
+const col = new Collection('todos');
+
+// Define query that selects all todos for a specific user,
+// and disables the Collection when no user is selected.
+col.query = (ref) => {
+  const userId = userId.get();
+  return userId
+  	? ref.where('userId', '==', userId)  // Get todos for specific user
+  	: null; // Disable collection when no user specified
+};
+
+...
+
+// User logs in
+userId.set('mjkhasdjk8278238223');
+
+...
+
+// User logs out
+userId.set(undefined);
+```
 
 ### Using explicit [Firestore Query](https://firebase.google.com/docs/reference/js/firebase.firestore.Query) references
 
