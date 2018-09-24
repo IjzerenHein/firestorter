@@ -721,7 +721,7 @@ class Collection {
 	 * @private
 	 */
 	_onSnapshotError(error) {
-		console.warn(error);
+		console.warn(`${this.debugName} - onSnapshotError: ${error.message}`);
 	}
 
 	/**
