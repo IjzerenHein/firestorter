@@ -851,7 +851,8 @@ class Collection {
 		}
 
 		// Resolve ref and check whether it has changed
-		const ref = this._queryRef.get() || this._ref.get();
+		const queryRef = this._queryRef.get();
+		const ref = (queryRef !== undefined) ? queryRef : this._ref.get();
 		if (this._activeRef === ref) return;
 		this._activeRef = ref;
 
