@@ -863,7 +863,14 @@ class Collection {
 		}
 
 		// Check whether any ref exists
-		if (!ref) return;
+		if (!ref) {
+			if (this._docs.length) {
+				this._updateFromSnapshot({
+					docs: []
+				});
+			}
+			return;
+		}
 
 		// Start listener
 		if (this._debug)
