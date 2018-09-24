@@ -1,7 +1,8 @@
 // @flow
 import { observable, transaction, reaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore, getFirebase, verifyMode } from './init';
+import { getFirestore, verifyMode } from './init';
+import { mergeUpdateData } from './Utils';
 import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
@@ -288,39 +289,7 @@ class Document {
 	 * @return {Object} Result
 	 */
 	static mergeUpdateData(data, fields) {
-		const res = {
-			...data
-		};
-		for (const key in fields) {
-			const val = fields[key];
-			const isDelete = val === getFirebase().firestore.FieldValue.delete();
-			const paths = key.split('.');
-			let dataVal = res;
-			for (let i = 0; i < (paths.length - 1); i++) {
-				if (dataVal[paths[i]] === undefined) {
-					if (isDelete) {
-						dataVal = undefined;
-						break;
-					}
-					dataVal[paths[i]] = {};
-				}
-				else {
-					dataVal[paths[i]] = {
-						...dataVal[paths[i]]
-					};
-				}
-				dataVal = dataVal[paths[i]];
-			}
-			if (isDelete) {
-				if (dataVal) {
-					delete dataVal[paths[paths.length - 1]];
-				}
-			}
-			else {
-				dataVal[paths[paths.length - 1]] = val;
-			}
-		}
-		return res;
+		return mergeUpdateData(data, fields);
 	}
 
 	/**
