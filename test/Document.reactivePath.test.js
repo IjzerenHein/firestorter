@@ -44,11 +44,6 @@ test('document path', () => {
 
 test('document data', async () => {
 	expect.assertions(3);
-	/*
-	Seed expected data
-	 */
-  firebase.firestore().doc('artists/FooFighters').set({topAlbumId:'TheColourAndTheShape'});
-
 	const doc = new Document('artists/FooFighters', { mode: 'off' });
 	const subDoc = new Document(
 		() => `${doc.path}/albums/${doc.data.topAlbumId}`
@@ -69,6 +64,4 @@ test('document data 2', async () => {
 	expect(subDoc.isActive).toBe(false);
 	await doc.ready();
 	expect(subDoc.path).toBe('artists/FooFighters/albums/TheColourAndTheShape');
-
-  firebase.firestore().doc('artists/FooFighters').delete();//drop seed
 });

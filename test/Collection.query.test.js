@@ -55,12 +55,6 @@ test('reset', () => {
 test('fetch', async () => {
 	expect.assertions(2);
 
-	/*
-  Seed expected data
-   */
-  firebase.firestore().doc('artists/TheOffspring').set({genre:'punk'});
-  firebase.firestore().doc('artists/FooFighters').set({genre:'rock'});
-
 	const col = new Collection('artists', {
 		query: (ref) => ref.where('genre', '==', 'punk')
 	});
@@ -92,12 +86,6 @@ test('fetch 2', async () => {
 
 test('reset & fetch', async () => {
 	expect.assertions(2);
-
-  /*
-  Seed expected data
-   */
-  firebase.firestore().doc('artists/TheOffspring').set({genre:'punk'});
-  firebase.firestore().doc('artists/FooFighters').set({genre:'rock'});
 
 	const ref = firebase.firestore().collection('artists');
 	const query = ref.where('genre', '==', 'punk');
@@ -152,7 +140,4 @@ test('ref change', async () => {
 	col.path = 'artists';
 	await col.fetch();
 	expect(col.docs.length).toBe(1);
-
-  firebase.firestore().doc('artists/TheOffspring').delete();
-  firebase.firestore().doc('artists/FooFighters').delete();
 });

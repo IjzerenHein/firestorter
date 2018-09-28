@@ -12,12 +12,6 @@ test('no ref fail', async () => {
 
 test('fetch', async () => {
 	expect.assertions(1);
-
-  /*
-  Seed expected data
-   */
-  firebase.firestore().doc('artists/FooFighters').set({topAlbumId:'TheColourAndTheShape'});
-
 	const doc = new Document('artists/FooFighters');
 	await doc.fetch();
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');

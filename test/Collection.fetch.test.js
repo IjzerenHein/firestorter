@@ -12,12 +12,6 @@ test('no ref fail', async () => {
 
 test('fetch', async () => {
 	expect.assertions(1);
-  /*
-  Seed expected data
-   */
-  firebase.firestore().doc('artists/TheOffspring').set({genre:'punk'});
-  firebase.firestore().doc('artists/FooFighters').set({genre:'rock'});
-
 	const col = new Collection('artists');
 	await col.fetch();
 	expect(col.docs.length).toBe(2);
