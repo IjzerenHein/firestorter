@@ -4,6 +4,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [0.16.1] - 2018-09-28
+### Fixed
+- Fixed schema validation in `Document.update` or `Document.set` sometimes failed, when data document data contained arrays or sub-objects
+
 ## [0.16.0] - 2018-09-24
 ### Added
 - Added ability to disable the Collection by returning `null` from a query function (this may break some things)
