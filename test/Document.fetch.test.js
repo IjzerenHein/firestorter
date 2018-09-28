@@ -1,4 +1,4 @@
-import { Document } from './init';
+import { Document, firebase } from './init';
 
 test('no ref fail', async () => {
 	expect.assertions(1);
@@ -12,6 +12,12 @@ test('no ref fail', async () => {
 
 test('fetch', async () => {
 	expect.assertions(1);
+
+  /*
+  Seed expected data
+   */
+  firebase.firestore().doc('artists/FooFighters').set({topAlbumId:'TheColourAndTheShape'});
+
 	const doc = new Document('artists/FooFighters');
 	await doc.fetch();
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
@@ -30,6 +36,11 @@ test('already in progress', async () => {
 
 test('ready', async () => {
 	expect.assertions(3);
+  /*
+  Seed expected data
+   */
+  firebase.firestore().doc('artists/FooFighters').set({topAlbumId:'TheColourAndTheShape'});
+
 	const doc = new Document('artists/FooFighters');
 	doc.fetch();
 	expect(doc.isLoading).toBe(true);
