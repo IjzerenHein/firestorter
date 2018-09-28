@@ -1,5 +1,5 @@
 // @flow
-import { observable, transaction, reaction } from 'mobx';
+import { observable, transaction, reaction, toJS } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, verifyMode } from './init';
 import { mergeUpdateData } from './Utils';
@@ -314,7 +314,12 @@ class Document {
 				console.warn(`${this.debugName} - Unable to verify schema in .update() because the document has not been fetched yet`);
 			}
 			else {
-				this._validateSchema(Document.mergeUpdateData(this.data, fields));
+				try {
+					this._validateSchema(mergeUpdateData(toJS(this.data), fields));
+				}
+				catch (err) {
+					return Promise.reject(err);
+				}
 			}
 		}
 		return ref.update(fields);
@@ -340,10 +345,15 @@ class Document {
 	 */
 	set(data: any, options: any): Promise<void> {
 		if (this._schema) {
-			if (options && options.merge) {
-				this._validateSchema(Document.mergeUpdateData(this.data, data));
-			} else {
-				this._validateSchema(data);
+			try {
+				if (options && options.merge) {
+					this._validateSchema(mergeUpdateData(toJS(this.data), data));
+				} else {
+					this._validateSchema(data);
+				}
+			}
+			catch (err) {
+				return Promise.reject(err);
 			}
 		}
 		return this._ref.get().set(data, options);
