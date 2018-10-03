@@ -1,0 +1,21 @@
+{
+	"artists": {
+		"TheOffspring": {
+			"genre": "punk",
+			"topAlbumId": "Smash"
+		},
+		"FooFighters": {
+			"genre": "rock",
+			"topAlbumId": "TheColourAndTheShape",
+			"memberCount": 4,
+			"members": {
+				"leadVocalist": "Dave Grohl"
+			}
+		}
+	},
+	"artists2": {},
+	"artists.FooFighters.albums.TheColourAndTheShape": {
+		"name": "The colour and shape",
+		"year": 1977
+	}
+}
