@@ -38,18 +38,19 @@
 		"mobx": "^4.1.0"
 	},
 	"devDependencies": {
+		"@firebase/app-types": "^0.3.2",
 		"@release-notes/cli": "^0.3.0",
-		"babel-eslint": "^8.0.1",
+		"babel-eslint": "^10.0.1",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
 		"babel-preset-es2015-rollup": "^3.0.0",
-		"codecov": "^3.0.2",
-		"documentation": "^8.0.0",
-		"eslint": "^4.19.1",
-		"eslint-plugin-flowtype": "^2.49.3",
-		"eslint-plugin-jest": "^21.17.0",
-		"firebase": "^5.0.4",
-		"flow-bin": "^0.74.0",
-		"jest": "^23.1.0",
+		"codecov": "^3.1.0",
+		"documentation": "^8.1.2",
+		"eslint": "^5.6.1",
+		"eslint-plugin-flowtype": "^2.50.3",
+		"eslint-plugin-jest": "^21.24.1",
+		"firebase": "^5.5.2",
+		"flow-bin": "^0.82.0",
+		"jest": "^23.6.0",
 		"mobx": "^5.0.2",
 		"rollup": "^0.57.1",
 		"rollup-plugin-babel": "^3.0.3",
@@ -57,6 +58,6 @@
 		"rollup-plugin-filesize": "^1.5.0",
 		"rollup-plugin-node-resolve": "^3.3.0",
 		"rollup-plugin-peer-deps-external": "^2.1.0",
-		"superstruct": "^0.5.4"
+		"superstruct": "^0.6.0"
 	}
 }
