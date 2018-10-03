@@ -1,4 +1,4 @@
-import { Document, Collection, observable } from './init';
+import { Document, Collection, observable, firebase } from './init';
 
 test('no path', () => {
 	const doc = new Document(() => undefined);

@@ -54,6 +54,7 @@ test('reset', () => {
 
 test('fetch', async () => {
 	expect.assertions(2);
+
 	const col = new Collection('artists', {
 		query: (ref) => ref.where('genre', '==', 'punk')
 	});
@@ -85,9 +86,10 @@ test('fetch 2', async () => {
 
 test('reset & fetch', async () => {
 	expect.assertions(2);
+
 	const ref = firebase.firestore().collection('artists');
 	const query = ref.where('genre', '==', 'punk');
-	const col = new Collection(ref, {
+	const col = new Collection('artists', {
 		query: query,
 		mode: 'off'
 	});
@@ -100,6 +102,7 @@ test('reset & fetch', async () => {
 
 test('re-fetch', async () => {
 	expect.assertions(5);
+
 	const col = new Collection('artists');
 	col.query = col.ref.where('genre', '==', 'punk');
 	expect(col.docs.length).toBe(0);

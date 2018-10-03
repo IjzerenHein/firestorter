@@ -1,4 +1,4 @@
-import { Collection } from './init';
+import { Collection, firebase } from './init';
 
 test('no ref fail', async () => {
 	expect.assertions(1);

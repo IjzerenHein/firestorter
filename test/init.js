@@ -17,6 +17,12 @@ beforeAll(() => {
 	if(!getFirebase()) throw new Error('getFirebase');
 	if(!getFirebaseApp()) throw new Error('getFirebaseApp');
 	if(!getFirestore()) throw new Error('getFirestore');
+
+  /*
+  Seed expected data
+   */
+  firebase.firestore().doc('artists/TheOffspring').set({genre:'punk',topAlbumId:'Smash'});
+  firebase.firestore().doc('artists/FooFighters').set({genre:'rock',topAlbumId:'TheColourAndTheShape'});
 });
 
 afterAll(() => {
