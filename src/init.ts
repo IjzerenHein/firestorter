@@ -1,7 +1,9 @@
-// @flow
-let globalFirebase;
-let globalFirebaseApp;
-let globalFirestore;
+import { FirebaseApp, FirebaseNamespace } from "@firebase/app-types";
+import { FirebaseFirestore } from "@firebase/firestore-types";
+
+let globalFirebase: FirebaseNamespace;
+let globalFirebaseApp: FirebaseApp;
+let globalFirestore: FirebaseFirestore;
 
 /**
  * Initializes `firestorter` with the firebase-app.
@@ -27,15 +29,22 @@ let globalFirestore;
  * const album = new Document('artists/Metallica/albums/BlackAlbum');
  * ...
  */
-function initFirestorter(config: any) {
-	/* if (globalFirestore) {
+function initFirestorter(config: {
+	firebase: FirebaseNamespace;
+	app: string | FirebaseApp;
+}): void {
+	if (globalFirestore) {
 		throw new Error(
-			'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
+			"Firestorter already initialized, did you accidentally call `initFirestorter()` again?"
 		);
-	}*/
+	}
 	globalFirebase = config.firebase;
-	globalFirebaseApp = config.app ? ((typeof config.app === 'string') ? globalFirebase.app(config.app) : config.app) : globalFirebase.app();
-	globalFirestore = globalFirebaseApp.firestore();
+	globalFirebaseApp = config.app
+		? typeof config.app === "string"
+			? globalFirebase.app(config.app)
+			: config.app
+		: globalFirebase.app();
+	globalFirestore = (<any>globalFirebaseApp).firestore();
 	if (!globalFirestore) {
 		throw new Error(
 			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"
@@ -43,42 +52,31 @@ function initFirestorter(config: any) {
 	}
 }
 
-function getFirebase() {
+function getFirebase(): FirebaseNamespace {
 	if (!globalFirebase) {
 		throw new Error(
-			'No firebase reference, did you forget to call `initFirestorter` ?'
+			"No firebase reference, did you forget to call `initFirestorter` ?"
 		);
 	}
 	return globalFirebase;
 }
 
-function getFirebaseApp() {
+function getFirebaseApp(): FirebaseApp {
 	if (!globalFirebaseApp) {
 		throw new Error(
-			'No firebase app, did you forget to call `initFirestorter` ?'
+			"No firebase app, did you forget to call `initFirestorter` ?"
 		);
 	}
 	return globalFirebaseApp;
 }
 
-function getFirestore() {
+function getFirestore(): FirebaseFirestore {
 	if (!globalFirestore) {
 		throw new Error(
-			'No firestore reference, did you forget to call `initFirestorter` ?'
+			"No firestore reference, did you forget to call `initFirestorter` ?"
 		);
 	}
 	return globalFirestore;
 }
 
-function verifyMode(mode: string) {
-	switch (mode) {
-		case 'auto':
-		case 'off':
-		case 'on':
-			return mode;
-		default:
-			throw new Error('Invalid mode mode: ' + mode);
-	}
-}
-
-export { initFirestorter, getFirestore, getFirebase, getFirebaseApp, verifyMode };
+export { initFirestorter, getFirestore, getFirebase, getFirebaseApp };

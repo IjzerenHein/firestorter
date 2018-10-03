@@ -25,8 +25,9 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "rollup -c",
-		"lint": "eslint src",
+		"build": "tsc",
+		"lint": "tslint -p tsconfig.json",
+		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
 		"test": "node ./test/seedSampleData.js && jest",
 		"cov": "jest --coverage",
 		"doc": "documentation build src/** -f md > ./docs/API.md"
@@ -39,25 +40,22 @@
 	},
 	"devDependencies": {
 		"@firebase/app-types": "^0.3.2",
+		"@firebase/firestore-types": "^0.7.0",
 		"@release-notes/cli": "^0.3.0",
+		"@types/jest": "^23.3.2",
 		"babel-eslint": "^10.0.1",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
 		"babel-preset-es2015-rollup": "^3.0.0",
 		"codecov": "^3.1.0",
 		"documentation": "^8.1.2",
-		"eslint": "^5.6.1",
-		"eslint-plugin-flowtype": "^2.50.3",
-		"eslint-plugin-jest": "^21.24.1",
 		"firebase": "^5.5.2",
-		"flow-bin": "^0.82.0",
 		"jest": "^23.6.0",
 		"mobx": "^5.0.2",
-		"rollup": "^0.57.1",
-		"rollup-plugin-babel": "^3.0.3",
-		"rollup-plugin-commonjs": "^9.1.0",
-		"rollup-plugin-filesize": "^1.5.0",
-		"rollup-plugin-node-resolve": "^3.3.0",
-		"rollup-plugin-peer-deps-external": "^2.1.0",
-		"superstruct": "^0.6.0"
+		"prettier": "^1.14.3",
+		"superstruct": "^0.6.0",
+		"ts-jest": "^23.10.3",
+		"tslint": "^5.11.0",
+		"tslint-config-prettier": "^1.15.0",
+		"typescript": "^3.1.1"
 	}
 }

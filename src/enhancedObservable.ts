@@ -1,5 +1,4 @@
-// @flow
-import { observable, getAtom, _isComputingDerivation } from 'mobx';
+import { _isComputingDerivation, getAtom, observable } from "mobx";
 
 /**
  * @private
@@ -10,13 +9,11 @@ import { observable, getAtom, _isComputingDerivation } from 'mobx';
  * needs to be enabled on it.
  */
 function enhancedObservable(data: any, delegate: any): any {
-	const o = Array.isArray(data)
-		? observable.array(data)
-		: observable.box(data);
+	const o = Array.isArray(data) ? observable.array(data) : observable.box(data);
 
 	// Hook into the MobX observable and track
 	// Whether any Component is observing this observable.
-	const atom = getAtom(o);
+	const atom: any = getAtom(o);
 	const onBecomeUnobserved = atom.onBecomeUnobserved;
 	const reportObserved = atom.reportObserved;
 	let isObserved = false;
