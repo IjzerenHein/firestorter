@@ -27,7 +27,7 @@
 	"scripts": {
 		"build": "rollup -c",
 		"lint": "eslint src",
-		"test": "jest",
+		"test": "node ./test/seedSampleData.js && jest",
 		"cov": "jest --coverage",
 		"doc": "documentation build src/** -f md > ./docs/API.md"
 	},

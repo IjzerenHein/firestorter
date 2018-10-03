@@ -14,8 +14,10 @@
 		}
 	},
 	"artists2": {},
-	"artists.FooFighters.albums.TheColourAndTheShape": {
-		"name": "The colour and shape",
-		"year": 1977
+	"artists/FooFighters/albums": {
+		"TheColourAndTheShape": {
+			"name": "The colour and shape",
+			"year": 1977
+		}
 	}
 }
