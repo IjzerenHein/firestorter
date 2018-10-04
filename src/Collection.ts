@@ -762,7 +762,7 @@ class Collection implements IEnhancedObservableDelegate {
 					doc.updateFromCollectionSnapshot(docSnapshot);
 				} else {
 					doc = new this.documentClass(docSnapshot.ref, {
-						snapshot
+						snapshot: docSnapshot
 					});
 					this.docLookup[doc.id] = doc;
 				}

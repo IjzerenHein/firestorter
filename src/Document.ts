@@ -2,7 +2,7 @@ import { DocumentReference, DocumentSnapshot } from "firebase/firestore";
 import { observable, reaction, toJS, transaction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
-import isEqual from "lodash.isequal";
+import * as isEqual from "lodash.isequal";
 import { mergeUpdateData, verifyMode } from "./Utils";
 import {
 	DocumentSource,
