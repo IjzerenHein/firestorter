@@ -8,5 +8,9 @@ script:
   - yarn build
   - yarn doc
 deploy:
-  - yarn codecov
-  - yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
+  provider: script
+  script:
+    - yarn codecov
+    - yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
+  on:
+    branch: master
