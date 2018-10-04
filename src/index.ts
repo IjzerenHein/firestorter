@@ -1,6 +1,5 @@
 import Collection from "./Collection";
 import Document from "./Document";
-import { Mode } from "./Utils";
 import {
 	getFirebase,
 	getFirebaseApp,
@@ -16,14 +15,12 @@ export {
 	getFirestore,
 	getFirebase,
 	getFirebaseApp,
-	Mode,
 	mergeUpdateData
 };
 
 export default {
 	Collection,
 	Document,
-	Mode,
 	getFirebase,
 	getFirebaseApp,
 	getFirestore,

@@ -44,7 +44,7 @@ function initFirestorter(config: {
 			? globalFirebase.app(config.app)
 			: config.app
 		: globalFirebase.app();
-	globalFirestore = (<any>globalFirebaseApp).firestore();
+	globalFirestore = (globalFirebaseApp as any).firestore();
 	if (!globalFirestore) {
 		throw new Error(
 			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"

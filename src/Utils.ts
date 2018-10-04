@@ -1,4 +1,5 @@
 import { getFirebase } from "./init";
+import { Mode } from "./Types";
 
 /**
  * Helper function which merges data into the source
@@ -13,39 +14,36 @@ function mergeUpdateData(data: object, fields: object) {
 		...data
 	};
 	for (const key in fields) {
-		const val = fields[key];
-		const isDelete = val === (<any>getFirebase()).firestore.FieldValue.delete();
-		const paths = key.split(".");
-		let dataVal = res;
-		for (let i = 0; i < paths.length - 1; i++) {
-			if (dataVal[paths[i]] === undefined) {
-				if (isDelete) {
-					dataVal = undefined;
-					break;
+		if (fields.hasOwnProperty(key)) {
+			const val = fields[key];
+			const isDelete =
+				val === (getFirebase() as any).firestore.FieldValue.delete();
+			const paths = key.split(".");
+			let dataVal = res;
+			for (let i = 0; i < paths.length - 1; i++) {
+				if (dataVal[paths[i]] === undefined) {
+					if (isDelete) {
+						dataVal = undefined;
+						break;
+					}
+					dataVal[paths[i]] = {};
+				} else {
+					dataVal[paths[i]] = {
+						...dataVal[paths[i]]
+					};
 				}
-				dataVal[paths[i]] = {};
+				dataVal = dataVal[paths[i]];
+			}
+			if (isDelete) {
+				if (dataVal) {
+					delete dataVal[paths[paths.length - 1]];
+				}
 			} else {
-				dataVal[paths[i]] = {
-					...dataVal[paths[i]]
-				};
+				dataVal[paths[paths.length - 1]] = val;
 			}
-			dataVal = dataVal[paths[i]];
-		}
-		if (isDelete) {
-			if (dataVal) {
-				delete dataVal[paths[paths.length - 1]];
-			}
-		} else {
-			dataVal[paths[paths.length - 1]] = val;
 		}
 	}
 	return res;
-}
-
-enum Mode {
-	Auto = "auto",
-	On = "on",
-	Off = "off"
 }
 
 function verifyMode(mode: Mode): Mode {
@@ -59,4 +57,4 @@ function verifyMode(mode: Mode): Mode {
 	}
 }
 
-export { mergeUpdateData, Mode, verifyMode };
+export { mergeUpdateData, verifyMode };

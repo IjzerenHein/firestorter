@@ -1,16 +1,22 @@
-import { observable, reaction, transaction } from "mobx";
+import { IObservableArray, observable, reaction, transaction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
-import { Mode, verifyMode } from "./Utils";
+import { verifyMode } from "./Utils";
 import {
 	CollectionReference,
 	DocumentSnapshot,
 	Query,
 	QuerySnapshot
 } from "firebase/firestore";
+import {
+	CollectionQuery,
+	CollectionSource,
+	ICollectionDocument,
+	ICollectionDocumentConstructor,
+	IEnhancedObservableDelegate,
+	Mode
+} from "./Types";
 import Document from "./Document";
-
-let fetchingDeprecationWarningCount = 0;
 
 // * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
 
@@ -76,40 +82,38 @@ let fetchingDeprecationWarningCount = 0;
  * // In manual mode, just call `fetch` explicitely
  * const col = new Collection('albums');
  * col.fetch().then((collection) => {
- *	 collection.docs.forEach((doc) => console.log(doc));
+ *   collection.docs.forEach((doc) => console.log(doc));
  * });
  *
  * // Yo can use the `isLoading` property to see whether a fetch
  * // is in progress
  * console.log(col.isLoading);
  */
-class Collection {
-	static EMPTY_OPTIONS = {};
-
-	private _source: any;
-	private _refDisposer: any;
-	private _sourceCache: any;
-	private _sourceCacheRef: any;
-	private _docLookup: { [name: string]: Document };
-	private _ref: any;
-	private _query: any;
-	private _queryRef: any;
-	private _activeRef: any;
-	private _mode: any;
-	private _fetching: any;
-	private _docs: any;
-	private _documentClass: any;
-	private _onSnapshotUnsubscribe: any;
-	private _observedRefCount: number;
-	private _debug: boolean;
-	private _debugName?: string;
-	private _minimizeUpdates: boolean;
-	private _initialLocalSnapshotDetectTime?: number;
-	private _initialLocalSnapshotDebounceTime?: number;
-	private _readyPromise?: Promise<void>;
-	private _readyResolve?: () => void;
-	private _initialLocalSnapshotStartTime?: number;
-	private _initialLocalSnapshotDebounceTimer?: number;
+class Collection implements IEnhancedObservableDelegate {
+	private sourceInput: CollectionSource;
+	private sourceCache: CollectionSource;
+	private sourceCacheRef: CollectionReference;
+	private refDisposerFn: () => void;
+	private refObservable: any;
+	private queryInput: CollectionQuery;
+	private queryRefObservable: any;
+	private onSnapshotRefCache?: Query;
+	private modeObservable: any;
+	private isLoadingObservable: any;
+	private docLookup: { [name: string]: ICollectionDocument };
+	private docsObservable: IObservableArray;
+	private documentClass: ICollectionDocumentConstructor;
+	private onSnapshotUnsubscribe: () => void;
+	private observedRefCount: number;
+	private isVerbose: boolean;
+	private debugInstanceName?: string;
+	private isMinimizingUpdates: boolean;
+	private initialLocalSnapshotDetectTime?: number;
+	private initialLocalSnapshotDebounceTime?: number;
+	private readyPromise?: Promise<void>;
+	private readyResolveFn?: () => void;
+	private initialLocalSnapshotStartTime?: number;
+	private initialLocalSnapshotDebounceTimer?: number;
 	// private _limit: any;
 	// private _cursor: any;
 
@@ -120,7 +124,7 @@ class Collection {
 			| (() => CollectionReference | string | undefined),
 		options: {
 			query?: Query | (() => Query | undefined);
-			DocumentClass?: Document;
+			DocumentClass?: ICollectionDocumentConstructor;
 			mode?: Mode;
 			debug?: boolean;
 			debugName?: string;
@@ -140,23 +144,23 @@ class Collection {
 			initialLocalSnapshotDetectTime = 50,
 			initialLocalSnapshotDebounceTime = 1000
 		} = options;
-		this._documentClass = DocumentClass;
-		this._debug = debug || false;
-		this._debugName = debugName;
-		this._minimizeUpdates = minimizeUpdates;
-		this._initialLocalSnapshotDetectTime = initialLocalSnapshotDetectTime;
-		this._initialLocalSnapshotDebounceTime = initialLocalSnapshotDebounceTime;
-		this._docLookup = {};
-		this._observedRefCount = 0;
-		this._source = source;
-		this._ref = observable.box(undefined);
-		this._query = query;
-		this._queryRef = observable.box(undefined);
+		this.documentClass = DocumentClass;
+		this.isVerbose = debug || false;
+		this.debugInstanceName = debugName;
+		this.isMinimizingUpdates = minimizeUpdates;
+		this.initialLocalSnapshotDetectTime = initialLocalSnapshotDetectTime;
+		this.initialLocalSnapshotDebounceTime = initialLocalSnapshotDebounceTime;
+		this.docLookup = {};
+		this.observedRefCount = 0;
+		this.sourceInput = source;
+		this.refObservable = observable.box(undefined);
+		this.queryInput = query;
+		this.queryRefObservable = observable.box(undefined);
 		// this._limit = observable.box(limit || undefined);
 		// this._cursor = observable.box(undefined);
-		this._mode = observable.box(verifyMode(mode || Mode.Auto));
-		this._fetching = observable.box(false);
-		this._docs = enhancedObservable([], this);
+		this.modeObservable = observable.box(verifyMode(mode || Mode.Auto));
+		this.isLoadingObservable = observable.box(false);
+		this.docsObservable = enhancedObservable([], this);
 		this._updateRealtimeUpdates(true, true);
 	}
 
@@ -169,8 +173,8 @@ class Collection {
 	 *   console.log(doc.data);
 	 * });
 	 */
-	public get docs(): Document[] {
-		return this._docs;
+	public get docs(): ICollectionDocument[] {
+		return this.docsObservable;
 	}
 
 	/**
@@ -190,12 +194,12 @@ class Collection {
 	 * col.ref = firebase.firestore().collection('albums/americana/tracks');
 	 */
 	public get ref(): CollectionReference | undefined {
-		let ref = this._ref.get();
-		if (!this._refDisposer) {
-			const newRef = this._resolveRef(this._source);
+		let ref = this.refObservable.get();
+		if (!this.refDisposerFn) {
+			const newRef = this._resolveRef(this.sourceInput);
 			if (ref !== newRef) {
 				ref = newRef;
-				this._ref.set(newRef);
+				this.refObservable.set(newRef);
 			}
 		}
 		return ref;
@@ -246,20 +250,20 @@ class Collection {
 	/**
 	 * @private
 	 */
-	public get source(): any {
-		return this._source.get();
+	public get source(): CollectionSource {
+		return this.sourceInput;
 	}
-	public set source(source: any) {
-		if (this._source === source) {
+	public set source(source: CollectionSource) {
+		if (this.sourceInput === source) {
 			return;
 		}
 		transaction(() => {
-			this._source = source;
+			this.sourceInput = source;
 
 			// Stop any reactions
-			if (this._refDisposer) {
-				this._refDisposer();
-				this._refDisposer = undefined;
+			if (this.refDisposerFn) {
+				this.refDisposerFn();
+				this.refDisposerFn = undefined;
 			}
 
 			// Update real-time updating
@@ -289,22 +293,20 @@ class Collection {
 	 * // Clear the query, will cause whole collection to be fetched
 	 * todos.query = undefined;
 	 */
-	public get query(): ((CollectionReference) => Query) | Query | undefined {
-		return this._query;
+	public get query(): CollectionQuery {
+		return this.queryInput;
 	}
-	public set query(
-		query: ((CollectionReference) => Query) | Query | undefined
-	) {
-		if (this._query === query) {
+	public set query(query: CollectionQuery) {
+		if (this.queryInput === query) {
 			return;
 		}
 		transaction(() => {
-			this._query = query;
+			this.queryInput = query;
 
 			// Stop any reactions
-			if (this._refDisposer) {
-				this._refDisposer();
-				this._refDisposer = undefined;
+			if (this.refDisposerFn) {
+				this.refDisposerFn();
+				this.refDisposerFn = undefined;
 			}
 
 			// Update real-time updating
@@ -316,7 +318,7 @@ class Collection {
 	 * @private
 	 */
 	public get queryRef(): Query | undefined {
-		return this._queryRef.get();
+		return this.queryRefObservable.get();
 	}
 
 	/**
@@ -328,15 +330,15 @@ class Collection {
 	 * - "on" (real-time updating is permanently enabled)
 	 */
 	public get mode(): Mode {
-		return this._mode.get();
+		return this.modeObservable.get();
 	}
 	public set mode(mode: Mode) {
-		if (this._mode.get() === mode) {
+		if (this.modeObservable.get() === mode) {
 			return;
 		}
 		verifyMode(mode);
 		transaction(() => {
-			this._mode.set(mode);
+			this.modeObservable.set(mode);
 			this._updateRealtimeUpdates();
 		});
 	}
@@ -346,7 +348,7 @@ class Collection {
 	 * for changes in the firestore back-end.
 	 */
 	public get isActive(): boolean {
-		return !!this._onSnapshotUnsubscribe;
+		return !!this.onSnapshotUnsubscribe;
 	}
 
 	/**
@@ -366,28 +368,28 @@ class Collection {
 					new Error("Should not call fetch when real-time updating is active")
 				);
 			}
-			if (this._fetching.get()) {
+			if (this.isLoadingObservable.get()) {
 				return reject(new Error("Fetch already in progress"));
 			}
-			const colRef = this._resolveRef(this._source);
-			const queryRef = this._resolveQuery(colRef, this._query);
+			const colRef = this._resolveRef(this.sourceInput);
+			const queryRef = this._resolveQuery(colRef, this.queryInput);
 			const ref = queryRef || colRef;
 			if (!ref) {
 				return reject(new Error("No ref, path or query set on Collection"));
 			}
 			this._ready(false);
-			this._fetching.set(true);
+			this.isLoadingObservable.set(true);
 			ref.get().then(
 				snapshot => {
 					transaction(() => {
-						this._fetching.set(false);
+						this.isLoadingObservable.set(false);
 						this._updateFromSnapshot(snapshot);
 					});
 					this._ready(true);
 					resolve(this);
 				},
 				err => {
-					this._fetching.set(false);
+					this.isLoadingObservable.set(false);
 					this._ready(true);
 					reject(err);
 				}
@@ -425,22 +427,9 @@ class Collection {
 	 * console.log(col.isLoading);  // false
 	 */
 	public get isLoading(): boolean {
-		// access data
-		this._docs.length; // tslint-disable-line
-		return this._fetching.get();
-	}
-
-	/**
-	 * @private
-	 */
-	public get fetching(): boolean {
-		if (fetchingDeprecationWarningCount % 100 === 0) {
-			console.warn(
-				"Collection.fetching has been deprecated and will be removed soon, please use `isLoading` instead"
-			);
-		}
-		fetchingDeprecationWarningCount++;
-		return this._fetching.get();
+		// tslint:disable-next-line
+		this.docsObservable.length;
+		return this.isLoadingObservable.get();
 	}
 
 	/**
@@ -466,8 +455,8 @@ class Collection {
 	 * console.log('albums: ', col.docs);
 	 */
 	public ready(): Promise<void> {
-		this._readyPromise = this._readyPromise || Promise.resolve(null);
-		return this._readyPromise;
+		this.readyPromise = this.readyPromise || Promise.resolve(null);
+		return this.readyPromise;
 	}
 
 	/**
@@ -483,7 +472,7 @@ class Collection {
 	 *   }
 	 * });
 	 */
-	public add(data: any): Promise<Document> {
+	public add(data: any): Promise<ICollectionDocument> {
 		return new Promise((resolve, reject) => {
 			const ref = this.ref;
 			if (!ref) {
@@ -492,7 +481,8 @@ class Collection {
 
 			// Validate schema
 			try {
-				new this._documentClass(undefined, {
+				// tslint:disable-next-line
+				new this.documentClass(undefined, {
 					snapshot: {
 						data: () => data
 					}
@@ -505,7 +495,7 @@ class Collection {
 			ref.add(data).then(ref2 => {
 				ref2.get().then(snapshot => {
 					try {
-						const doc = new this._documentClass(snapshot.ref, {
+						const doc = new this.documentClass(snapshot.ref, {
 							snapshot
 						});
 						resolve(doc);
@@ -535,7 +525,7 @@ class Collection {
 	 * @private
 	 */
 	public get debugName(): string {
-		return `${this._debugName || this.constructor.name} (${this.path})`;
+		return `${this.debugInstanceName || this.constructor.name} (${this.path})`;
 	}
 
 	/**
@@ -604,13 +594,13 @@ class Collection {
 	 * Called whenever a property of this class becomes observed.
 	 * @private
 	 */
-	protected addObserverRef(): number {
-		if (this._debug) {
+	public addObserverRef(): number {
+		if (this.isVerbose) {
 			console.debug(
-				`${this.debugName} - addRef (${this._observedRefCount + 1})`
+				`${this.debugName} - addRef (${this.observedRefCount + 1})`
 			);
 		}
-		const res = ++this._observedRefCount;
+		const res = ++this.observedRefCount;
 		if (res === 1) {
 			transaction(() => {
 				this._updateRealtimeUpdates();
@@ -623,13 +613,13 @@ class Collection {
 	 * Called whenever a property of this class becomes un-observed.
 	 * @private
 	 */
-	protected releaseObserverRef(): number {
-		if (this._debug) {
+	public releaseObserverRef(): number {
+		if (this.isVerbose) {
 			console.debug(
-				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
+				`${this.debugName} - releaseRef (${this.observedRefCount - 1})`
 			);
 		}
-		const res = --this._observedRefCount;
+		const res = --this.observedRefCount;
 		if (!res) {
 			transaction(() => {
 				this._updateRealtimeUpdates();
@@ -640,21 +630,21 @@ class Collection {
 
 	protected _ready(complete) {
 		if (complete) {
-			const readyResolve = this._readyResolve;
+			const readyResolve = this.readyResolveFn;
 			if (readyResolve) {
-				this._readyResolve = undefined;
+				this.readyResolveFn = undefined;
 				readyResolve();
 			}
-		} else if (!this._readyResolve) {
-			this._readyPromise = new Promise(resolve => {
-				this._readyResolve = resolve;
+		} else if (!this.readyResolveFn) {
+			this.readyPromise = new Promise(resolve => {
+				this.readyResolveFn = resolve;
 			});
 		}
 	}
 
 	protected _resolveRef(source): CollectionReference {
-		if (this._sourceCache === source) {
-			return this._sourceCacheRef;
+		if (this.sourceCache === source) {
+			return this.sourceCacheRef;
 		}
 		let ref;
 		if (typeof source === "string") {
@@ -665,8 +655,8 @@ class Collection {
 		} else {
 			ref = source;
 		}
-		this._sourceCache = source;
-		this._sourceCacheRef = ref;
+		this.sourceCache = source;
+		this.sourceCacheRef = ref;
 		return ref;
 	}
 
@@ -707,10 +697,10 @@ class Collection {
 		// Firestore sometimes returns multiple snapshots initially.
 		// The first one containing cached results, followed by a second
 		// snapshot which was fetched from the cloud.
-		if (this._initialLocalSnapshotDebounceTimer) {
-			clearTimeout(this._initialLocalSnapshotDebounceTimer);
-			this._initialLocalSnapshotDebounceTimer = undefined;
-			if (this._debug) {
+		if (this.initialLocalSnapshotDebounceTimer) {
+			clearTimeout(this.initialLocalSnapshotDebounceTimer);
+			this.initialLocalSnapshotDebounceTimer = undefined;
+			if (this.isVerbose) {
 				console.debug(
 					`${
 						this.debugName
@@ -718,36 +708,36 @@ class Collection {
 				);
 			}
 		}
-		if (this._minimizeUpdates) {
-			const timeElapsed = Date.now() - this._initialLocalSnapshotStartTime;
-			this._initialLocalSnapshotStartTime = 0;
+		if (this.isMinimizingUpdates) {
+			const timeElapsed = Date.now() - this.initialLocalSnapshotStartTime;
+			this.initialLocalSnapshotStartTime = 0;
 			if (
 				timeElapsed >= 0 &&
-				timeElapsed < this._initialLocalSnapshotDetectTime
+				timeElapsed < this.initialLocalSnapshotDetectTime
 			) {
-				if (this._debug) {
+				if (this.isVerbose) {
 					console.debug(
 						`${this.debugName} - local snapshot detected (${timeElapsed}ms < ${
-							this._initialLocalSnapshotDetectTime
+							this.initialLocalSnapshotDetectTime
 						}ms threshold), debouncing ${
-							this._initialLocalSnapshotDebounceTime
+							this.initialLocalSnapshotDebounceTime
 						} msec...`
 					);
 				}
-				this._initialLocalSnapshotDebounceTimer = setTimeout(() => {
-					this._initialLocalSnapshotDebounceTimer = undefined;
+				this.initialLocalSnapshotDebounceTimer = setTimeout(() => {
+					this.initialLocalSnapshotDebounceTimer = undefined;
 					this._onSnapshot(snapshot);
-				}, this._initialLocalSnapshotDebounceTime);
+				}, this.initialLocalSnapshotDebounceTime);
 				return;
 			}
 		}
 
 		// Process snapshot
 		transaction(() => {
-			if (this._debug) {
+			if (this.isVerbose) {
 				console.debug(`${this.debugName} - onSnapshot`);
 			}
-			this._fetching.set(false);
+			this.isLoadingObservable.set(false);
 			this._updateFromSnapshot(snapshot);
 			this._ready(true);
 		});
@@ -766,34 +756,34 @@ class Collection {
 	private _updateFromSnapshot(snapshot: QuerySnapshot): void {
 		const newDocs = [];
 		snapshot.docs.forEach((docSnapshot: DocumentSnapshot) => {
-			let doc = this._docLookup[docSnapshot.id];
+			let doc = this.docLookup[docSnapshot.id];
 			try {
 				if (doc) {
-					doc._updateFromSnapshot(docSnapshot);
+					doc.updateFromCollectionSnapshot(docSnapshot);
 				} else {
-					doc = new this._documentClass(docSnapshot.ref, {
+					doc = new this.documentClass(docSnapshot.ref, {
 						snapshot
 					});
-					this._docLookup[doc.id] = doc;
+					this.docLookup[doc.id] = doc;
 				}
-				doc._collectionRefCount++;
+				doc.addCollectionRef();
 				newDocs.push(doc);
 			} catch (err) {
 				console.error(err.message);
 			}
 		});
-		this._docs.forEach(doc => {
-			if (!--doc._collectionRefCount) {
-				delete this._docLookup[doc.id || ""];
+		this.docsObservable.forEach(doc => {
+			if (!doc.releaseCollectionRef()) {
+				delete this.docLookup[doc.id || ""];
 			}
 		});
 
-		if (this._docs.length !== newDocs.length) {
-			this._docs.replace(newDocs);
+		if (this.docsObservable.length !== newDocs.length) {
+			this.docsObservable.replace(newDocs);
 		} else {
 			for (let i = 0, n = newDocs.length; i < n; i++) {
-				if (newDocs[i] !== this._docs[i]) {
-					this._docs.replace(newDocs);
+				if (newDocs[i] !== this.docsObservable[i]) {
+					this.docsObservable.replace(newDocs);
 					break;
 				}
 			}
@@ -808,10 +798,10 @@ class Collection {
 		updateQueryRef?: boolean
 	): void {
 		let newActive = false;
-		const active = !!this._onSnapshotUnsubscribe;
-		switch (this._mode.get()) {
+		const active = !!this.onSnapshotUnsubscribe;
+		switch (this.modeObservable.get()) {
 			case Mode.Auto:
-				newActive = !!this._observedRefCount;
+				newActive = !!this.observedRefCount;
 				break;
 			case Mode.Off:
 				newActive = false;
@@ -827,32 +817,34 @@ class Collection {
 			updateQueryRef = true;
 		}
 		if (updateSourceRef) {
-			this._ref.set(this._resolveRef(this._source));
+			this.refObservable.set(this._resolveRef(this.sourceInput));
 		}
 		if (updateQueryRef) {
-			this._queryRef.set(this._resolveQuery(this._ref.get(), this._query));
+			this.queryRefObservable.set(
+				this._resolveQuery(this.refObservable.get(), this.queryInput)
+			);
 		}
 
 		// Upon de-activation, stop any observed reactions or
 		// snapshot listeners.
 		if (!newActive) {
-			if (this._refDisposer) {
-				this._refDisposer();
-				this._refDisposer = undefined;
+			if (this.refDisposerFn) {
+				this.refDisposerFn();
+				this.refDisposerFn = undefined;
 			}
-			this._activeRef = undefined;
-			if (this._onSnapshotUnsubscribe) {
-				if (this._debug) {
+			this.onSnapshotRefCache = undefined;
+			if (this.onSnapshotUnsubscribe) {
+				if (this.isVerbose) {
 					console.debug(
-						`${this.debugName} - stop (${this._mode.get()}:${
-							this._observedRefCount
+						`${this.debugName} - stop (${this.modeObservable.get()}:${
+							this.observedRefCount
 						})`
 					);
 				}
-				this._onSnapshotUnsubscribe();
-				this._onSnapshotUnsubscribe = undefined;
-				if (this._fetching.get()) {
-					this._fetching.set(false);
+				this.onSnapshotUnsubscribe();
+				this.onSnapshotUnsubscribe = undefined;
+				if (this.isLoadingObservable.get()) {
+					this.isLoadingObservable.set(false);
 				}
 				this._ready(true);
 			}
@@ -860,13 +852,13 @@ class Collection {
 		}
 
 		// Start listening for ref-changes
-		if (!this._refDisposer) {
-			let initialSourceRef = this._ref.get();
-			let initialQueryRef = this._queryRef.get();
-			this._refDisposer = reaction(
+		if (!this.refDisposerFn) {
+			let initialSourceRef = this.refObservable.get();
+			let initialQueryRef = this.queryRefObservable.get();
+			this.refDisposerFn = reaction(
 				() => {
-					let sourceRef = this._resolveRef(this._source);
-					let queryRef2 = this._resolveQuery(sourceRef, this._query);
+					let sourceRef = this._resolveRef(this.sourceInput);
+					let queryRef2 = this._resolveQuery(sourceRef, this.queryInput);
 					if (initialSourceRef) {
 						sourceRef = initialSourceRef;
 						queryRef2 = initialQueryRef;
@@ -881,11 +873,11 @@ class Collection {
 				({ sourceRef, queryRef2 }) => {
 					transaction(() => {
 						if (
-							this._ref.get() !== sourceRef ||
-							this._queryRef.get() !== queryRef2
+							this.refObservable.get() !== sourceRef ||
+							this.queryRefObservable.get() !== queryRef2
 						) {
-							this._ref.set(sourceRef);
-							this._queryRef.set(queryRef2);
+							this.refObservable.set(sourceRef);
+							this.queryRefObservable.set(queryRef2);
 							this._updateRealtimeUpdates();
 						}
 					});
@@ -894,22 +886,22 @@ class Collection {
 		}
 
 		// Resolve ref and check whether it has changed
-		const queryRef = this._queryRef.get();
-		const ref = queryRef !== undefined ? queryRef : this._ref.get();
-		if (this._activeRef === ref) {
+		const queryRef = this.queryRefObservable.get();
+		const ref = queryRef !== undefined ? queryRef : this.refObservable.get();
+		if (this.onSnapshotRefCache === ref) {
 			return;
 		}
-		this._activeRef = ref;
+		this.onSnapshotRefCache = ref;
 
 		// Stop any existing listener
-		if (this._onSnapshotUnsubscribe) {
-			this._onSnapshotUnsubscribe();
-			this._onSnapshotUnsubscribe = undefined;
+		if (this.onSnapshotUnsubscribe) {
+			this.onSnapshotUnsubscribe();
+			this.onSnapshotUnsubscribe = undefined;
 		}
 
 		// Check whether any ref exists
 		if (!ref) {
-			if (this._docs.length) {
+			if (this.docsObservable.length) {
 				this._updateFromSnapshot({
 					docs: []
 				});
@@ -918,17 +910,17 @@ class Collection {
 		}
 
 		// Start listener
-		if (this._debug) {
+		if (this.isVerbose) {
 			console.debug(
-				`${this.debugName} - ${active ? "re-" : ""}start (${this._mode.get()}:${
-					this._observedRefCount
-				})`
+				`${this.debugName} - ${
+					active ? "re-" : ""
+				}start (${this.modeObservable.get()}:${this.observedRefCount})`
 			);
 		}
 		this._ready(false);
-		this._fetching.set(true);
-		this._initialLocalSnapshotStartTime = Date.now();
-		this._onSnapshotUnsubscribe = ref.onSnapshot(
+		this.isLoadingObservable.set(true);
+		this.initialLocalSnapshotStartTime = Date.now();
+		this.onSnapshotUnsubscribe = ref.onSnapshot(
 			snapshot => this._onSnapshot(snapshot),
 			err => this._onSnapshotError(err)
 		);

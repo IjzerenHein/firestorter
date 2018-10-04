@@ -1,4 +1,5 @@
 import { _isComputingDerivation, getAtom, observable } from "mobx";
+import { IEnhancedObservableDelegate } from "./Types";
 
 /**
  * @private
@@ -8,7 +9,10 @@ import { _isComputingDerivation, getAtom, observable } from "mobx";
  * a Collection/Document is observed and real-time updating
  * needs to be enabled on it.
  */
-function enhancedObservable(data: any, delegate: any): any {
+function enhancedObservable(
+	data: any,
+	delegate: IEnhancedObservableDelegate
+): any {
 	const o = Array.isArray(data) ? observable.array(data) : observable.box(data);
 
 	// Hook into the MobX observable and track
