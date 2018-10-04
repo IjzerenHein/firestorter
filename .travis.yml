@@ -1,11 +1,12 @@
 language: node_js
 node_js:
-- '8'
+  - '8'
 install: yarn
 script:
-- yarn test --coverage
-- yarn lint
-- yarn build
-- yarn doc
-- yarn codecov
-- yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
+  - yarn test --coverage
+  - yarn lint
+  - yarn build
+  - yarn doc
+deploy:
+  - yarn codecov
+  - yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
