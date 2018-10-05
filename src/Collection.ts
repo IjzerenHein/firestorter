@@ -361,40 +361,36 @@ class Collection implements IEnhancedObservableDelegate {
 	 *   docs.forEach(doc => console.log(doc));
 	 * });
 	 */
-	public fetch(): Promise<Collection> {
-		return new Promise((resolve, reject) => {
-			if (this.isActive) {
-				return reject(
-					new Error("Should not call fetch when real-time updating is active")
-				);
-			}
-			if (this.isLoadingObservable.get()) {
-				return reject(new Error("Fetch already in progress"));
-			}
-			const colRef = this._resolveRef(this.sourceInput);
-			const queryRef = this._resolveQuery(colRef, this.queryInput);
-			const ref = queryRef || colRef;
-			if (!ref) {
-				return reject(new Error("No ref, path or query set on Collection"));
-			}
-			this._ready(false);
-			this.isLoadingObservable.set(true);
-			ref.get().then(
-				snapshot => {
-					transaction(() => {
-						this.isLoadingObservable.set(false);
-						this._updateFromSnapshot(snapshot);
-					});
-					this._ready(true);
-					resolve(this);
-				},
-				err => {
-					this.isLoadingObservable.set(false);
-					this._ready(true);
-					reject(err);
-				}
+	public async fetch(): Promise<Collection> {
+		if (this.isActive) {
+			throw new Error(
+				"Should not call fetch when real-time updating is active"
 			);
-		});
+		}
+		if (this.isLoadingObservable.get()) {
+			throw new Error("Fetch already in progress");
+		}
+		const colRef = this._resolveRef(this.sourceInput);
+		const queryRef = this._resolveQuery(colRef, this.queryInput);
+		const ref = queryRef || colRef;
+		if (!ref) {
+			throw new Error("No ref, path or query set on Collection");
+		}
+		this._ready(false);
+		this.isLoadingObservable.set(true);
+		try {
+			const snapshot = await ref.get();
+			transaction(() => {
+				this.isLoadingObservable.set(false);
+				this._updateFromSnapshot(snapshot);
+			});
+			this._ready(true);
+			return this;
+		} catch (err) {
+			this.isLoadingObservable.set(false);
+			this._ready(true);
+			throw err;
+		}
 	}
 
 	/**
@@ -472,39 +468,27 @@ class Collection implements IEnhancedObservableDelegate {
 	 *   }
 	 * });
 	 */
-	public add(data: any): Promise<ICollectionDocument> {
-		return new Promise((resolve, reject) => {
-			const ref = this.ref;
-			if (!ref) {
-				return reject(new Error("No valid collection reference"));
-			}
+	public async add(data: any): Promise<ICollectionDocument> {
+		const ref = this.ref;
+		if (!ref) {
+			throw new Error("No valid collection reference");
+		}
 
-			// Validate schema
-			try {
-				// tslint:disable-next-line
-				new this.documentClass(undefined, {
-					snapshot: {
-						data: () => data
-					}
-				});
-			} catch (err) {
-				return reject(err);
+		// Validate schema
+		// tslint:disable-next-line
+		new this.documentClass(undefined, {
+			snapshot: {
+				data: () => data
 			}
-
-			// Add to firestore
-			ref.add(data).then(ref2 => {
-				ref2.get().then(snapshot => {
-					try {
-						const doc = new this.documentClass(snapshot.ref, {
-							snapshot
-						});
-						resolve(doc);
-					} catch (err) {
-						reject(err);
-					}
-				}, reject);
-			}, reject);
 		});
+
+		// Add to firestore
+		const ref2 = await ref.add(data);
+		const snapshot = await ref2.get();
+		const doc = new this.documentClass(snapshot.ref, {
+			snapshot
+		});
+		return doc;
 	}
 
 	/**
@@ -512,13 +496,13 @@ class Collection implements IEnhancedObservableDelegate {
 	 *
 	 * TODO - Not implemented yet
 	 */
-	public deleteAll(): Promise<void> {
+	public async deleteAll(): Promise<void> {
 		const ref = this.ref;
 		if (!ref) {
 			throw new Error("No valid collection reference");
 		}
 		// TODO
-		return Promise.resolve(null);
+		return;
 	}
 
 	/**

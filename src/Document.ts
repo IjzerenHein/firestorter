@@ -322,54 +322,47 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * new data when `mode` is set to 'off'.
 	 *
 	 * @example
-	 * const doc = new Document('albums/splinter', 'off');
-	 * doc.fetch().then(({data}) => {
-	 *   console.log('data: ', data);
-	 * });
+	 * const doc = new Document('albums/splinter');
+	 * await doc.fetch();
+	 * console.log('data: ', doc.data);
 	 */
-	public fetch(): Promise<Document> {
-		return new Promise((resolve, reject) => {
-			if (this.collectionRefCount) {
-				return reject(
-					new Error(
-						"Should not call fetch on Document that is controlled by a Collection"
-					)
-				);
-			}
-			if (this.isActive) {
-				return reject(
-					new Error("Should not call fetch when real-time updating is active")
-				);
-			}
-			if (this.isLoadingObservable.get()) {
-				return reject(new Error("Fetch already in progress"));
-			}
-			const ref = this.refObservable.get();
-			if (!ref) {
-				return reject(new Error("No ref or path set on Document"));
-			}
-			this._ready(false);
-			this.isLoadingObservable.set(true);
-			ref.get().then(
-				snapshot => {
-					transaction(() => {
-						this.isLoadingObservable.set(false);
-						try {
-							this._updateFromSnapshot(snapshot);
-						} catch (err) {
-							console.error(err.message);
-						}
-					});
-					this._ready(true);
-					resolve(this);
-				},
-				err => {
-					this.isLoadingObservable.set(false);
-					this._ready(true);
-					reject(err);
-				}
+	public async fetch(): Promise<Document> {
+		if (this.collectionRefCount) {
+			throw new Error(
+				"Should not call fetch on Document that is controlled by a Collection"
 			);
-		});
+		}
+		if (this.isActive) {
+			throw new Error(
+				"Should not call fetch when real-time updating is active"
+			);
+		}
+		if (this.isLoadingObservable.get()) {
+			throw new Error("Fetch already in progress");
+		}
+		const ref = this.refObservable.get();
+		if (!ref) {
+			throw new Error("No ref or path set on Document");
+		}
+		this._ready(false);
+		this.isLoadingObservable.set(true);
+		try {
+			const snapshot = await ref.get();
+			transaction(() => {
+				this.isLoadingObservable.set(false);
+				try {
+					this._updateFromSnapshot(snapshot);
+				} catch (err) {
+					console.error(err.message);
+				}
+			});
+			this._ready(true);
+		} catch (err) {
+			this.isLoadingObservable.set(false);
+			this._ready(true);
+			throw err;
+		}
+		return this;
 	}
 
 	/**
