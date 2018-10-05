@@ -11,7 +11,7 @@ import {
 	IEnhancedObservableDelegate,
 	Mode
 } from "./Types";
-const isEqual = require("lodash.isEqual"); //tslint:disable-line
+const isEqual = require("lodash.isequal"); //tslint:disable-line
 
 /**
  * @private
