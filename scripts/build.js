@@ -82,7 +82,8 @@ function generateBundledModule(inputFile, outputFile, format) {
 	return rollup
 		.rollup({
 			entry: inputFile,
-			plugins: rollupPlugins
+			plugins: rollupPlugins,
+			external: ['mobx']
 		})
 		.then(bundle =>
 			bundle.write({
@@ -90,7 +91,10 @@ function generateBundledModule(inputFile, outputFile, format) {
 				format,
 				banner:
 					'/** Firestorter - (c) Hein Rutjes 2017 - 2018 - MIT Licensed */',
-				exports: 'named'
+				exports: 'named',
+				globals: {
+					mobx: 'mobx'
+				}
 			})
 		);
 }
