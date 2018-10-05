@@ -113,7 +113,7 @@ class Collection implements IEnhancedObservableDelegate {
 	private readyPromise?: Promise<void>;
 	private readyResolveFn?: () => void;
 	private initialLocalSnapshotStartTime?: number;
-	private initialLocalSnapshotDebounceTimer?: number;
+	private initialLocalSnapshotDebounceTimer?: any;
 	// private _limit: any;
 	// private _cursor: any;
 
