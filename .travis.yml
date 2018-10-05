@@ -6,7 +6,7 @@ script:
   - yarn test --coverage
   - yarn lint
   - yarn build
-  - yarn doc
+  -  # yarn doc
 deploy:
   provider: script
   script:
