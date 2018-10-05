@@ -17,13 +17,3 @@ export {
 	getFirebaseApp,
 	mergeUpdateData
 };
-
-export default {
-	Collection,
-	Document,
-	getFirebase,
-	getFirebaseApp,
-	getFirestore,
-	initFirestorter,
-	mergeUpdateData
-};

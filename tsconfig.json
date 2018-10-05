@@ -1,18 +1,16 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "outDir": "./lib",
-        "declaration": true,
-        "downlevelIteration": true,
-        "alwaysStrict": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitThis": false
-    },
-    "include": [
-        "./src/*.ts"
-    ]
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"outDir": "./lib",
+		"declaration": true,
+		"downlevelIteration": true,
+		"alwaysStrict": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitThis": false
+	},
+	"include": ["./src/**/*.ts"]
 }
