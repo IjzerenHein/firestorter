@@ -145,19 +145,19 @@ function build() {
 	runTypeScriptBuild('.build.es6', ts.ScriptTarget.ES2015, false);
 	return Promise.all([
 		generateBundledModule(
-			path.resolve('.build.es5', 'firestorter.js'),
+			path.resolve('.build.es5', 'index.js'),
 			path.resolve('lib', 'firestorter.js'),
 			'cjs'
 		),
 
 		generateBundledModule(
-			path.resolve('.build.es5', 'firestorter.js'),
+			path.resolve('.build.es5', 'index.js'),
 			path.resolve('lib', 'firestorter.module.js'),
 			'es'
 		),
 
 		generateBundledModule(
-			path.resolve('.build.es6', 'firestorter.js'),
+			path.resolve('.build.es6', 'index.js'),
 			path.resolve('lib', 'firestorter.es6.js'),
 			'es'
 		)
