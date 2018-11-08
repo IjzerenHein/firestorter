@@ -8,7 +8,7 @@ import { getFirebase, getFirestore } from './init';
  * @param {Object} fields - JSON data that supports field-paths
  * @return {Object} Result
  */
-function mergeUpdateData (data, fields) {
+function mergeUpdateData(data, fields) {
 	const res = {
 		...data
 	};
@@ -50,7 +50,7 @@ function mergeUpdateData (data, fields) {
  *
  * @param {any} value
  */
-function resolveRef (value) {
+function resolveRef(value) {
 	if (typeof value === 'string') {
 		return getFirestore().doc(value);
 	} else if (typeof value === 'function') {

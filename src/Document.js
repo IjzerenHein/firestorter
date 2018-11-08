@@ -1,11 +1,11 @@
 // @flow
-import { observable, reaction, toJS, transaction } from 'mobx';
+import { observable, transaction, reaction, toJS } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { verifyMode } from './init';
 import { mergeUpdateData, resolveRef } from './Utils';
 import isEqual from 'lodash.isequal';
 
-import type { DocumentReference, DocumentSnapshot } from 'firebase/firestore';
+import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
 
 let fetchingDeprecationWarningCount = 0;
 
@@ -46,8 +46,8 @@ class Document {
 		source: DocumentReference | string | (() => string | void),
 		options: any
 	) {
-		const {schema, snapshot, mode, debug, debugName} =
-		options || Document.EMPTY_OPTIONS;
+		const { schema, snapshot, mode, debug, debugName } =
+			options || Document.EMPTY_OPTIONS;
 		this._source = source;
 		this._ref = observable.box(resolveRef(source));
 		this._schema = schema;
@@ -85,13 +85,13 @@ class Document {
 
 			throw new Error(
 				'Invalid value at "' +
-				err.path +
-				'" for ' +
-				(this._debugName || this.constructor.name) +
-				' with id "' +
-				this.id +
-				'": ' +
-				err.message
+					err.path +
+					'" for ' +
+					(this._debugName || this.constructor.name) +
+					' with id "' +
+					this.id +
+					'": ' +
+					err.message
 			);
 		}
 		return data;
@@ -134,7 +134,6 @@ class Document {
 	get ref(): ?DocumentReference {
 		return this._ref.get();
 	}
-
 	set ref(ref: ?DocumentReference) {
 		this.source = ref;
 	}
@@ -177,7 +176,6 @@ class Document {
 		}
 		return path;
 	}
-
 	set path(documentPath: string | (() => string | void)) {
 		this.source = documentPath;
 	}
@@ -188,7 +186,6 @@ class Document {
 	get source(): ?any {
 		return this._source.get();
 	}
-
 	set source(source: ?any) {
 		if (this._collectionRefCount)
 			throw new Error(
@@ -236,7 +233,6 @@ class Document {
 	get mode(): string {
 		return this._mode.get();
 	}
-
 	set mode(mode: string) {
 		if (this._mode.get() === mode) return;
 		verifyMode(mode);
@@ -471,22 +467,22 @@ class Document {
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'off'});
-	 * console.log(doc.isLoading);  // false
-	 * doc.fetch();                // start fetch
-	 * console.log(doc.isLoading);  // true
-	 * await doc.ready();          // wait for fetch to complete
-	 * console.log(doc.isLoading);  // false
+	 * console.log(doc.isLoading); 	// false
+	 * doc.fetch(); 								// start fetch
+	 * console.log(doc.isLoading); 	// true
+	 * await doc.ready(); 					// wait for fetch to complete
+	 * console.log(doc.isLoading); 	// false
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
-	 * console.log(doc.isLoading);  // false
+	 * console.log(doc.isLoading); 	// false
 	 * const dispose = autorun(() => {
 	 *   console.log(doc.data);			// start observing document data
 	 * });
-	 * console.log(doc.isLoading);  // true
+	 * console.log(doc.isLoading); 	// true
 	 * ...
-	 * dispose();                    // stop observing document data
-	 * console.log(doc.isLoading);  // false
+	 * dispose();										// stop observing document data
+	 * console.log(doc.isLoading); 	// false
 	 */
 	get isLoading(): boolean {
 		this._data.get(); // access data
@@ -598,7 +594,9 @@ class Document {
 		if (newActive && (!active || force)) {
 			if (this._debug)
 				console.debug(
-					`${this.debugName} - ${active ? 're-' : ''}start (${this._mode.get()}:${this._observedRefCount})`
+					`${this.debugName} - ${
+						active ? 're-' : ''
+					}start (${this._mode.get()}:${this._observedRefCount})`
 				);
 			this._ready(false);
 			this._fetching.set(true);
@@ -609,7 +607,9 @@ class Document {
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
-					`${this.debugName} - stop (${this._mode.get()}:${this._observedRefCount})`
+					`${this.debugName} - stop (${this._mode.get()}:${
+						this._observedRefCount
+					})`
 				);
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
