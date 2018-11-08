@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
-import { initFirestorter, getFirestore, getFirebase, getFirebaseApp, Collection, Document } from '../src';
+import { initFirestorter, getFirestore, getFirebase, getFirebaseApp, Collection, Document, Batch} from '../src';
 import { autorun, reaction, observable } from 'mobx';
 import firebaseConfig from './firebaseConfig.json';
 
@@ -31,5 +31,6 @@ export {
 	Document,
 	autorun,
 	reaction,
-	observable
+	observable,
+	Batch
 };

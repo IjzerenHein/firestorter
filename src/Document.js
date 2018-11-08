@@ -2,25 +2,14 @@
 import { observable, transaction, reaction, toJS } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, verifyMode } from './init';
-import { mergeUpdateData } from './Utils';
+import { mergeUpdateData, resolveRef } from './Utils';
 import isEqual from 'lodash.isequal';
 
 import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
 
 let fetchingDeprecationWarningCount = 0;
 
-/**
- * @private
- */
-function resolveRef(value) {
-	if (typeof value === 'string') {
-		return getFirestore().doc(value);
-	} else if (typeof value === 'function') {
-		return resolveRef(value());
-	} else {
-		return value;
-	}
-}
+
 
 /**
  * Document represents a document stored in the firestore no-sql database.

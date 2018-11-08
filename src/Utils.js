@@ -1,4 +1,4 @@
-import { getFirebase } from './init';
+import { getFirebase, getFirestore } from './init';
 
 /**
  * Helper function which merges data into the source
@@ -44,6 +44,31 @@ function mergeUpdateData(data, fields) {
 	return res;
 }
 
+/**
+ * Taken out of the Document class to be used
+ * by the Batch class.
+ *
+ * @param {any} value
+ */
+function resolveRef(value) {
+  if (typeof value === 'string') {
+    return getFirestore().doc(value);
+  } else if (typeof value === 'function') {
+    return resolveRef(value());
+  }
+  /*
+  Not sure about this. I don't think it should be responsibility of the user to
+  extract the reference from Firestorter Document when passing into a Batch
+  so this is the logical place to do this but the test is pretty heinous.
+   */
+  else if (typeof value === 'object' && value.constructor.name === 'Document'){
+    return value.ref;
+  } else {
+    return value;
+  }
+}
+
 export {
-	mergeUpdateData
+	mergeUpdateData,
+	resolveRef
 };
