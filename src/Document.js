@@ -1,15 +1,13 @@
 // @flow
-import { observable, transaction, reaction, toJS } from 'mobx';
+import { observable, reaction, toJS, transaction } from 'mobx';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore, verifyMode } from './init';
+import { verifyMode } from './init';
 import { mergeUpdateData, resolveRef } from './Utils';
 import isEqual from 'lodash.isequal';
 
-import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore';
+import type { DocumentReference, DocumentSnapshot } from 'firebase/firestore';
 
 let fetchingDeprecationWarningCount = 0;
-
-
 
 /**
  * Document represents a document stored in the firestore no-sql database.
@@ -44,12 +42,12 @@ class Document {
 	_onSnapshotUnsubscribe: any;
 	_readyPromise: any;
 
-	constructor(
+	constructor (
 		source: DocumentReference | string | (() => string | void),
 		options: any
 	) {
-		const { schema, snapshot, mode, debug, debugName } =
-			options || Document.EMPTY_OPTIONS;
+		const {schema, snapshot, mode, debug, debugName} =
+		options || Document.EMPTY_OPTIONS;
 		this._source = source;
 		this._ref = observable.box(resolveRef(source));
 		this._schema = schema;
@@ -71,14 +69,14 @@ class Document {
 	 * Returns the superstruct schema used to validate the
 	 * document, or undefined.
 	 */
-	get schema(): any {
+	get schema (): any {
 		return this._schema;
 	}
 
 	/**
 	 * @private
 	 */
-	_validateSchema(data: any): any {
+	_validateSchema (data: any): any {
 		if (!this._schema) return data;
 		try {
 			data = this._schema(data);
@@ -87,13 +85,13 @@ class Document {
 
 			throw new Error(
 				'Invalid value at "' +
-					err.path +
-					'" for ' +
-					(this._debugName || this.constructor.name) +
-					' with id "' +
-					this.id +
-					'": ' +
-					err.message
+				err.path +
+				'" for ' +
+				(this._debugName || this.constructor.name) +
+				' with id "' +
+				this.id +
+				'": ' +
+				err.message
 			);
 		}
 		return data;
@@ -111,7 +109,7 @@ class Document {
 	 *   // }
 	 * });
 	 */
-	get data(): any {
+	get data (): any {
 		return this._data.get();
 	}
 
@@ -133,10 +131,11 @@ class Document {
 	 * // Switch to another document
 	 * doc.ref = firebase.firestore().doc('albums/americana');
 	 */
-	get ref(): ?DocumentReference {
+	get ref (): ?DocumentReference {
 		return this._ref.get();
 	}
-	set ref(ref: ?DocumentReference) {
+
+	set ref (ref: ?DocumentReference) {
 		this.source = ref;
 	}
 
@@ -145,7 +144,7 @@ class Document {
 	 *
 	 * To get the full-path of the document, use `path`.
 	 */
-	get id(): ?string {
+	get id (): ?string {
 		const ref = this._ref.get();
 		return ref ? ref.id : undefined;
 	}
@@ -168,7 +167,7 @@ class Document {
 	 * const doc2 = new Document('settings/activeArtist');
 	 * doc.path = () => 'artists/' + doc2.data.artistId;
 	 */
-	get path(): ?string {
+	get path (): ?string {
 		let ref = this._ref.get();
 		if (!ref) return undefined;
 		let path = ref.id;
@@ -178,17 +177,19 @@ class Document {
 		}
 		return path;
 	}
-	set path(documentPath: string | (() => string | void)) {
+
+	set path (documentPath: string | (() => string | void)) {
 		this.source = documentPath;
 	}
 
 	/**
 	 * @private
 	 */
-	get source(): ?any {
+	get source (): ?any {
 		return this._source.get();
 	}
-	set source(source: ?any) {
+
+	set source (source: ?any) {
 		if (this._collectionRefCount)
 			throw new Error(
 				'Cannot change source on Document that is controlled by a Collection'
@@ -205,7 +206,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	_updateSourceObserver() {
+	_updateSourceObserver () {
 		if (this._sourceDisposer) {
 			this._sourceDisposer();
 			this._sourceDisposer = undefined;
@@ -232,10 +233,11 @@ class Document {
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
 	 */
-	get mode(): string {
+	get mode (): string {
 		return this._mode.get();
 	}
-	set mode(mode: string) {
+
+	set mode (mode: string) {
 		if (this._mode.get() === mode) return;
 		verifyMode(mode);
 		transaction(() => {
@@ -248,14 +250,14 @@ class Document {
 	 * Returns true when the Document is actively listening
 	 * for changes in the firestore back-end.
 	 */
-	get isActive(): boolean {
+	get isActive (): boolean {
 		return !!this._onSnapshotUnsubscribe;
 	}
 
 	/**
 	 * @private
 	 */
-	get active(): boolean {
+	get active (): boolean {
 		console.warn(
 			'Document.active has been renamed `isActive`, please update as the method will be removed in the near future'
 		);
@@ -265,7 +267,7 @@ class Document {
 	/**
 	 * Underlying firestore snapshot.
 	 */
-	get snapshot(): DocumentSnapshot {
+	get snapshot (): DocumentSnapshot {
 		return this._snapshot.get();
 	}
 
@@ -277,7 +279,7 @@ class Document {
 	 * @param {Object} fields - JSON data that supports field-paths
 	 * @return {Object} Result
 	 */
-	static mergeUpdateData(data, fields) {
+	static mergeUpdateData (data, fields) {
 		return mergeUpdateData(data, fields);
 	}
 
@@ -296,7 +298,7 @@ class Document {
 	 *   }
 	 * });
 	 */
-	update(fields: any): Promise<void> {
+	update (fields: any): Promise<void> {
 		const ref = this._ref.get();
 		if (this._schema) {
 			if (!this.snapshot) {
@@ -332,7 +334,7 @@ class Document {
 	 *   text: 'this is awesome'
 	 * });
 	 */
-	set(data: any, options: any): Promise<void> {
+	set (data: any, options: any): Promise<void> {
 		if (this._schema) {
 			try {
 				if (options && options.merge) {
@@ -355,7 +357,7 @@ class Document {
 	 * successfully deleted from the backend (Note that it won't
 	 * resolve while you're offline).
 	 */
-	delete(): Promise<void> {
+	delete (): Promise<void> {
 		return this._ref.get().delete();
 	}
 
@@ -363,7 +365,7 @@ class Document {
 	 * Called whenever a property of this class becomes observed.
 	 * @private
 	 */
-	addObserverRef(): number {
+	addObserverRef (): number {
 		if (this._debug)
 			console.debug(
 				`${this.debugName} - addRef (${this._observedRefCount + 1})`
@@ -377,7 +379,7 @@ class Document {
 	 * Called whenever a property of this class becomes un-observed.
 	 * @private
 	 */
-	releaseObserverRef(): number {
+	releaseObserverRef (): number {
 		if (this._debug)
 			console.debug(
 				`${this.debugName} - releaseRef (${this._observedRefCount - 1})`
@@ -390,7 +392,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	_updateFromSnapshot(snapshot: DocumentSnapshot) {
+	_updateFromSnapshot (snapshot: DocumentSnapshot) {
 		let data = snapshot.data();
 		if (data) {
 			data = this._validateSchema(data);
@@ -415,7 +417,7 @@ class Document {
 	 *   console.log('data: ', data);
 	 * });
 	 */
-	fetch(): Promise<Document> {
+	fetch (): Promise<Document> {
 		return new Promise((resolve, reject) => {
 			if (this._collectionRefCount)
 				return reject(
@@ -469,24 +471,24 @@ class Document {
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'off'});
-	 * console.log(doc.isLoading); 	// false
-	 * doc.fetch(); 								// start fetch
-	 * console.log(doc.isLoading); 	// true
-	 * await doc.ready(); 					// wait for fetch to complete
-	 * console.log(doc.isLoading); 	// false
+	 * console.log(doc.isLoading);  // false
+	 * doc.fetch();                // start fetch
+	 * console.log(doc.isLoading);  // true
+	 * await doc.ready();          // wait for fetch to complete
+	 * console.log(doc.isLoading);  // false
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
-	 * console.log(doc.isLoading); 	// false
+	 * console.log(doc.isLoading);  // false
 	 * const dispose = autorun(() => {
 	 *   console.log(doc.data);			// start observing document data
 	 * });
-	 * console.log(doc.isLoading); 	// true
+	 * console.log(doc.isLoading);  // true
 	 * ...
-	 * dispose();										// stop observing document data
-	 * console.log(doc.isLoading); 	// false
+	 * dispose();                    // stop observing document data
+	 * console.log(doc.isLoading);  // false
 	 */
-	get isLoading(): boolean {
+	get isLoading (): boolean {
 		this._data.get(); // access data
 		return this._fetching.get();
 	}
@@ -494,7 +496,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	get fetching(): boolean {
+	get fetching (): boolean {
 		if ((fetchingDeprecationWarningCount % 100) === 0) {
 			console.warn(
 				'Document.fetching has been deprecated and will be removed soon, please use `isLoading` instead'
@@ -526,7 +528,7 @@ class Document {
 	 * await doc.ready();
 	 * console.log('data: ', doc.data);
 	 */
-	ready(): Promise<void> {
+	ready (): Promise<void> {
 		this._readyPromise = this._readyPromise || Promise.resolve(true);
 		return this._readyPromise;
 	}
@@ -534,7 +536,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	_ready(complete) {
+	_ready (complete) {
 		if (complete) {
 			const readyResolve = this._readyResolve;
 			if (readyResolve) {
@@ -551,7 +553,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	_onSnapshot(snapshot: DocumentSnapshot) {
+	_onSnapshot (snapshot: DocumentSnapshot) {
 		transaction(() => {
 			if (this._debug) console.debug(`${this.debugName} - onSnapshot`);
 			this._fetching.set(false);
@@ -567,14 +569,14 @@ class Document {
 	/**
 	 * @private
 	 */
-	_onSnapshotError(error) {
+	_onSnapshotError (error) {
 		console.warn(`${this.debugName} - onSnapshotError: ${error.message}`);
 	}
 
 	/**
 	 * @private
 	 */
-	_updateRealtimeUpdates(force?: boolean) {
+	_updateRealtimeUpdates (force?: boolean) {
 		let newActive = false;
 		switch (this._mode.get()) {
 			case 'auto':
@@ -596,9 +598,7 @@ class Document {
 		if (newActive && (!active || force)) {
 			if (this._debug)
 				console.debug(
-					`${this.debugName} - ${
-						active ? 're-' : ''
-					}start (${this._mode.get()}:${this._observedRefCount})`
+					`${this.debugName} - ${active ? 're-' : ''}start (${this._mode.get()}:${this._observedRefCount})`
 				);
 			this._ready(false);
 			this._fetching.set(true);
@@ -609,9 +609,7 @@ class Document {
 		} else if (!newActive && active) {
 			if (this._debug)
 				console.debug(
-					`${this.debugName} - stop (${this._mode.get()}:${
-						this._observedRefCount
-					})`
+					`${this.debugName} - stop (${this._mode.get()}:${this._observedRefCount})`
 				);
 			this._onSnapshotUnsubscribe();
 			this._onSnapshotUnsubscribe = undefined;
@@ -625,7 +623,7 @@ class Document {
 	/**
 	 * @private
 	 */
-	get debugName(): string {
+	get debugName (): string {
 		return `${this._debugName || this.constructor.name} (${this.path})`;
 	}
 }
