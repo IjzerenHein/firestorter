@@ -28,7 +28,7 @@ test('already in progress', async () => {
 	}
 });
 
-test('ready', async () => {
+test('ready', async (done) => {
 	expect.assertions(3);
 	const doc = new Document('artists/FooFighters');
 	doc.fetch();
@@ -36,4 +36,5 @@ test('ready', async () => {
 	await doc.ready();
 	expect(doc.isLoading).toBe(false);
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
+	done();
 });
