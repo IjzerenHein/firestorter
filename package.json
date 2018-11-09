@@ -37,15 +37,15 @@
 		"lodash.isequal": "^4.5.0"
 	},
 	"peerDependencies": {
-		"mobx": "^4.1.0"
+		"mobx": "^5.5.0"
 	},
 	"devDependencies": {
 		"@firebase/app-types": "^0.3.2",
 		"@firebase/firestore-types": "^0.7.0",
 		"@release-notes/cli": "^0.3.0",
-		"@types/jest": "^23.3.2",
+		"@types/jest": "^23.3.9",
 		"@types/lodash.isequal": "^4.5.3",
-		"@types/node": "^10.11.4",
+		"@types/node": "^10.12.3",
 		"babel-eslint": "^10.0.1",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
 		"babel-preset-es2015-rollup": "^3.0.0",
@@ -53,20 +53,20 @@
 		"codecov": "^3.1.0",
 		"documentation": "^8.1.2",
 		"envify": "^4.1.0",
-		"firebase": "^5.5.2",
-		"fs-extra": "^7.0.0",
+		"firebase": "^5.5.8",
+		"fs-extra": "^7.0.1",
 		"jest": "^23.6.0",
-		"mobx": "^5.5.0",
-		"prettier": "^1.14.3",
+		"mobx": "^5.6.0",
+		"prettier": "^1.15.1",
 		"rollup": "^0.41.6",
 		"rollup-plugin-filesize": "^1.3.2",
 		"rollup-plugin-node-resolve": "^3.0.0",
 		"shelljs": "^0.8.2",
 		"superstruct": "^0.6.0",
-		"ts-jest": "^23.10.3",
+		"ts-jest": "^23.10.4",
 		"tslint": "^5.11.0",
 		"tslint-config-prettier": "^1.15.0",
-		"typescript": "^3.1.1",
+		"typescript": "^3.1.6",
 		"uglify-es": "^3.3.9"
 	}
 }
