@@ -1,0 +1,39 @@
+import React, { Component } from "react";
+import Button from "@material-ui/core/Button";
+import ContentAddIcon from "@material-ui/icons/Add";
+import Todos from "./Todos";
+import { todos } from "./store";
+import "./app.css";
+
+class App extends Component {
+	public render() {
+		return (
+			<div className="app-container">
+				<div className="app-header">
+					<div className="app-header-row">
+						<img src={require("./logo.jpg")} alt="logo" />
+						<h1>Firestorter Todo</h1>
+					</div>
+					<h3>Firestore & React, using MobX</h3>
+				</div>
+				<Todos />
+				<Button variant="fab" className="app-add" onClick={this.onPressAdd}>
+					<ContentAddIcon />
+				</Button>
+			</div>
+		);
+	}
+
+	private onPressAdd = async () => {
+		try {
+			await todos.add({
+				finished: false,
+				text: ""
+			});
+		} catch (err) {
+			// TODO
+		}
+	};
+}
+
+export default App;

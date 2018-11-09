@@ -1,0 +1,41 @@
+app-container {
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+app-header: {
+	padding: 20px;
+	padding-bottom: 0;
+	padding-right: 10px;
+}
+
+app-header-row {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+}
+
+app-header-row > img {
+	height: 50;
+	margin-right: 10;
+}
+
+app-header-row > h1 {
+	margin: 0;
+	padding: 0;
+}
+
+app-header h3 {
+	margin-bottom: 0;
+}
+
+app-add {
+	bottom: 20px;
+	position: absolute;
+	right: 20px;
+}
