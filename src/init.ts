@@ -31,7 +31,7 @@ let globalFirestore: FirebaseFirestore;
  */
 function initFirestorter(config: {
 	firebase: FirebaseNamespace;
-	app: string | FirebaseApp;
+	app?: string | FirebaseApp;
 }): void {
 	if (globalFirestore) {
 		throw new Error(
