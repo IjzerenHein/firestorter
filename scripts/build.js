@@ -76,7 +76,7 @@ const rollupPlugins = [
 	require('rollup-plugin-filesize')()
 ];
 
-function generateBundledModule(inputFile, outputFile, format) {
+function generateBundledModule(inputFile, outputFile, format, moduleName) {
 	console.log(`Generating ${outputFile} bundle.`);
 
 	return rollup
@@ -89,6 +89,7 @@ function generateBundledModule(inputFile, outputFile, format) {
 			bundle.write({
 				dest: outputFile,
 				format,
+				moduleName,
 				banner:
 					'/** Firestorter - (c) Hein Rutjes 2017 - 2018 - MIT Licensed */',
 				exports: 'named',
@@ -97,13 +98,6 @@ function generateBundledModule(inputFile, outputFile, format) {
 				}
 			})
 		);
-}
-
-function generateUmd() {
-	console.log('Generating firestorter.umd.js');
-	exec(
-		'browserify -s firestorter -e lib/firestorter.js -o lib/firestorter.umd.js'
-	);
 }
 
 function generateMinified() {
@@ -152,6 +146,13 @@ function build() {
 
 		generateBundledModule(
 			path.resolve('.build.es5', 'index.js'),
+			path.resolve('lib', 'firestorter.umd.js'),
+			'umd',
+			'firestorter'
+		),
+
+		generateBundledModule(
+			path.resolve('.build.es5', 'index.js'),
 			path.resolve('lib', 'firestorter.module.js'),
 			'es'
 		),
@@ -162,7 +163,6 @@ function build() {
 			'es'
 		)
 	]).then(() => {
-		generateUmd();
 		generateMinified();
 		// copyFlowDefinitions();
 	});
