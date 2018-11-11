@@ -12,14 +12,21 @@ class App extends Component {
 				<div className="app-header">
 					<div className="app-header-row">
 						<img src={require("./logo.jpg")} alt="logo" />
-						<h1>Firestorter Todo</h1>
+						<h1>
+							<a href="https://github.com/IjzerenHein/firestorter">
+								Firestorter
+							</a>{" "}
+							Todo App
+						</h1>
 					</div>
 					<h3>Firestore & React, using MobX</h3>
 				</div>
 				<Todos />
-				<Button variant="fab" className="app-add" onClick={this.onPressAdd}>
-					<ContentAddIcon />
-				</Button>
+				<div className="app-add">
+					<Button variant="fab" onClick={this.onPressAdd}>
+						<ContentAddIcon />
+					</Button>
+				</div>
 			</div>
 		);
 	}

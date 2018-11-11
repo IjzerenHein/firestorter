@@ -1,10 +1,10 @@
 body {
- 	font-family: sans-serif;
+	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
- 	margin: 0;
- 	padding: 0 0;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	margin: 0;
+	padding: 0 0;
 }
 
 h1 {
@@ -25,4 +25,9 @@ h3 {
 	.mobile-margins {
 		padding: 20px;
 	}
+}
+
+a {
+	color: #fca20e;
+	text-decoration: none;
 }

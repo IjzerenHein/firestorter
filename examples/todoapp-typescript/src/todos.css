@@ -1,16 +1,16 @@
-todos-container {
+.todos-container {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	position: relative;
 }
 
-todos-content {
+.todos-content {
 	flex: 1;
 	overflow-y: scroll;
 }
 
-todos-header {
+.todos-header {
 	border-bottom: 1px solid #ddd;
 	display: flex;
 	flex-direction: row;
@@ -18,7 +18,7 @@ todos-header {
 	padding: 16px;
 }
 
-todos-loader {
+.todos-loader {
 	align-items: center;
 	bottom: 0;
 	display: flex;

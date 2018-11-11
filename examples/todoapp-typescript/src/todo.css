@@ -1,22 +1,22 @@
-todo-checkbox {
+.todo-checkbox {
 	margin-left: 16px;
 	width: 40px;
 }
 
-todo-container {
+.todo-container {
 	display: flex;
 	flex-direction: column;
 }
 
-todo-icon: {
+.todo-icon {
 	margin-right: 6px;
 }
 
-todo-input {
+.todo-input {
 	flex: 1;
 }
 
-todo-row {
+.todo-row {
 	align-items: center;
 	display: flex;
 	flex-direction: row;

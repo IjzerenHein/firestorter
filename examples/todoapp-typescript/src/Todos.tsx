@@ -4,13 +4,17 @@ import { todos } from "./store";
 import FlipMove from "react-flip-move";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import TodoItem from "./TodoItem";
 import "./todos.css";
 
-class Todos extends Component {
-	private state = {
-		disabled: false
-	};
+class Todos extends Component<any, any> {
+	constructor(props: any) {
+		super(props);
+		this.state = {
+			disabled: false
+		};
+	}
 
 	public render() {
 		const { disabled } = this.state;
@@ -20,10 +24,11 @@ class Todos extends Component {
 				<div>
 					<div className="todos-header">
 						<div />
-						<Checkbox
+						<FormControlLabel
+							control={
+								<Checkbox checked={disabled} onChange={this.onCheckDisable} />
+							}
 							label="Disable observe"
-							checked={disabled}
-							onCheck={this.onCheckDisable}
 						/>
 					</div>
 				</div>
@@ -36,15 +41,15 @@ class Todos extends Component {
 		return (
 			<div className="todos-container">
 				<div className="todos-header">
-					<Checkbox
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={query ? true : false}
+								onChange={this.onCheckShowOnlyUnfinished}
+							/>
+						}
 						label="Hide finished"
-						checked={query ? true : false}
-						onCheck={this.onCheckShowOnlyUnfinished}
 					/>
-					{/* <Checkbox
-					label='Disable observe'
-					checked={disabled}
-					onCheck={this.onCheckDisable} />*/}
 				</div>
 				<div className="mobile-margins todos-content">
 					<FlipMove enterAnimation="fade" leaveAnimation="fade">

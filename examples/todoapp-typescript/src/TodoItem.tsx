@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
@@ -9,10 +8,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Paper from "@material-ui/core/Paper";
 import "./todo.css";
 
-class TodoItem extends Component {
-	public static propTypes = {
-		todo: PropTypes.any
-	};
+interface ITodoItemProps {
+	todo: any;
+}
+
+class TodoItem extends Component<ITodoItemProps, any> {
+	private isDeleting: boolean = false;
 
 	public render() {
 		const { todo } = this.props;
@@ -20,24 +21,23 @@ class TodoItem extends Component {
 
 		console.log("TodoItem.render: ", todo.path, ", text: ", text);
 		return (
-			<Paper zDepth={1}>
+			<Paper elevation={1}>
 				<div className="todo-row">
 					<Checkbox
 						className="todo-checkbox"
-						onCheck={this.onPressCheck}
+						onChange={this.onPressCheck}
 						checked={finished}
 					/>
 					<TextField
 						id={todo.id}
 						className="todo-input"
-						underlineShow={false}
-						hintText={text ? undefined : "What needs to be done?"}
+						placeholder={text ? undefined : "What needs to be done?"}
 						onChange={this.onTextChange}
 						value={text || ""}
 					/>
 					<IconButton
 						className="todo-icon"
-						secondary
+						color="secondary"
 						onClick={this.onPressDelete}
 					>
 						<DeleteIcon />
@@ -50,15 +50,15 @@ class TodoItem extends Component {
 
 	private onPressDelete = async () => {
 		const { todo } = this.props;
-		if (this._deleting) {
+		if (this.isDeleting) {
 			return;
 		}
-		this._deleting = true;
+		this.isDeleting = true;
 		try {
 			await todo.delete();
-			this._deleting = false;
+			this.isDeleting = false;
 		} catch (err) {
-			this._deleting = false;
+			this.isDeleting = false;
 		}
 	};
 
@@ -69,10 +69,10 @@ class TodoItem extends Component {
 		});
 	};
 
-	private onTextChange = async (event, newValue) => {
+	private onTextChange = async (event: any) => {
 		const { todo } = this.props;
 		await todo.update({
-			text: newValue
+			text: event.target.value
 		});
 	};
 }
