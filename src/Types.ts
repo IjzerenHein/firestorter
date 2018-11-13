@@ -41,6 +41,21 @@ type CollectionSource =
 	| (() => CollectionReference | string | undefined);
 
 /**
+ * Collection options.
+ */
+interface ICollectionOptions<T> {
+	query?: Query | (() => Query | undefined);
+	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
+	DocumentClass?: any; // deprecated, use `createDocument` instead
+	mode?: Mode;
+	debug?: boolean;
+	debugName?: string;
+	minimizeUpdates?: boolean;
+	initialLocalSnapshotDetectTime?: number;
+	initialLocalSnapshotDebounceTime?: number;
+}
+
+/**
  * Collection-query.
  */
 type CollectionQuery = ((CollectionReference) => Query) | Query | undefined;
@@ -52,10 +67,6 @@ interface ICollectionDocument extends IDocument {
 	addCollectionRef(): number;
 	releaseCollectionRef(): number;
 	updateFromCollectionSnapshot(snapshot: DocumentSnapshot): void;
-}
-
-interface ICollectionDocumentConstructor {
-	new (source: DocumentSource, options: IDocumentOptions): ICollectionDocument;
 }
 
 /**
@@ -77,7 +88,7 @@ interface IEnhancedObservableDelegate {
 
 export {
 	ICollectionDocument,
-	ICollectionDocumentConstructor,
+	ICollectionOptions,
 	IDocument,
 	IDocumentOptions,
 	IEnhancedObservableDelegate,

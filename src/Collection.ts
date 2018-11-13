@@ -11,8 +11,10 @@ import {
 import {
 	CollectionQuery,
 	CollectionSource,
+	DocumentSource,
 	ICollectionDocument,
-	ICollectionDocumentConstructor,
+	ICollectionOptions,
+	IDocumentOptions,
 	IEnhancedObservableDelegate,
 	Mode
 } from "./Types";
@@ -54,7 +56,7 @@ import Document from "./Document";
  * @param
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
- * @param {String} [options.DocumentClass] Document classes to create (must be inherited from Document)
+ * @param {Function} [options.createDocument] Factory function for creating documents `(source, options) => new Document(source, options)`
  * @param {Bool} [options.minimizeUpdates] Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
@@ -89,7 +91,8 @@ import Document from "./Document";
  * // is in progress
  * console.log(col.isLoading);
  */
-class Collection implements IEnhancedObservableDelegate {
+class Collection<T extends ICollectionDocument = Document>
+	implements IEnhancedObservableDelegate {
 	private sourceInput: CollectionSource;
 	private sourceCache: CollectionSource;
 	private sourceCacheRef: CollectionReference;
@@ -100,9 +103,12 @@ class Collection implements IEnhancedObservableDelegate {
 	private onSnapshotRefCache?: Query;
 	private modeObservable: any;
 	private isLoadingObservable: any;
-	private docLookup: { [name: string]: ICollectionDocument };
-	private docsObservable: IObservableArray;
-	private documentClass: ICollectionDocumentConstructor;
+	private docLookup: { [name: string]: T };
+	private docsObservable: IObservableArray<T>;
+	private createDocument: (
+		source: DocumentSource,
+		options: IDocumentOptions
+	) => T;
 	private onSnapshotUnsubscribe: () => void;
 	private observedRefCount: number;
 	private isVerbose: boolean;
@@ -117,25 +123,11 @@ class Collection implements IEnhancedObservableDelegate {
 	// private _limit: any;
 	// private _cursor: any;
 
-	constructor(
-		source?:
-			| CollectionReference
-			| string
-			| (() => CollectionReference | string | undefined),
-		options: {
-			query?: Query | (() => Query | undefined);
-			DocumentClass?: ICollectionDocumentConstructor;
-			mode?: Mode;
-			debug?: boolean;
-			debugName?: string;
-			minimizeUpdates?: boolean;
-			initialLocalSnapshotDetectTime?: number;
-			initialLocalSnapshotDebounceTime?: number;
-		} = {}
-	) {
+	constructor(source?: CollectionSource, options: ICollectionOptions<T> = {}) {
 		const {
 			query,
-			DocumentClass = Document,
+			DocumentClass,
+			createDocument,
 			mode,
 			// limit,
 			debug,
@@ -144,7 +136,6 @@ class Collection implements IEnhancedObservableDelegate {
 			initialLocalSnapshotDetectTime = 50,
 			initialLocalSnapshotDebounceTime = 1000
 		} = options;
-		this.documentClass = DocumentClass;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
 		this.isMinimizingUpdates = minimizeUpdates;
@@ -161,6 +152,33 @@ class Collection implements IEnhancedObservableDelegate {
 		this.modeObservable = observable.box(verifyMode(mode || Mode.Auto));
 		this.isLoadingObservable = observable.box(false);
 		this.docsObservable = enhancedObservable([], this);
+
+		if (createDocument) {
+			if (DocumentClass) {
+				throw new Error(
+					`${
+						this.debugName
+					} - The \`createDocument\` and deprecated \`DocumentClass\` options cannot be specified both, remove the \`DocumentClass\` option`
+				);
+			}
+			this.createDocument = createDocument;
+		} else if (DocumentClass) {
+			console.warn(
+				`${
+					this.debugName
+				} - \`DocumentClass\` option has been deprecated, use \`createDocument\` instead`
+			);
+			this.createDocument = (
+				docSource: DocumentSource,
+				docOptions: IDocumentOptions
+			): T => new DocumentClass(docSource, docOptions);
+		} else {
+			this.createDocument = (
+				docSource: DocumentSource,
+				docOptions: IDocumentOptions
+			): T => (new Document(docSource, docOptions) as unknown) as T;
+		}
+
 		this._updateRealtimeUpdates(true, true);
 	}
 
@@ -173,7 +191,7 @@ class Collection implements IEnhancedObservableDelegate {
 	 *   console.log(doc.data);
 	 * });
 	 */
-	public get docs(): ICollectionDocument[] {
+	public get docs(): T[] {
 		return this.docsObservable;
 	}
 
@@ -361,7 +379,7 @@ class Collection implements IEnhancedObservableDelegate {
 	 *   docs.forEach(doc => console.log(doc));
 	 * });
 	 */
-	public async fetch(): Promise<Collection> {
+	public async fetch(): Promise<Collection<T>> {
 		if (this.isActive) {
 			throw new Error(
 				"Should not call fetch when real-time updating is active"
@@ -468,7 +486,7 @@ class Collection implements IEnhancedObservableDelegate {
 	 *   }
 	 * });
 	 */
-	public async add(data: any): Promise<ICollectionDocument> {
+	public async add(data: any): Promise<T> {
 		const ref = this.ref;
 		if (!ref) {
 			throw new Error("No valid collection reference");
@@ -476,7 +494,7 @@ class Collection implements IEnhancedObservableDelegate {
 
 		// Validate schema
 		// tslint:disable-next-line
-		new this.documentClass(undefined, {
+		this.createDocument(undefined, {
 			snapshot: {
 				data: () => data
 			}
@@ -485,7 +503,7 @@ class Collection implements IEnhancedObservableDelegate {
 		// Add to firestore
 		const ref2 = await ref.add(data);
 		const snapshot = await ref2.get();
-		const doc = new this.documentClass(snapshot.ref, {
+		const doc = this.createDocument(snapshot.ref, {
 			snapshot
 		});
 		return doc;
@@ -745,7 +763,7 @@ class Collection implements IEnhancedObservableDelegate {
 				if (doc) {
 					doc.updateFromCollectionSnapshot(docSnapshot);
 				} else {
-					doc = new this.documentClass(docSnapshot.ref, {
+					doc = this.createDocument(docSnapshot.ref, {
 						snapshot: docSnapshot
 					});
 					this.docLookup[doc.id] = doc;

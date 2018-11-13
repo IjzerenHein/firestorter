@@ -27,6 +27,18 @@ test('fail on missing ref/path', async () => {
 test('fail on invalid doc schema', async () => {
 	expect.assertions(1);
 	const col = new Collection('todos', {
+		createDocument: (source, options) => new TodoDoc(source, options)
+	});
+	try {
+		await col.add({ id: 'not a number' });
+	} catch (err) {
+		expect(err).toBeDefined();
+	}
+});
+
+test('deprecated DocumentClass prop should still work', async () => {
+	expect.assertions(1);
+	const col = new Collection('todos', {
 		DocumentClass: TodoDoc
 	});
 	try {

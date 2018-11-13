@@ -1,15 +1,10 @@
 module.exports = {
-	"transform": {
-		"^.+\\.js?$": "<rootDir>/node_modules/babel-jest",
-		"^.+\\.tsx?$": "ts-jest"
-	},
-	"testRegex": "/test/.*.test.js$",
-	"moduleFileExtensions": [
-		"ts",
-		"tsx",
-		"js",
-		"jsx",
-		"json",
-		"node"
-	],
+	preset: 'ts-jest/presets/js-with-babel',
+	globals: {
+		'ts-jest': {
+			diagnostics: {
+				ignoreCodes: [6133] // disables TS6133 - unused variables in tests
+			}
+		}
+	}
 };

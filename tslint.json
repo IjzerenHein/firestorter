@@ -2,6 +2,7 @@
 	"extends": ["tslint:recommended", "tslint-config-prettier"],
 	"rules": {
 		"no-console": ["warn", { "allow": ["warn", "error", "info", "debug"] }],
-		"ordered-imports": false
+		"ordered-imports": false,
+		"no-unused-variable": false
 	}
 }
