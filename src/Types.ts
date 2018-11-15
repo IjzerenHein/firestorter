@@ -1,17 +1,12 @@
-import {
-	CollectionReference,
-	DocumentReference,
-	DocumentSnapshot,
-	Query
-} from "firebase/firestore";
+import { firestore } from "firebase";
 
 /**
  * Document Source.
  */
 type DocumentSource =
-	| DocumentReference
+	| firestore.DocumentReference
 	| string
-	| (() => DocumentReference | string | undefined)
+	| (() => firestore.DocumentReference | string | undefined)
 	| undefined;
 
 /**
@@ -19,7 +14,7 @@ type DocumentSource =
  */
 interface IDocumentOptions {
 	schema?: any;
-	snapshot?: DocumentSnapshot;
+	snapshot?: firestore.DocumentSnapshot;
 	mode?: Mode;
 	debug?: boolean;
 	debugName?: string;
@@ -36,15 +31,15 @@ interface IDocument {
  * Collection-source.
  */
 type CollectionSource =
-	| CollectionReference
+	| firestore.CollectionReference
 	| string
-	| (() => CollectionReference | string | undefined);
+	| (() => firestore.CollectionReference | string | undefined);
 
 /**
  * Collection options.
  */
 interface ICollectionOptions<T> {
-	query?: Query | (() => Query | undefined);
+	query?: firestore.Query | (() => firestore.Query | undefined);
 	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
 	DocumentClass?: any; // deprecated, use `createDocument` instead
 	mode?: Mode;
@@ -58,7 +53,10 @@ interface ICollectionOptions<T> {
 /**
  * Collection-query.
  */
-type CollectionQuery = ((CollectionReference) => Query) | Query | undefined;
+type CollectionQuery =
+	| ((CollectionReference) => firestore.Query)
+	| firestore.Query
+	| undefined;
 
 /**
  * Collection document.
@@ -66,7 +64,7 @@ type CollectionQuery = ((CollectionReference) => Query) | Query | undefined;
 interface ICollectionDocument extends IDocument {
 	addCollectionRef(): number;
 	releaseCollectionRef(): number;
-	updateFromCollectionSnapshot(snapshot: DocumentSnapshot): void;
+	updateFromCollectionSnapshot(snapshot: firestore.DocumentSnapshot): void;
 }
 
 /**

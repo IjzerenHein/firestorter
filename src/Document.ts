@@ -1,4 +1,4 @@
-import { DocumentReference, DocumentSnapshot } from "firebase/firestore";
+import { firestore } from "firebase";
 import { observable, reaction, toJS, transaction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
@@ -16,7 +16,9 @@ const isEqual = require("lodash.isequal"); //tslint:disable-line
 /**
  * @private
  */
-function resolveRef(value: DocumentSource): DocumentReference | undefined {
+function resolveRef(
+	value: DocumentSource
+): firestore.DocumentReference | undefined {
 	if (typeof value === "string") {
 		return getFirestore().doc(value);
 	} else if (typeof value === "function") {
@@ -125,10 +127,10 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * // Switch to another document
 	 * doc.ref = firebase.firestore().doc('albums/americana');
 	 */
-	public get ref(): DocumentReference | undefined {
+	public get ref(): firestore.DocumentReference | undefined {
 		return this.refObservable.get();
 	}
-	public set ref(ref: DocumentReference | undefined) {
+	public set ref(ref: firestore.DocumentReference | undefined) {
 		this.source = ref;
 	}
 
@@ -234,7 +236,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	/**
 	 * Underlying firestore snapshot.
 	 */
-	public get snapshot(): DocumentSnapshot | undefined {
+	public get snapshot(): firestore.DocumentSnapshot | undefined {
 		return this.snapshotObservable.get();
 	}
 
@@ -472,14 +474,16 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	public releaseCollectionRef(): number {
 		return --this.collectionRefCount;
 	}
-	public updateFromCollectionSnapshot(snapshot: DocumentSnapshot): void {
+	public updateFromCollectionSnapshot(
+		snapshot: firestore.DocumentSnapshot
+	): void {
 		return this._updateFromSnapshot(snapshot);
 	}
 
 	/**
 	 * @private
 	 */
-	public _updateFromSnapshot(snapshot: DocumentSnapshot): void {
+	public _updateFromSnapshot(snapshot: firestore.DocumentSnapshot): void {
 		let data = snapshot.data();
 		if (data) {
 			data = this._validateSchema(data);
@@ -513,7 +517,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	/**
 	 * @private
 	 */
-	protected _onSnapshot(snapshot: DocumentSnapshot) {
+	protected _onSnapshot(snapshot: firestore.DocumentSnapshot) {
 		transaction(() => {
 			if (this.isVerbose) {
 				console.debug(`${this.debugName} - onSnapshot`);
@@ -603,7 +607,11 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		}
 		if (typeof this.sourceInput === "function") {
 			this.sourceDisposerFn = reaction(
-				() => this.sourceInput(),
+				() =>
+					(this.sourceInput as () =>
+						| firestore.DocumentReference
+						| string
+						| undefined)(),
 				value => {
 					transaction(() => {
 						// TODO, check whether path has changed

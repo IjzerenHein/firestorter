@@ -1,9 +1,8 @@
-import { FirebaseApp, FirebaseNamespace } from "@firebase/app-types";
-import { FirebaseFirestore } from "@firebase/firestore-types";
+import { app, firestore } from "firebase";
 
-let globalFirebase: FirebaseNamespace;
-let globalFirebaseApp: FirebaseApp;
-let globalFirestore: FirebaseFirestore;
+let globalFirebase: any;
+let globalFirebaseApp: app.App;
+let globalFirestore: firestore.Firestore;
 
 /**
  * Initializes `firestorter` with the firebase-app.
@@ -30,8 +29,8 @@ let globalFirestore: FirebaseFirestore;
  * ...
  */
 function initFirestorter(config: {
-	firebase: FirebaseNamespace;
-	app?: string | FirebaseApp;
+	firebase: any;
+	app?: string | app.App;
 }): void {
 	if (globalFirestore) {
 		throw new Error(
@@ -52,7 +51,7 @@ function initFirestorter(config: {
 	}
 }
 
-function getFirebase(): FirebaseNamespace {
+function getFirebase(): any {
 	if (!globalFirebase) {
 		throw new Error(
 			"No firebase reference, did you forget to call `initFirestorter` ?"
@@ -61,7 +60,7 @@ function getFirebase(): FirebaseNamespace {
 	return globalFirebase;
 }
 
-function getFirebaseApp(): FirebaseApp {
+function getFirebaseApp(): app.App {
 	if (!globalFirebaseApp) {
 		throw new Error(
 			"No firebase app, did you forget to call `initFirestorter` ?"
@@ -70,7 +69,7 @@ function getFirebaseApp(): FirebaseApp {
 	return globalFirebaseApp;
 }
 
-function getFirestore(): FirebaseFirestore {
+function getFirestore(): firestore.Firestore {
 	if (!globalFirestore) {
 		throw new Error(
 			"No firestore reference, did you forget to call `initFirestorter` ?"

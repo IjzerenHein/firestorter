@@ -1,6 +1,6 @@
 import { Collection, Document } from "./init";
 import { ICollectionDocument } from "../src/Types";
-import { DocumentSnapshot } from "firebase/firestore";
+import { firestore } from "firebase";
 
 class TestDoc implements ICollectionDocument {
 	private collectionRef: number = 0;
@@ -23,7 +23,9 @@ class TestDoc implements ICollectionDocument {
 		return this.collectionRef;
 	}
 
-	public updateFromCollectionSnapshot(snapshot: DocumentSnapshot): void {
+	public updateFromCollectionSnapshot(
+		snapshot: firestore.DocumentSnapshot
+	): void {
 		// nop
 	}
 }

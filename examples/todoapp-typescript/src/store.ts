@@ -1,6 +1,5 @@
-import { FirebaseFirestore } from "@firebase/firestore-types";
-import firebase from "@firebase/app";
-import "@firebase/firestore";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import { initFirestorter, Collection, Document } from "firestorter";
 import { DocumentSource, IDocumentOptions } from "firestorter/lib/Types";
 import { struct } from "superstruct";
@@ -14,7 +13,7 @@ const app = firebase.initializeApp({
 	storageBucket: "firestore-mobx-todo.appspot.com"
 });
 
-const firestore: FirebaseFirestore = (app as any).firestore();
+const firestore = app.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 
 initFirestorter({ firebase });
