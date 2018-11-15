@@ -37,16 +37,36 @@ function initFirestorter(config: {
 			"Firestorter already initialized, did you accidentally call `initFirestorter()` again?"
 		);
 	}
+
+	// Set firebase object
+	if (!config.firebase) {
+		throw new Error(
+			"Missing argument `firebase` specified to `initFirestorter()`"
+		);
+	}
 	globalFirebase = config.firebase;
+
+	// Get app instance
 	globalFirebaseApp = config.app
 		? typeof config.app === "string"
 			? globalFirebase.app(config.app)
 			: config.app
 		: globalFirebase.app();
-	globalFirestore = (globalFirebaseApp as any).firestore();
+
+	// Get firestore instance
+	globalFirestore = globalFirebaseApp.firestore();
 	if (!globalFirestore) {
 		throw new Error(
 			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"
+		);
+	}
+
+	// Verify existence of firestore & fieldvalue
+	try {
+		globalFirebase.firestore.FieldValue.delete();
+	} catch (err) {
+		throw new Error(
+			"invalid `firebase` argument specified to `initFirestorter()`, `firebase.firestore.FieldValue.delete` does not exist"
 		);
 	}
 }
