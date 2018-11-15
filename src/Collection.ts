@@ -492,11 +492,16 @@ class Collection<T extends ICollectionDocument = Document>
 			throw new Error("No valid collection reference");
 		}
 
-		// Validate schema
-		// tslint:disable-next-line
+		// Validate schema using a dummy snapshot
 		this.createDocument(undefined, {
 			snapshot: {
-				data: () => data
+				data: () => data,
+				exists: false,
+				get: (fieldPath: string) => data[fieldPath],
+				id: "",
+				isEqual: () => false,
+				metadata: undefined,
+				ref: undefined
 			}
 		});
 
