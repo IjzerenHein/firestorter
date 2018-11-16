@@ -475,7 +475,8 @@ class Collection<T extends ICollectionDocument = Document>
 
 	/**
 	 * Add a new document to this collection with the specified
-	 * data, assigning it a document ID automatically.
+	 * data, assigning it the given ID if specified.  Otherwise, 
+	 * a document ID will be assigned automatically.
 	 *
 	 * @example
 	 * const doc = await collection.add({
@@ -486,7 +487,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 *   }
 	 * });
 	 */
-	public async add(data: any): Promise<T> {
+	public async add(data: any, id?: string): Promise<T> {
 		const ref = this.ref;
 		if (!ref) {
 			throw new Error("No valid collection reference");
@@ -498,7 +499,7 @@ class Collection<T extends ICollectionDocument = Document>
 				data: () => data,
 				exists: false,
 				get: (fieldPath: string) => data[fieldPath],
-				id: "",
+				id: id || "",
 				isEqual: () => false,
 				metadata: undefined,
 				ref: undefined
