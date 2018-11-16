@@ -2,12 +2,7 @@ import { IObservableArray, observable, reaction, transaction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
 import { verifyMode } from "./Utils";
-import {
-	CollectionReference,
-	DocumentSnapshot,
-	Query,
-	QuerySnapshot
-} from "firebase/firestore";
+import { firestore } from "firebase";
 import {
 	CollectionQuery,
 	CollectionSource,
@@ -95,12 +90,12 @@ class Collection<T extends ICollectionDocument = Document>
 	implements IEnhancedObservableDelegate {
 	private sourceInput: CollectionSource;
 	private sourceCache: CollectionSource;
-	private sourceCacheRef: CollectionReference;
+	private sourceCacheRef: firestore.CollectionReference;
 	private refDisposerFn: () => void;
 	private refObservable: any;
 	private queryInput: CollectionQuery;
 	private queryRefObservable: any;
-	private onSnapshotRefCache?: Query;
+	private onSnapshotRefCache?: firestore.Query;
 	private modeObservable: any;
 	private isLoadingObservable: any;
 	private docLookup: { [name: string]: T };
@@ -211,7 +206,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * // Switch to another collection
 	 * col.ref = firebase.firestore().collection('albums/americana/tracks');
 	 */
-	public get ref(): CollectionReference | undefined {
+	public get ref(): firestore.CollectionReference | undefined {
 		let ref = this.refObservable.get();
 		if (!this.refDisposerFn) {
 			const newRef = this._resolveRef(this.sourceInput);
@@ -222,7 +217,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 		return ref;
 	}
-	public set ref(ref: CollectionReference | undefined) {
+	public set ref(ref: firestore.CollectionReference | undefined) {
 		this.source = ref;
 	}
 
@@ -250,7 +245,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * col.path = 'artists/EaglesOfDeathMetal/albums';
 	 */
 	public get path(): string | undefined {
-		let ref = this.ref;
+		let ref: any = this.ref;
 		if (!ref) {
 			return undefined;
 		}
@@ -335,7 +330,7 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	public get queryRef(): Query | undefined {
+	public get queryRef(): firestore.Query | undefined {
 		return this.queryRefObservable.get();
 	}
 
@@ -650,7 +645,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 	}
 
-	protected _resolveRef(source): CollectionReference {
+	protected _resolveRef(source): firestore.CollectionReference {
 		if (this.sourceCache === source) {
 			return this.sourceCacheRef;
 		}
@@ -669,10 +664,10 @@ class Collection<T extends ICollectionDocument = Document>
 	}
 
 	protected _resolveQuery(
-		collectionRef: CollectionReference,
-		query?: Query
-	): Query {
-		let ref = query;
+		collectionRef: firestore.CollectionReference,
+		query?: CollectionQuery
+	): firestore.Query {
+		let ref: any = query;
 		if (typeof query === "function") {
 			ref = query(collectionRef);
 		}
@@ -701,7 +696,7 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	protected _onSnapshot(snapshot: QuerySnapshot): void {
+	protected _onSnapshot(snapshot: firestore.QuerySnapshot): void {
 		// Firestore sometimes returns multiple snapshots initially.
 		// The first one containing cached results, followed by a second
 		// snapshot which was fetched from the cloud.
@@ -761,9 +756,9 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	private _updateFromSnapshot(snapshot: QuerySnapshot): void {
+	private _updateFromSnapshot(snapshot: firestore.QuerySnapshot): void {
 		const newDocs = [];
-		snapshot.docs.forEach((docSnapshot: DocumentSnapshot) => {
+		snapshot.docs.forEach((docSnapshot: firestore.DocumentSnapshot) => {
 			let doc = this.docLookup[docSnapshot.id];
 			try {
 				if (doc) {
@@ -907,11 +902,19 @@ class Collection<T extends ICollectionDocument = Document>
 			this.onSnapshotUnsubscribe = undefined;
 		}
 
-		// Check whether any ref exists
+		// If no valid ref exists, then clear the collection so no "old"
+		// documents are visible.
 		if (!ref) {
 			if (this.docsObservable.length) {
 				this._updateFromSnapshot({
-					docs: []
+					docChanges: (options?: firestore.SnapshotListenOptions) => [],
+					docs: [],
+					empty: true,
+					forEach: () => true,
+					isEqual: () => false,
+					metadata: undefined,
+					query: queryRef,
+					size: 0
 				});
 			}
 			return;

@@ -4,9 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.0.4] - 2018-11-16
+
 ### Added
 
-- Added TypeScript as a first-class language (convert to TypeScript and added type-bindings)
+- Added TypeScript as a first-class language (converted to TypeScript and added type-bindings)
+- Added Collection `createDocument` factory function, in which documents can be created based on the snapshot data (`new Collection({createDocument: (source, options) => return new Document(source, options)}))`)
 
 ### Fixed
 
@@ -16,6 +19,10 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 - Removed deprecated `active` property from Collection & Document (use `isActive` instead)
 - Removed deprecated `fetching` property from Collection & Document (use `isLoading` instead)
+
+### Deprecated
+
+- The Collection `DocumentClass` constructor option has been deprecated (use `createDocument` instead)
 
 ## [0.16.1] - 2018-09-28
 

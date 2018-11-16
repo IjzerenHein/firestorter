@@ -54,7 +54,7 @@ interface ICollectionOptions<T> {
  * Collection-query.
  */
 type CollectionQuery =
-	| ((CollectionReference) => firestore.Query)
+	| ((ref: firestore.CollectionReference) => firestore.Query)
 	| firestore.Query
 	| undefined;
 
