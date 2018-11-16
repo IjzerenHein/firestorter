@@ -906,11 +906,8 @@ class Collection<T extends ICollectionDocument = Document>
 		if (!ref) {
 			if (this.docsObservable.length) {
 				this._updateFromSnapshot({
+					docChanges: (options?: firestore.SnapshotListenOptions) => [],
 					docs: [],
-					docChanges: (options?: firestore.SnapshotListenOptions) => {
-						options; // nop
-						return [];
-					},
 					empty: true,
 					forEach: () => true,
 					isEqual: () => false,
