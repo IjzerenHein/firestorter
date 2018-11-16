@@ -14,6 +14,8 @@ import firebaseConfig from './firebaseConfig.json';
 let firebaseApp;
 
 beforeAll(() => {
+	jest.setTimeout(10000);
+
 	// Initialize firebase
 	firebaseApp = firebase.initializeApp(firebaseConfig);
 	const firestore = firebase.firestore();
