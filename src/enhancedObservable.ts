@@ -9,7 +9,7 @@ import { IEnhancedObservableDelegate } from "./Types";
  * a Collection/Document is observed and real-time updating
  * needs to be enabled on it.
  */
-function enhancedObservable(
+export function enhancedObservable(
 	data: any,
 	delegate: IEnhancedObservableDelegate
 ): any {
@@ -41,5 +41,3 @@ function enhancedObservable(
 
 	return o;
 }
-
-export { enhancedObservable };

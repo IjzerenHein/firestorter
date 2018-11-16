@@ -3,7 +3,7 @@ import { firestore } from "firebase";
 /**
  * Document Source.
  */
-type DocumentSource =
+export type DocumentSource =
 	| firestore.DocumentReference
 	| string
 	| (() => firestore.DocumentReference | string | undefined)
@@ -12,7 +12,7 @@ type DocumentSource =
 /**
  * Document options.
  */
-interface IDocumentOptions {
+export interface IDocumentOptions {
 	schema?: any;
 	snapshot?: firestore.DocumentSnapshot;
 	mode?: Mode;
@@ -23,14 +23,14 @@ interface IDocumentOptions {
 /**
  * Document interface.
  */
-interface IDocument {
+export interface IDocument {
 	readonly id: string | undefined;
 }
 
 /**
  * Collection-source.
  */
-type CollectionSource =
+export type CollectionSource =
 	| firestore.CollectionReference
 	| string
 	| (() => firestore.CollectionReference | string | undefined);
@@ -38,7 +38,7 @@ type CollectionSource =
 /**
  * Collection options.
  */
-interface ICollectionOptions<T> {
+export interface ICollectionOptions<T> {
 	query?: firestore.Query | (() => firestore.Query | undefined);
 	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
 	DocumentClass?: any; // deprecated, use `createDocument` instead
@@ -53,7 +53,7 @@ interface ICollectionOptions<T> {
 /**
  * Collection-query.
  */
-type CollectionQuery =
+export type CollectionQuery =
 	| ((ref: firestore.CollectionReference) => firestore.Query)
 	| firestore.Query
 	| undefined;
@@ -61,7 +61,7 @@ type CollectionQuery =
 /**
  * Collection document.
  */
-interface ICollectionDocument extends IDocument {
+export interface ICollectionDocument extends IDocument {
 	addCollectionRef(): number;
 	releaseCollectionRef(): number;
 	updateFromCollectionSnapshot(snapshot: firestore.DocumentSnapshot): void;
@@ -70,7 +70,7 @@ interface ICollectionDocument extends IDocument {
 /**
  * Real-time updating mode.
  */
-enum Mode {
+export enum Mode {
 	Auto = "auto",
 	On = "on",
 	Off = "off"
@@ -79,19 +79,7 @@ enum Mode {
 /**
  * @private
  */
-interface IEnhancedObservableDelegate {
+export interface IEnhancedObservableDelegate {
 	addObserverRef(): number;
 	releaseObserverRef(): number;
 }
-
-export {
-	ICollectionDocument,
-	ICollectionOptions,
-	IDocument,
-	IDocumentOptions,
-	IEnhancedObservableDelegate,
-	CollectionQuery,
-	CollectionSource,
-	DocumentSource,
-	Mode
-};

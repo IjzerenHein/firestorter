@@ -9,7 +9,7 @@ import { Mode } from "./Types";
  * @param {Object} fields - JSON data that supports field-paths
  * @return {Object} Result
  */
-function mergeUpdateData(data: object, fields: object) {
+export function mergeUpdateData(data: object, fields: object) {
 	const res = {
 		...data
 	};
@@ -46,7 +46,7 @@ function mergeUpdateData(data: object, fields: object) {
 	return res;
 }
 
-function verifyMode(mode: Mode): Mode {
+export function verifyMode(mode: Mode): Mode {
 	switch (mode) {
 		case "auto":
 		case "off":
@@ -56,5 +56,3 @@ function verifyMode(mode: Mode): Mode {
 			throw new Error("Invalid mode mode: " + mode);
 	}
 }
-
-export { mergeUpdateData, verifyMode };
