@@ -2,7 +2,7 @@ import { _isComputingDerivation, getAtom, observable } from "mobx";
 import { IEnhancedObservableDelegate } from "./Types";
 
 /**
- * @private
+ * @ignore
  * Creates an observable which calls addObserverRef &
  * releaseObserverRef methods on the passed-in delegate class.
  * Effecitively, this allows Firestorter to track whether

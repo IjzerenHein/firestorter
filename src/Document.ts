@@ -37,7 +37,6 @@ const EMPTY_OPTIONS = {};
  * component is only re-rendered when data that is accessed in the `render`
  * function has changed.
  *
- * @param {DocumentReference | string | () => string | void} [source] Ref, path or observable function
  * @param {Object} [options] Configuration options
  * @param {String} [options.mode] See `Document.mode` (default: auto)
  * @param {Object} [options.schema] Superstruct schema for data validation
