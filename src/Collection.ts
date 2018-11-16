@@ -906,7 +906,11 @@ class Collection<T extends ICollectionDocument = Document>
 		if (!ref) {
 			if (this.docsObservable.length) {
 				this._updateFromSnapshot({
-					docChanges: (options?: firestore.SnapshotListenOptions) => [],
+					docChanges: (options?: firestore.SnapshotListenOptions) => {
+						// tslint:disable-next-line
+						options;
+						return [];
+					},
 					docs: [],
 					empty: true,
 					forEach: () => true,
