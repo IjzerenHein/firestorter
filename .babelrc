@@ -1,8 +1,3 @@
 {
-	"presets": ["es2015"],
-	"plugins": [
-		"transform-object-rest-spread",
-		"transform-class-properties",
-		"transform-flow-strip-types"
-	]
+	"presets": ["es2015"]
 }
