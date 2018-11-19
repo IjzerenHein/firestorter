@@ -36,10 +36,17 @@ export type CollectionSource =
 	| (() => firestore.CollectionReference | string | undefined);
 
 /**
+ * Collection-query.
+ */
+export type CollectionQuery =
+	| ((ref: firestore.CollectionReference) => firestore.Query | undefined)
+	| firestore.Query;
+
+/**
  * Collection options.
  */
 export interface ICollectionOptions<T> {
-	query?: firestore.Query | (() => firestore.Query | undefined);
+	query?: CollectionQuery;
 	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
 	DocumentClass?: any; // deprecated, use `createDocument` instead
 	mode?: Mode;
@@ -49,14 +56,6 @@ export interface ICollectionOptions<T> {
 	initialLocalSnapshotDetectTime?: number;
 	initialLocalSnapshotDebounceTime?: number;
 }
-
-/**
- * Collection-query.
- */
-export type CollectionQuery =
-	| ((ref: firestore.CollectionReference) => firestore.Query)
-	| firestore.Query
-	| undefined;
 
 /**
  * Collection document.

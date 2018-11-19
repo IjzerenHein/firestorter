@@ -93,7 +93,7 @@ class Collection<T extends ICollectionDocument = Document>
 	private sourceCacheRef: firestore.CollectionReference;
 	private refDisposerFn: () => void;
 	private refObservable: any;
-	private queryInput: CollectionQuery;
+	private queryInput?: CollectionQuery;
 	private queryRefObservable: any;
 	private onSnapshotRefCache?: firestore.Query;
 	private modeObservable: any;
