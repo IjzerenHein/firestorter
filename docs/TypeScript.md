@@ -29,7 +29,7 @@ Besides the Collection and Document classes, Firestorter contains additional typ
 which are needed when writing for instance custom Documents. These type-definitions
 are located in:
 
-[firestorter/lib/Types.ts](./src/Types.ts)
+[firestorter/lib/Types.ts](../src/Types.ts)
 
 To import these types, use:
 
@@ -41,7 +41,7 @@ import { ICollectionOptions, CollectionQuery, IDocument } from 'firestorter/lib/
 ### Collection generics
 
 Collection can be extended to create and use your custom Document types.
-In the following example, a custom document is used that adds several methods
+In the following example, a custom document is created that adds several methods
 to the standard Document class.
 
 #### todo.ts
@@ -49,6 +49,7 @@ to the standard Document class.
 ```ts
 import { Document } from 'firestorter';
 import { DocumentSource, IDocumentOptions } from 'firestorter/lib/Types';
+import { struct } from 'superstruct';
 
 class Todo extends Document {
 	constructor(source: DocumentSource, options: IDocumentOptions) {
@@ -90,4 +91,19 @@ class Todos<Todo> extends Collection {
 		});
     }
 }
+```
+
+#### app.ts
+
+```ts
+import Todo from './Todo';
+import Todos from './Todos';
+
+...
+const todos = new Todos('mytodos');
+const todo: Todo = todos.add({
+    finished: false
+});
+...
+await todo.finish();
 ```
