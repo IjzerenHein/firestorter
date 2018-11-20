@@ -9,6 +9,6 @@ script:
   - yarn doc
 deploy:
   provider: script
-  script: yarn codecov && yarn release-notes publish --scope IjzerenHein --name Firestorter --token $RELEASE_NOTES_TOKEN ./CHANGELOG.md
+  script: bash scripts/deploy.sh $RELEASE_NOTES_TOKEN
   on:
     branch: master
