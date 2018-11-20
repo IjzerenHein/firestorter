@@ -24,12 +24,14 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 
 ## Index
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [How it works](#how-it-works)
-* [Examples](#examples)
-* [Documentation](./docs/API.md)
-* [Work in progress](#work-in-progress)
+- [Index](#index)
+- [Installation](#installation)
+- [Usage](#usage)
+- [How it works](#how-it-works)
+- [Examples](#examples)
+- [Documentation](#documentation)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Installation
 
@@ -97,52 +99,15 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 ## Documentation
 
-* [API Reference](./docs/API.md)
 * [Introduction to Firestorter](https://medium.com/@hrutjes/building-a-react-firestore-app-with-zero-effort-and-mobx-525df611eabf)
+* [TypeScript support 👌](./docs/TypeScript)
+* [react-native support](./docs/ReactNative)
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
 * [Using Queries](./docs/Queries.md)
 * [Using Sub-collections](./docs/SubCollections.md)
-* Real-time updating modes (coming soon)
-* Using Collection and Document inside a Component (coming soon)
-* Why you should create a component per document (coming soon)
-
-## Work in progress
-
-Hi ✋, and thanks for visiting this project in its early stages.
-Firestorter is being built as you read this. The API is pretty stable, but more testing and documentation is still needed. Let me know if you run into problems or have requests 🤘
-
-* [x] Collection class
-* [x] Document class
-* [x] Adding documents
-* [x] Updating documents
-* [x] Deleting documents
-* [x] Queries
-* [x] Changing of ref/path in Collection
-* [x] Smart enable/disable real-time fetching based on whether collection is rendered
-* [x] Real-time fetching (onSnapshot) always enabled mode
-* [x] Manual fetching mode
-* [x] Fetching property to indicate loading state
-* [x] Per document fetching
-* [x] Per document real time updates
-* [x] Document Schemas (using superstruct)
-* [x] Custom Document classes
-* [x] Ability to set Document path, based on contents of another document
-* [x] Document.set
-* [x] Document.ready (Promise to check whether data is available)
-* [x] Collection.ready (Promise to check whether docs are available)
-* [x] Ability to set Collection path, based on contents of a document
-* [x] Ability to set reactive query on Collection
-* [X] FieldPath notation for Document.update
-* [ ] Collection pagination (in progress)
-* [ ] Sub-collections howto
-* [ ] Revise Collection.add
-* [ ] Delete all documents in a collection or query
-* [ ] Blobs
-* [ ] GeoPoint ?
-* [ ] Batch updates
-* [ ] More documentation / articles
+* [API Reference](./docs/API.md)
 
 ## License
 
@@ -150,5 +115,5 @@ Firestorter is being built as you read this. The API is pretty stable, but more 
 
 ## Acknowledgements
 
-* Thanks to all [sponsors](./sponsors.md) supporting this project
+* Big thanks to all [sponsors](./sponsors.md) and contributors supporting this project 🤘
 * Logo design by [Alex Prodrom](https://github.com/AlexProdrom)
