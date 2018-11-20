@@ -4,6 +4,8 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.0.4] - 2018-11-20
+
 ### Added
 
 - Added TypeScript as a first-class language (converted to TypeScript and added type-bindings)
