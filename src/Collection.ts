@@ -24,9 +24,9 @@ import Document from "./Document";
  * using `mobx-react`'s `observer` pattern.
  *
  * Collection supports three modes of real-time updating:
- * - "off" (real-time updating is turned off)
- * - "on" (real-time updating is permanently turned on)
  * - "auto" (real-time updating is enabled on demand) (default)
+ * - "on" (real-time updating is permanently turned on)
+ * - "off" (real-time updating is turned off, use `.fetch` explicitly)
  *
  * The "auto" mode ensures that Collection only communicates with
  * the firestore back-end whever the Collection is actually
@@ -47,8 +47,8 @@ import Document from "./Document";
  * If nothing has changed on the back-end, no new Documents would be
  * created or modified.
  *
+ * @param {CollectionSource} [source] String-path, ref or function that returns a path or ref
  * @param {Object} [options] Configuration options
- * @param
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
  * @param {Function} [options.createDocument] Factory function for creating documents `(source, options) => new Document(source, options)`
@@ -77,7 +77,7 @@ import Document from "./Document";
  *
  * @example
  * // In manual mode, just call `fetch` explicitely
- * const col = new Collection('albums');
+ * const col = new Collection('albums', {mode: 'off'});
  * col.fetch().then((collection) => {
  *   collection.docs.forEach((doc) => console.log(doc));
  * });
@@ -367,6 +367,10 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * Fetches new data from firestore. Use this to manually fetch
 	 * new data when `mode` is set to 'off'.
+	 * 
+	 * @return {Promise}
+	 * @fulfil {Collection} - This collection
+	 * @reject {Error} - Error describing the cause of the problem
 	 *
 	 * @example
 	 * const col = new Collection('albums', 'off');
@@ -448,6 +452,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Use this method to for instance wait for
 	 * the initial snapshot update to complete, or to wait
 	 * for fresh data after changing the path/ref.
+	 * 
+	 * @return {Promise}
 	 *
 	 * @example
 	 * const col = new Collection('albums', {mode: 'on'});
@@ -472,6 +478,11 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Add a new document to this collection with the specified
 	 * data, assigning it a document ID automatically.
 	 *
+	 * @param {Object} data - JSON data for the new document
+	 * @return {Promise}
+	 * @fulfil {Document} - The newly created document
+	 * @reject {Error} - Error, e.g. a schema validation error or Firestore error
+	 *
 	 * @example
 	 * const doc = await collection.add({
 	 *   finished: false,
@@ -479,6 +490,16 @@ class Collection<T extends ICollectionDocument = Document>
 	 *   options: {
 	 *     highPrio: true
 	 *   }
+	 * });
+	 * console.log(doc.id); // print id of new document
+	 *
+	 * @example
+	 * // If you want to create a document with a custom Id, then
+	 * // use the Document class instead, like this:
+	 * const docWithCustomId = new Document('todos/mytodoid');
+	 * await docWithCustomId.set({
+	 *   finished: false,
+	 *   text: 'New todo',
 	 * });
 	 */
 	public async add(data: any): Promise<T> {
@@ -511,7 +532,7 @@ class Collection<T extends ICollectionDocument = Document>
 
 	/**
 	 * Deletes all the documents in the collection or query.
-	 *
+	 * @ignore
 	 * TODO - Not implemented yet
 	 */
 	public async deleteAll(): Promise<void> {

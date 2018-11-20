@@ -68,6 +68,7 @@ export interface ICollectionDocument extends IDocument {
 
 /**
  * Real-time updating mode.
+ * @type Mode
  */
 export enum Mode {
 	Auto = "auto",

@@ -31,12 +31,13 @@ function resolveRef(
 const EMPTY_OPTIONS = {};
 
 /**
- * Document represents a document stored in the firestore no-sql database.
- * Document is observable so that it can be efficiently linked to a React
- * Component using `mobx-react`'s `observer` pattern. This ensures that a
- * component is only re-rendered when data that is accessed in the `render`
+ * Document represents a document stored in the firestore database.
+ * Document is observable so that it can be efficiently linked to for instance
+ * a React Component using `mobx-react`'s `observer` pattern. This ensures that
+ * a component is only re-rendered when data that is accessed in the `render`
  * function has changed.
  *
+ * @param {DocumentSource} [source] String-path, ref or function that returns a path or ref
  * @param {Object} [options] Configuration options
  * @param {String} [options.mode] See `Document.mode` (default: auto)
  * @param {Object} [options.schema] Superstruct schema for data validation
@@ -245,6 +246,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * The update will fail if applied to a document that does
 	 * not exist.
 	 *
+	 * @param {Object} fields - Fields to update
+	 * @return {Promise}
+	 * 
 	 * @example
 	 * await todoDoc.update({
 	 *   finished: true,
@@ -284,6 +288,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * @param {Object} data - An object of the fields and values for the document
 	 * @param {Object} [options] - Set behaviour options
 	 * @param {Boolean} [options.merge] - Set to `true` to only replace the values specified in the data argument. Fields omitted will remain untouched.
+	 * @return {Promise}
 	 *
 	 * @example
 	 * const todo = new Document('todos/mynewtodo');
@@ -313,6 +318,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * Returns a promise that resolves once the document has been
 	 * successfully deleted from the backend (Note that it won't
 	 * resolve while you're offline).
+	 * 
+	 * @return {Promise}
 	 */
 	public delete(): Promise<void> {
 		return this.refObservable.get().delete();
@@ -322,6 +329,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * Fetches new data from firestore. Use this to manually fetch
 	 * new data when `mode` is set to 'off'.
 	 *
+	 * @return {Promise}
+	 * @fullfil {Document} This document
+	 * 
 	 * @example
 	 * const doc = new Document('albums/splinter');
 	 * await doc.fetch();
@@ -408,6 +418,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * the initial snapshot update to complete, or to wait
 	 * for fresh data after changing the path/ref.
 	 *
+	 * @return {Promise}
+	 * 
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'on'});
 	 * await doc.ready();
@@ -466,6 +478,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 
 	/**
 	 * ICollectionDocument
+	 * @private
 	 */
 	public addCollectionRef(): number {
 		return ++this.collectionRefCount;

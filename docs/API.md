@@ -8,9 +8,9 @@ observable so that it can be efficiently linked to a React Component
 using <code>mobx-react</code>&#39;s <code>observer</code> pattern.</p>
 <p>Collection supports three modes of real-time updating:</p>
 <ul>
-<li>&quot;off&quot; (real-time updating is turned off)</li>
-<li>&quot;on&quot; (real-time updating is permanently turned on)</li>
 <li>&quot;auto&quot; (real-time updating is enabled on demand) (default)</li>
+<li>&quot;on&quot; (real-time updating is permanently turned on)</li>
+<li>&quot;off&quot; (real-time updating is turned off, use <code>.fetch</code> explicitly)</li>
 </ul>
 <p>The &quot;auto&quot; mode ensures that Collection only communicates with
 the firestore back-end whever the Collection is actually
@@ -29,17 +29,17 @@ manually. This will update the Collection as efficiently as possible.
 If nothing has changed on the back-end, no new Documents would be
 created or modified.</p></dd>
 <dt><a href="#Document">Document</a></dt>
-<dd><p>Document represents a document stored in the firestore no-sql database.
-Document is observable so that it can be efficiently linked to a React
-Component using <code>mobx-react</code>&#39;s <code>observer</code> pattern. This ensures that a
-component is only re-rendered when data that is accessed in the <code>render</code>
+<dd><p>Document represents a document stored in the firestore database.
+Document is observable so that it can be efficiently linked to for instance
+a React Component using <code>mobx-react</code>&#39;s <code>observer</code> pattern. This ensures that
+a component is only re-rendered when data that is accessed in the <code>render</code>
 function has changed.</p></dd>
 </dl>
 
 ## Members
 
 <dl>
-<dt><a href="#Mode">Mode</a></dt>
+<dt><a href="#Mode">Mode</a> : <code><a href="#Mode">Mode</a></code></dt>
 <dd><p>Real-time updating mode.</p></dd>
 </dl>
 
@@ -62,9 +62,9 @@ observable so that it can be efficiently linked to a React Component
 using <code>mobx-react</code>'s <code>observer</code> pattern.</p>
 <p>Collection supports three modes of real-time updating:</p>
 <ul>
-<li>&quot;off&quot; (real-time updating is turned off)</li>
-<li>&quot;on&quot; (real-time updating is permanently turned on)</li>
 <li>&quot;auto&quot; (real-time updating is enabled on demand) (default)</li>
+<li>&quot;on&quot; (real-time updating is permanently turned on)</li>
+<li>&quot;off&quot; (real-time updating is turned off, use <code>.fetch</code> explicitly)</li>
 </ul>
 <p>The &quot;auto&quot; mode ensures that Collection only communicates with
 the firestore back-end whever the Collection is actually
@@ -86,7 +86,7 @@ created or modified.</p>
 **Kind**: global class  
 
 * [Collection](#Collection)
-    * [new Collection([options], options)](#new_Collection_new)
+    * [new Collection([source], [options])](#new_Collection_new)
     * [.docs](#Collection+docs)
     * [.ref](#Collection+ref)
     * [.id](#Collection+id)
@@ -95,19 +95,18 @@ created or modified.</p>
     * [.mode](#Collection+mode)
     * [.isActive](#Collection+isActive)
     * [.isLoading](#Collection+isLoading)
-    * [.fetch()](#Collection+fetch)
-    * [.ready()](#Collection+ready)
-    * [.add()](#Collection+add)
-    * [.deleteAll()](#Collection+deleteAll)
+    * [.fetch()](#Collection+fetch) ⇒ <code>Promise</code>
+    * [.ready()](#Collection+ready) ⇒ <code>Promise</code>
+    * [.add(data)](#Collection+add) ⇒ <code>Promise</code>
 
 <a name="new_Collection_new"></a>
 
-### new Collection([options], options)
+### new Collection([source], [options])
 
 | Param | Type | Description |
 | --- | --- | --- |
+| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
 | [options] | <code>Object</code> | <p>Configuration options</p> |
-| options |  |  |
 | [options.query] | <code>function</code> \| <code>Query</code> | <p>See <code>Collection.query</code></p> |
 | [options.mode] | <code>String</code> | <p>See <code>Collection.mode</code></p> |
 | [options.createDocument] | <code>function</code> | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
@@ -138,7 +137,7 @@ const col3 = new Collection('artists', {
 **Example**  
 ```js
 // In manual mode, just call `fetch` explicitely
-const col = new Collection('albums');
+const col = new Collection('albums', {mode: 'off'});
 col.fetch().then((collection) => {
   collection.docs.forEach((doc) => console.log(doc));
 });
@@ -281,11 +280,13 @@ console.log(col.isLoading);  // false
 ```
 <a name="Collection+fetch"></a>
 
-### collection.fetch()
+### collection.fetch() ⇒ <code>Promise</code>
 <p>Fetches new data from firestore. Use this to manually fetch
 new data when <code>mode</code> is set to 'off'.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
+**Fulfil**: [<code>Collection</code>](#Collection) - This collection  
+**Reject**: <code>Error</code> - Error describing the cause of the problem  
 **Example**  
 ```js
 const col = new Collection('albums', 'off');
@@ -295,7 +296,7 @@ col.fetch().then(({docs}) => {
 ```
 <a name="Collection+ready"></a>
 
-### collection.ready()
+### collection.ready() ⇒ <code>Promise</code>
 <p>Promise that is resolved when the Collection has
 finished fetching its (initial) documents.</p>
 <p>Use this method to for instance wait for
@@ -321,11 +322,18 @@ console.log('albums: ', col.docs);
 ```
 <a name="Collection+add"></a>
 
-### collection.add()
+### collection.add(data) ⇒ <code>Promise</code>
 <p>Add a new document to this collection with the specified
 data, assigning it a document ID automatically.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
+**Fulfil**: [<code>Document</code>](#Document) - The newly created document  
+**Reject**: <code>Error</code> - Error, e.g. a schema validation error or Firestore error  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | <p>JSON data for the new document</p> |
+
 **Example**  
 ```js
 const doc = await collection.add({
@@ -335,27 +343,31 @@ const doc = await collection.add({
     highPrio: true
   }
 });
+console.log(doc.id); // print id of new document
 ```
-<a name="Collection+deleteAll"></a>
-
-### collection.deleteAll()
-<p>Deletes all the documents in the collection or query.</p>
-<p>TODO - Not implemented yet</p>
-
-**Kind**: instance method of [<code>Collection</code>](#Collection)  
+**Example**  
+```js
+// If you want to create a document with a custom Id, then
+// use the Document class instead, like this:
+const docWithCustomId = new Document('todos/mytodoid');
+await docWithCustomId.set({
+  finished: false,
+  text: 'New todo',
+});
+```
 <a name="Document"></a>
 
 ## Document
-<p>Document represents a document stored in the firestore no-sql database.
-Document is observable so that it can be efficiently linked to a React
-Component using <code>mobx-react</code>'s <code>observer</code> pattern. This ensures that a
-component is only re-rendered when data that is accessed in the <code>render</code>
+<p>Document represents a document stored in the firestore database.
+Document is observable so that it can be efficiently linked to for instance
+a React Component using <code>mobx-react</code>'s <code>observer</code> pattern. This ensures that
+a component is only re-rendered when data that is accessed in the <code>render</code>
 function has changed.</p>
 
 **Kind**: global class  
 
 * [Document](#Document)
-    * [new Document([options])](#new_Document_new)
+    * [new Document([source], [options])](#new_Document_new)
     * [.schema](#Document+schema)
     * [.data](#Document+data)
     * [.ref](#Document+ref)
@@ -365,19 +377,19 @@ function has changed.</p>
     * [.isActive](#Document+isActive)
     * [.snapshot](#Document+snapshot)
     * [.isLoading](#Document+isLoading)
-    * [.update()](#Document+update)
-    * [.set(data, [options])](#Document+set)
-    * [.delete()](#Document+delete)
-    * [.fetch()](#Document+fetch)
-    * [.ready()](#Document+ready)
-    * [.addCollectionRef()](#Document+addCollectionRef)
+    * [.update(fields)](#Document+update) ⇒ <code>Promise</code>
+    * [.set(data, [options])](#Document+set) ⇒ <code>Promise</code>
+    * [.delete()](#Document+delete) ⇒ <code>Promise</code>
+    * [.fetch()](#Document+fetch) ⇒ <code>Promise</code>
+    * [.ready()](#Document+ready) ⇒ <code>Promise</code>
 
 <a name="new_Document_new"></a>
 
-### new Document([options])
+### new Document([source], [options])
 
 | Param | Type | Description |
 | --- | --- | --- |
+| [source] | <code>DocumentSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
 | [options] | <code>Object</code> | <p>Configuration options</p> |
 | [options.mode] | <code>String</code> | <p>See <code>Document.mode</code> (default: auto)</p> |
 | [options.schema] | <code>Object</code> | <p>Superstruct schema for data validation</p> |
@@ -517,12 +529,17 @@ console.log(doc.isLoading); 	// false
 ```
 <a name="Document+update"></a>
 
-### document.update()
+### document.update(fields) ⇒ <code>Promise</code>
 <p>Updates one or more fields in the document.</p>
 <p>The update will fail if applied to a document that does
 not exist.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fields | <code>Object</code> | <p>Fields to update</p> |
+
 **Example**  
 ```js
 await todoDoc.update({
@@ -535,7 +552,7 @@ await todoDoc.update({
 ```
 <a name="Document+set"></a>
 
-### document.set(data, [options])
+### document.set(data, [options]) ⇒ <code>Promise</code>
 <p>Writes to the document.</p>
 <p>If the document does not exist yet, it will be created.
 If you pass options, the provided data can be merged into
@@ -559,7 +576,7 @@ await todo.set({
 ```
 <a name="Document+delete"></a>
 
-### document.delete()
+### document.delete() ⇒ <code>Promise</code>
 <p>Deletes the document in Firestore.</p>
 <p>Returns a promise that resolves once the document has been
 successfully deleted from the backend (Note that it won't
@@ -568,11 +585,12 @@ resolve while you're offline).</p>
 **Kind**: instance method of [<code>Document</code>](#Document)  
 <a name="Document+fetch"></a>
 
-### document.fetch()
+### document.fetch() ⇒ <code>Promise</code>
 <p>Fetches new data from firestore. Use this to manually fetch
 new data when <code>mode</code> is set to 'off'.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
+**Fullfil**: [<code>Document</code>](#Document) This document  
 **Example**  
 ```js
 const doc = new Document('albums/splinter');
@@ -581,7 +599,7 @@ console.log('data: ', doc.data);
 ```
 <a name="Document+ready"></a>
 
-### document.ready()
+### document.ready() ⇒ <code>Promise</code>
 <p>Promise that is resolved when the Document has
 data ready to be consumed.</p>
 <p>Use this function to for instance wait for
@@ -605,15 +623,9 @@ doc.path = 'albums/americana';
 await doc.ready();
 console.log('data: ', doc.data);
 ```
-<a name="Document+addCollectionRef"></a>
-
-### document.addCollectionRef()
-<p>ICollectionDocument</p>
-
-**Kind**: instance method of [<code>Document</code>](#Document)  
 <a name="Mode"></a>
 
-## Mode
+## Mode : [<code>Mode</code>](#Mode)
 <p>Real-time updating mode.</p>
 
 **Kind**: global variable  
