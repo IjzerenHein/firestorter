@@ -100,8 +100,8 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Documentation
 
 * [Introduction to Firestorter](https://medium.com/@hrutjes/building-a-react-firestore-app-with-zero-effort-and-mobx-525df611eabf)
-* [TypeScript support 👌](./docs/TypeScript)
-* [react-native support](./docs/ReactNative)
+* [TypeScript support 👌](./docs/TypeScript.md)
+* [react-native support](./docs/ReactNative.md)
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Collections and Documents with a store](./docs/Store.md)

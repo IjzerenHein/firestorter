@@ -1,3 +1,3 @@
 ### react-native support
 
-TODO
+react-native is already fully supported, docs will appear here soon
