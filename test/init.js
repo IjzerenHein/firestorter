@@ -41,6 +41,7 @@ export {
 	firebase,
 	initFirestorter,
 	getFirestore,
+	getFirebase,
 	Collection,
 	Document,
 	autorun,

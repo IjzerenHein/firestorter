@@ -5,8 +5,8 @@ Adding documents can be best done using Collection.add, which automatically assi
 ```js
 const todos = new Collection('todos');
 const doc = await todos.add({
-	finished: false,
-	text: 'new task'
+  finished: false,
+  text: 'new task'
 });
 console.log(doc.id);
 ```
@@ -20,8 +20,8 @@ const todo = new Document('todos/mydoc');
 
 // Use .set to create the document in the back-end
 todo.set({
-	finished: false,
-	text: 'this is awesome'
+  finished: false,
+  text: 'this is awesome'
 });
 ```
 
@@ -29,34 +29,55 @@ todo.set({
 
 Updating documents can be done in 3 different ways:
 
-* Update one or more fields
-* Replace document contents
-* Merge data into document
+| Method | Action |
+|---|---|
+| `.update(...)` | Updates an existing document, but fails when document doesn't exist |
+| `.set(...)` | Replaces whole document contents or create document if it doesn't exist |
+| `.set(..., {merge: true})` | Merges data into existing document or create document if it doesn't exist |
+
 
 ```js
+import { getFirebase } from 'firestorter';
 const todo = new Document('todos/akskladlkasd887asj');
 
 // Update one or more fields
 await doc.update({
-	finished: true,
-	settings: {}
+  finished: true,
+  settings: {}
 });
 
 // Update a nested property using a field-path
+// This will only update `bar` and will leave all
+// other properties in settings and foo untouched.
 await doc.update({
-	'settings.foo.bar': 56
+  'settings.foo.bar': 56
 });
 
-// Replace document content using .set
-await doc.set({
-	blank: true
+// Properties can also be deleted entirely
+// See: https://firebase.google.com/docs/firestore/manage-data/delete-data
+await doc.update({
+  'settings.foo': getFirebase().firestore.FieldValue.delete()
+});
+// Field-paths can be combined to update multiple
+// properties/objects at once
+await doc.update({
+  'user.batman.isAwesome': true,
+  'user.batman.secretName': 'Bruce Wayne'
+  'user.batman.friends.robin': getFirebase().firestore.FieldValue.delete()
 });
 
-// Merge data into the document
+// Alternatively, you can use .set to create
+// or completely overwrite documents
 await doc.set({
-	settings: {
-		foo2: 'hello'
-	}
+  blank: true
+});
+
+// When {merge: true} is specified to .set, the provided
+// data is merged in case the document already exists
+await doc.set({
+  settings: {
+    foo2: 'hello'
+  }
 }, {merge: true});
 ```
 

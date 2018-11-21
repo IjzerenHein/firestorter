@@ -1,4 +1,4 @@
-import { Document, firebase } from './init';
+import { Document, firebase, getFirebase } from './init';
 import { struct } from 'superstruct';
 
 const ArtistSchema = struct({
@@ -46,13 +46,14 @@ test('update field-path with schema', async () => {
 });
 
 test('delete field with schema', async () => {
-	expect.assertions(1);
+	expect.assertions(2);
 	const doc = new Document('artists/FooFighters', {
 		schema: ArtistSchema
 	});
 	await doc.fetch();
+	expect(doc.data.memberCount).toBe(3);
 	await doc.update({
-		memberCount: firebase.firestore.FieldValue.delete()
+		memberCount: getFirebase().firestore.FieldValue.delete()
 	});
 	await doc.fetch();
 	expect(doc.data.memberCount).toBeUndefined();
