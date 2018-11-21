@@ -104,8 +104,9 @@ It does this by intelligently tracking whether a Collection or Document should b
 * [react-native support](./docs/ReactNative.md)
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
-* [Using Collections and Documents with a store](./docs/Store.md)
 * [Using Queries](./docs/Queries.md)
+* [Schemas & Custom documents](./docs/SchemasAndCustomDocuments.md)
+* [Using Collections and Documents with a store](./docs/Store.md)
 * [Using Sub-collections](./docs/SubCollections.md)
 * [API Reference](./docs/API.md)
 
