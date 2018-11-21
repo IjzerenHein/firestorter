@@ -1,4 +1,4 @@
-### TypeScript support
+## TypeScript support
 
 Firestorter is written in TypeScript and supports TypeScript as first-class citizen.
 It comes bundled with its own type-definitions so there is no need to import these separately.

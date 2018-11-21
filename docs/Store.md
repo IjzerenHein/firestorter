@@ -1,4 +1,4 @@
-### Using Collections and Documents with a store
+## Using Collections and Documents with a store
 
 When creating an application you need to think about how
 to structure your data. When a Collection is used in multiple

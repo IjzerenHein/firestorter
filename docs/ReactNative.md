@@ -1,4 +1,4 @@
-### react-native support
+## react-native support
 
 React-native is fully supported by Firestorter. The best way to use Firebase and Firestorter
 on react-native is to use the awesome [react-native-firebase](https://github.com/invertase/react-native-firebase) package. This library wraps the native

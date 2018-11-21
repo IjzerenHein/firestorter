@@ -1,11 +1,11 @@
-### Schema validation and Custom documents
+## Schema validation and Custom documents
 
 Firestorter offers document JSON data validation through [superstruct](https://github.com/ianstormtaylor/superstruct)
 schemas. These schemas validate that the data is as expected and adds an
 important safe-guard when writing to Firestore, to ensure the data conforms
 to your data-specification.
 
-#### Creating schemas
+### Creating schemas
 
 Schemas can be created using the [superstruct](https://github.com/ianstormtaylor/superstruct) library.
 Superstruct allows you to define a function that can verify JavaScript objects
@@ -30,7 +30,7 @@ const ArticleSchema = struct({
 });
 ```
 
-#### Custom documents
+### Custom documents
 
 Once a schema has been created, it can be assigned to a Document.
 
