@@ -528,7 +528,7 @@ class Collection<T extends ICollectionDocument = Document>
 		this.createDocument(undefined, {
 			snapshot: {
 				data: () => data,
-				exists: false,
+				exists: true,
 				get: (fieldPath: string) => data[fieldPath],
 				id: "",
 				isEqual: () => false,

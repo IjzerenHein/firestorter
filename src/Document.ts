@@ -119,7 +119,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * @type {boolean}
 	 */
 	public get hasData(): boolean {
-		return this.snapshot ? true : false;
+		const { snapshot } = this;
+		return (snapshot && snapshot.exists) ? true : false;
 	}
 
 	/**
