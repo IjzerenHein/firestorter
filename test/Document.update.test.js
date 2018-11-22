@@ -3,9 +3,9 @@ import { struct } from 'superstruct';
 
 const ArtistSchema = struct({
 	genre: 'string',
-	topAlbumId: 'string',
 	memberCount: 'number?',
-	members: 'object?'
+	members: 'object?',
+	topAlbumId: 'string',
 });
 
 test('update field', async () => {
