@@ -1,4 +1,5 @@
 import { Collection, firebase, observable } from './init';
+import { runInAction } from 'mobx';
 
 test('no query', () => {
 	const col = new Collection();
@@ -119,7 +120,7 @@ test('observable', async () => {
 	col.query = (ref) => ref.where('genre', '==', genre.get());
 	await col.fetch();
 	expect(col.docs[0].id).toBe('TheOffspring');
-	genre.set('rock');
+	runInAction(() => genre.set('rock'));
 	await col.fetch();
 	expect(col.docs[0].id).toBe('FooFighters');
 });

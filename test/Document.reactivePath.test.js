@@ -1,4 +1,5 @@
 import { Document, Collection, observable } from './init';
+import { runInAction } from 'mobx';
 
 test('no path', () => {
 	const doc = new Document(() => undefined);
@@ -18,7 +19,7 @@ test('observable', () => {
 	const name = observable.box('todo');
 	const doc = new Document(() => 'todos/' + name.get());
 	expect(doc.path).toBe('todos/todo');
-	name.set('todo2');
+	runInAction(() => name.set('todo2'));
 	expect(doc.path).toBe('todos/todo2');
 });
 

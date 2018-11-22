@@ -1,5 +1,5 @@
 import { firestore } from "firebase";
-import { observable, reaction, toJS, transaction } from "mobx";
+import { observable, reaction, toJS, runInAction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
 import { mergeUpdateData, verifyMode } from "./Utils";
@@ -40,7 +40,7 @@ const EMPTY_OPTIONS = {};
  * @param {DocumentSource} [source] String-path, ref or function that returns a path or ref
  * @param {Object} [options] Configuration options
  * @param {String} [options.mode] See `Document.mode` (default: auto)
- * @param {Object} [options.schema] Superstruct schema for data validation
+ * @param {Function} [options.schema] Superstruct schema for data validation
  * @param {DocumentSnapshot} [options.snapshot] Initial document snapshot
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
@@ -50,7 +50,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	private sourceDisposerFn: () => void;
 	private refObservable: any;
 	private snapshotObservable: any;
-	private docSchema: any;
+	private docSchema: (data: any) => any;
 	private isVerbose: boolean;
 	private debugInstanceName?: string;
 	private collectionRefCount: number;
@@ -69,7 +69,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		this.docSchema = schema;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
-		this.snapshotObservable = observable.box(snapshot);
+		this.snapshotObservable = enhancedObservable(snapshot, this);
 		this.collectionRefCount = 0;
 		this.observedRefCount = 0;
 		let data = snapshot ? snapshot.data() : undefined;
@@ -81,20 +81,24 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		this.isLoadingObservable = observable.box(false);
 		this._updateSourceObserver();
 		if (mode === Mode.On) {
-			this._updateRealtimeUpdates();
+			runInAction(() => this._updateRealtimeUpdates());
 		}
 	}
 
 	/**
 	 * Returns the superstruct schema used to validate the
 	 * document, or undefined.
+	 * 
+	 * @type {Function}
 	 */
-	public get schema(): any {
+	public get schema(): (data: any) => any {
 		return this.docSchema;
 	}
 
 	/**
 	 * Returns the data inside the firestore document.
+	 *
+	 * @type {Object}
 	 *
 	 * @example
 	 * todos.docs.map((doc) => {
@@ -110,6 +114,15 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	}
 
 	/**
+	 * True whenever the document has fetched any data.
+	 * 
+	 * @type {boolean}
+	 */
+	public get hasData(): boolean {
+		return this.snapshot ? true : false;
+	}
+
+	/**
 	 * Firestore document reference.
 	 *
 	 * Use this property to get or set the
@@ -118,6 +131,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * Alternatively, you can also use `path` to change the
 	 * reference in more a readable way.
 	 *
+	 * @type {firestore.DocumentReference | Function}
+	 * 
 	 * @example
 	 * const doc = new Document('albums/splinter');
 	 *
@@ -138,6 +153,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * Id of the firestore document.
 	 *
 	 * To get the full-path of the document, use `path`.
+	 * 
+	 * @type {string}
 	 */
 	public get id(): string | undefined {
 		const ref = this.refObservable.get();
@@ -151,6 +168,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * the back-end. Effectively, it is a more compact
 	 * and readable way of setting a new ref.
 	 *
+	 * @type {string | Function}
+	 * 
 	 * @example
 	 * const doc = new Document('artists/Metallica');
 	 * ...
@@ -197,7 +216,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		}
 		this.sourceInput = source;
 		this._updateSourceObserver();
-		transaction(() => {
+		runInAction(() => {
 			this.refObservable.set(resolveRef(source));
 			this._updateRealtimeUpdates(true);
 		});
@@ -210,6 +229,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * - "auto" (enables real-time updating when the document becomes observed)
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
+	 * 
+	 * @type {string}
 	 */
 	public get mode(): Mode {
 		return this.modeObservable.get();
@@ -219,7 +240,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 			return;
 		}
 		verifyMode(mode);
-		transaction(() => {
+		runInAction(() => {
 			this.modeObservable.set(mode);
 			this._updateRealtimeUpdates();
 		});
@@ -228,6 +249,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	/**
 	 * Returns true when the Document is actively listening
 	 * for changes in the firestore back-end.
+	 * 
+	 * @type {boolean}
 	 */
 	public get isActive(): boolean {
 		return !!this.onSnapshotUnsubscribeFn;
@@ -235,6 +258,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 
 	/**
 	 * Underlying firestore snapshot.
+	 * 
+	 * @type {firestore.DocumentSnapshot}
 	 */
 	public get snapshot(): firestore.DocumentSnapshot | undefined {
 		return this.snapshotObservable.get();
@@ -355,11 +380,13 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		if (!ref) {
 			throw new Error("No ref or path set on Document");
 		}
-		this._ready(false);
-		this.isLoadingObservable.set(true);
+		runInAction(() => {
+			this._ready(false);
+			this.isLoadingObservable.set(true);
+		});
 		try {
 			const snapshot = await ref.get();
-			transaction(() => {
+			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				try {
 					this._updateFromSnapshot(snapshot);
@@ -369,8 +396,10 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 			});
 			this._ready(true);
 		} catch (err) {
-			this.isLoadingObservable.set(false);
-			this._ready(true);
+			runInAction(() => {
+				this.isLoadingObservable.set(false);
+				this._ready(true);
+			});
 			throw err;
 		}
 		return this;
@@ -385,6 +414,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
 	 * - When `fetch` is explicitely called
+	 *
+	 * @type {boolean}
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'off'});
@@ -457,7 +488,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 			);
 		}
 		const res = ++this.observedRefCount;
-		this._updateRealtimeUpdates();
+		if (res === 1) {
+			runInAction(() => this._updateRealtimeUpdates());
+		}
 		return res;
 	}
 
@@ -472,7 +505,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 			);
 		}
 		const res = --this.observedRefCount;
-		this._updateRealtimeUpdates();
+		if (!res) {
+			runInAction(() => this._updateRealtimeUpdates());
+		}
 		return res;
 	}
 
@@ -530,7 +565,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * @private
 	 */
 	protected _onSnapshot(snapshot: firestore.DocumentSnapshot) {
-		transaction(() => {
+		runInAction(() => {
 			if (this.isVerbose) {
 				console.debug(`${this.debugName} - onSnapshot`);
 			}
@@ -625,7 +660,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 						| string
 						| undefined)(),
 				value => {
-					transaction(() => {
+					runInAction(() => {
 						// TODO, check whether path has changed
 						this.refObservable.set(resolveRef(value));
 						this._updateRealtimeUpdates(true);

@@ -87,14 +87,14 @@ created or modified.</p>
 
 * [Collection](#Collection)
     * [new Collection([source], [options])](#new_Collection_new)
-    * [.docs](#Collection+docs)
-    * [.ref](#Collection+ref)
-    * [.id](#Collection+id)
-    * [.path](#Collection+path)
-    * [.query](#Collection+query)
-    * [.mode](#Collection+mode)
-    * [.isActive](#Collection+isActive)
-    * [.isLoading](#Collection+isLoading)
+    * [.docs](#Collection+docs) : <code>Array</code>
+    * [.ref](#Collection+ref) : <code>firestore.CollectionReference</code> \| <code>function</code>
+    * [.id](#Collection+id) : <code>string</code>
+    * [.path](#Collection+path) : <code>string</code> \| <code>function</code>
+    * [.query](#Collection+query) : <code>firestore.Query</code> \| <code>function</code>
+    * [.mode](#Collection+mode) : <code>string</code>
+    * [.isActive](#Collection+isActive) : <code>boolean</code>
+    * [.isLoading](#Collection+isLoading) : <code>boolean</code>
     * [.fetch()](#Collection+fetch) ⇒ <code>Promise</code>
     * [.ready()](#Collection+ready) ⇒ <code>Promise</code>
     * [.add(data)](#Collection+add) ⇒ <code>Promise</code>
@@ -148,7 +148,7 @@ console.log(col.isLoading);
 ```
 <a name="Collection+docs"></a>
 
-### collection.docs
+### collection.docs : <code>Array</code>
 <p>Array of all the documents that have been fetched
 from firestore.</p>
 
@@ -161,7 +161,7 @@ collection.docs.forEach((doc) => {
 ```
 <a name="Collection+ref"></a>
 
-### collection.ref
+### collection.ref : <code>firestore.CollectionReference</code> \| <code>function</code>
 <p>Firestore collection reference.</p>
 <p>Use this property to get or set the collection
 reference. When set, a fetch to the new collection
@@ -179,14 +179,14 @@ col.ref = firebase.firestore().collection('albums/americana/tracks');
 ```
 <a name="Collection+id"></a>
 
-### collection.id
+### collection.id : <code>string</code>
 <p>Id of the Firestore collection (e.g. 'tracks').</p>
 <p>To get the full-path of the collection, use <code>path</code>.</p>
 
 **Kind**: instance property of [<code>Collection</code>](#Collection)  
 <a name="Collection+path"></a>
 
-### collection.path
+### collection.path : <code>string</code> \| <code>function</code>
 <p>Path of the collection (e.g. 'albums/blackAlbum/tracks').</p>
 <p>Use this property to switch to another collection in
 the back-end. Effectively, it is a more compact
@@ -202,13 +202,13 @@ col.path = 'artists/EaglesOfDeathMetal/albums';
 ```
 <a name="Collection+query"></a>
 
-### collection.query
+### collection.query : <code>firestore.Query</code> \| <code>function</code>
 <p>Use this property to set any order-by, where,
 limit or start/end criteria. When set, that query
 is used to retrieve any data. When cleared, the collection
 reference is used.</p>
 <p>The query can be either a Function of the form
-<code>(CollectionReference) =&gt; Query</code> (preferred), or a direct
+<code>(firestore.CollectionReference) =&gt; firestore.Query</code> (preferred), or a direct
 Firestore Query object.</p>
 
 **Kind**: instance property of [<code>Collection</code>](#Collection)  
@@ -227,7 +227,7 @@ todos.query = undefined;
 ```
 <a name="Collection+mode"></a>
 
-### collection.mode
+### collection.mode : <code>string</code>
 <p>Real-time updating mode.</p>
 <p>Can be set to any of the following values:</p>
 <ul>
@@ -239,14 +239,14 @@ todos.query = undefined;
 **Kind**: instance property of [<code>Collection</code>](#Collection)  
 <a name="Collection+isActive"></a>
 
-### collection.isActive
+### collection.isActive : <code>boolean</code>
 <p>Returns true when the Collection is actively listening
 for changes in the firestore back-end.</p>
 
 **Kind**: instance property of [<code>Collection</code>](#Collection)  
 <a name="Collection+isLoading"></a>
 
-### collection.isLoading
+### collection.isLoading : <code>boolean</code>
 <p>True when new data is being loaded.</p>
 <p>Fetches are performed in these cases:</p>
 <ul>
@@ -348,7 +348,7 @@ console.log(doc.id); // print id of new document
 **Example**  
 ```js
 // If you want to create a document with a custom Id, then
-// use the Document class instead, like this:
+// use the Document class instead, like this
 const docWithCustomId = new Document('todos/mytodoid');
 await docWithCustomId.set({
   finished: false,
@@ -368,15 +368,16 @@ function has changed.</p>
 
 * [Document](#Document)
     * [new Document([source], [options])](#new_Document_new)
-    * [.schema](#Document+schema)
-    * [.data](#Document+data)
-    * [.ref](#Document+ref)
-    * [.id](#Document+id)
-    * [.path](#Document+path)
-    * [.mode](#Document+mode)
-    * [.isActive](#Document+isActive)
-    * [.snapshot](#Document+snapshot)
-    * [.isLoading](#Document+isLoading)
+    * [.schema](#Document+schema) : <code>function</code>
+    * [.data](#Document+data) : <code>Object</code>
+    * [.hasData](#Document+hasData) : <code>boolean</code>
+    * [.ref](#Document+ref) : <code>firestore.DocumentReference</code> \| <code>function</code>
+    * [.id](#Document+id) : <code>string</code>
+    * [.path](#Document+path) : <code>string</code> \| <code>function</code>
+    * [.mode](#Document+mode) : <code>string</code>
+    * [.isActive](#Document+isActive) : <code>boolean</code>
+    * [.snapshot](#Document+snapshot) : <code>firestore.DocumentSnapshot</code>
+    * [.isLoading](#Document+isLoading) : <code>boolean</code>
     * [.update(fields)](#Document+update) ⇒ <code>Promise</code>
     * [.set(data, [options])](#Document+set) ⇒ <code>Promise</code>
     * [.delete()](#Document+delete) ⇒ <code>Promise</code>
@@ -392,21 +393,21 @@ function has changed.</p>
 | [source] | <code>DocumentSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
 | [options] | <code>Object</code> | <p>Configuration options</p> |
 | [options.mode] | <code>String</code> | <p>See <code>Document.mode</code> (default: auto)</p> |
-| [options.schema] | <code>Object</code> | <p>Superstruct schema for data validation</p> |
+| [options.schema] | <code>function</code> | <p>Superstruct schema for data validation</p> |
 | [options.snapshot] | <code>DocumentSnapshot</code> | <p>Initial document snapshot</p> |
 | [options.debug] | <code>Bool</code> | <p>Enables debug logging</p> |
 | [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
 
 <a name="Document+schema"></a>
 
-### document.schema
+### document.schema : <code>function</code>
 <p>Returns the superstruct schema used to validate the
 document, or undefined.</p>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+data"></a>
 
-### document.data
+### document.data : <code>Object</code>
 <p>Returns the data inside the firestore document.</p>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
@@ -420,9 +421,15 @@ todos.docs.map((doc) => {
   // }
 });
 ```
+<a name="Document+hasData"></a>
+
+### document.hasData : <code>boolean</code>
+<p>True whenever the document has fetched any data.</p>
+
+**Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+ref"></a>
 
-### document.ref
+### document.ref : <code>firestore.DocumentReference</code> \| <code>function</code>
 <p>Firestore document reference.</p>
 <p>Use this property to get or set the
 underlying document reference.</p>
@@ -442,14 +449,14 @@ doc.ref = firebase.firestore().doc('albums/americana');
 ```
 <a name="Document+id"></a>
 
-### document.id
+### document.id : <code>string</code>
 <p>Id of the firestore document.</p>
 <p>To get the full-path of the document, use <code>path</code>.</p>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+path"></a>
 
-### document.path
+### document.path : <code>string</code> \| <code>function</code>
 <p>Path of the document (e.g. 'albums/blackAlbum').</p>
 <p>Use this property to switch to another document in
 the back-end. Effectively, it is a more compact
@@ -470,7 +477,7 @@ doc.path = () => 'artists/' + doc2.data.artistId;
 ```
 <a name="Document+mode"></a>
 
-### document.mode
+### document.mode : <code>string</code>
 <p>Real-time updating mode.</p>
 <p>Can be set to any of the following values:</p>
 <ul>
@@ -482,20 +489,20 @@ doc.path = () => 'artists/' + doc2.data.artistId;
 **Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+isActive"></a>
 
-### document.isActive
+### document.isActive : <code>boolean</code>
 <p>Returns true when the Document is actively listening
 for changes in the firestore back-end.</p>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+snapshot"></a>
 
-### document.snapshot
+### document.snapshot : <code>firestore.DocumentSnapshot</code>
 <p>Underlying firestore snapshot.</p>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+isLoading"></a>
 
-### document.isLoading
+### document.isLoading : <code>boolean</code>
 <p>True when new data is being loaded.</p>
 <p>Loads are performed in these cases:</p>
 <ul>

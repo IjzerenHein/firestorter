@@ -1,4 +1,4 @@
-import { IObservableArray, observable, reaction, transaction } from "mobx";
+import { IObservableArray, observable, reaction, runInAction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore } from "./init";
 import { verifyMode } from "./Utils";
@@ -174,13 +174,15 @@ class Collection<T extends ICollectionDocument = Document>
 			): T => (new Document(docSource, docOptions) as unknown) as T;
 		}
 
-		this._updateRealtimeUpdates(true, true);
+		runInAction(() => this._updateRealtimeUpdates(true, true));
 	}
 
 	/**
 	 * Array of all the documents that have been fetched
 	 * from firestore.
 	 *
+	 * @type {Array}
+	 * 
 	 * @example
 	 * collection.docs.forEach((doc) => {
 	 *   console.log(doc.data);
@@ -200,6 +202,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Alternatively, you can also use `path` to change the
 	 * reference in more a readable way.
 	 *
+	 * @type {firestore.CollectionReference | Function}
+	 * 
 	 * @example
 	 * const col = new Collection(firebase.firestore().collection('albums/splinter/tracks'));
 	 * ...
@@ -209,11 +213,7 @@ class Collection<T extends ICollectionDocument = Document>
 	public get ref(): firestore.CollectionReference | undefined {
 		let ref = this.refObservable.get();
 		if (!this.refDisposerFn) {
-			const newRef = this._resolveRef(this.sourceInput);
-			if (ref !== newRef) {
-				ref = newRef;
-				this.refObservable.set(newRef);
-			}
+			ref = this._resolveRef(this.sourceInput);
 		}
 		return ref;
 	}
@@ -225,6 +225,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Id of the Firestore collection (e.g. 'tracks').
 	 *
 	 * To get the full-path of the collection, use `path`.
+	 * 
+	 * @type {string}
 	 */
 	public get id(): string | undefined {
 		const ref = this.ref;
@@ -238,6 +240,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * the back-end. Effectively, it is a more compact
 	 * and readable way of setting a new ref.
 	 *
+	 * @type {string | Function}
+	 * 
 	 * @example
 	 * const col = new Collection('artists/Metallica/albums');
 	 * ...
@@ -270,7 +274,7 @@ class Collection<T extends ICollectionDocument = Document>
 		if (this.sourceInput === source) {
 			return;
 		}
-		transaction(() => {
+		runInAction(() => {
 			this.sourceInput = source;
 
 			// Stop any reactions
@@ -291,9 +295,11 @@ class Collection<T extends ICollectionDocument = Document>
 	 * reference is used.
 	 *
 	 * The query can be either a Function of the form
-	 * `(CollectionReference) => Query` (preferred), or a direct
+	 * `(firestore.CollectionReference) => firestore.Query` (preferred), or a direct
 	 * Firestore Query object.
 	 *
+	 * @type {firestore.Query | Function}
+	 * 
 	 * @example
 	 * const todos = new Collection('todos');
 	 *
@@ -313,7 +319,7 @@ class Collection<T extends ICollectionDocument = Document>
 		if (this.queryInput === query) {
 			return;
 		}
-		transaction(() => {
+		runInAction(() => {
 			this.queryInput = query;
 
 			// Stop any reactions
@@ -341,6 +347,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * - "auto" (enables real-time updating when the collection is observed)
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
+	 * 
+	 * @type {string}
 	 */
 	public get mode(): Mode {
 		return this.modeObservable.get();
@@ -350,7 +358,7 @@ class Collection<T extends ICollectionDocument = Document>
 			return;
 		}
 		verifyMode(mode);
-		transaction(() => {
+		runInAction(() => {
 			this.modeObservable.set(mode);
 			this._updateRealtimeUpdates();
 		});
@@ -359,6 +367,8 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * Returns true when the Collection is actively listening
 	 * for changes in the firestore back-end.
+	 * 
+	 * @type {boolean}
 	 */
 	public get isActive(): boolean {
 		return !!this.onSnapshotUnsubscribe;
@@ -393,19 +403,23 @@ class Collection<T extends ICollectionDocument = Document>
 		if (!ref) {
 			throw new Error("No ref, path or query set on Collection");
 		}
-		this._ready(false);
-		this.isLoadingObservable.set(true);
+		runInAction(() => {
+			this._ready(false);
+			this.isLoadingObservable.set(true);
+		});
 		try {
 			const snapshot = await ref.get();
-			transaction(() => {
+			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				this._updateFromSnapshot(snapshot);
 			});
 			this._ready(true);
 			return this;
 		} catch (err) {
-			this.isLoadingObservable.set(false);
-			this._ready(true);
+			runInAction(() => {
+				this.isLoadingObservable.set(false);
+				this._ready(true);
+			});
 			throw err;
 		}
 	}
@@ -419,6 +433,8 @@ class Collection<T extends ICollectionDocument = Document>
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
 	 * - When `fetch` is explicitely called
+	 *
+	 * @type {boolean}
 	 *
 	 * @example
 	 * const col = new Collection('albums', {mode: 'off'});
@@ -495,7 +511,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 *
 	 * @example
 	 * // If you want to create a document with a custom Id, then
-	 * // use the Document class instead, like this:
+	 * // use the Document class instead, like this
 	 * const docWithCustomId = new Document('todos/mytodoid');
 	 * await docWithCustomId.set({
 	 *   finished: false,
@@ -625,9 +641,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 		const res = ++this.observedRefCount;
 		if (res === 1) {
-			transaction(() => {
-				this._updateRealtimeUpdates();
-			});
+			runInAction(() => this._updateRealtimeUpdates());
 		}
 		return res;
 	}
@@ -644,9 +658,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 		const res = --this.observedRefCount;
 		if (!res) {
-			transaction(() => {
-				this._updateRealtimeUpdates();
-			});
+			runInAction(() => this._updateRealtimeUpdates());
 		}
 		return res;
 	}
@@ -756,7 +768,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 
 		// Process snapshot
-		transaction(() => {
+		runInAction(() => {
 			if (this.isVerbose) {
 				console.debug(`${this.debugName} - onSnapshot`);
 			}
@@ -894,7 +906,7 @@ class Collection<T extends ICollectionDocument = Document>
 					};
 				},
 				({ sourceRef, queryRef2 }) => {
-					transaction(() => {
+					runInAction(() => {
 						if (
 							this.refObservable.get() !== sourceRef ||
 							this.queryRefObservable.get() !== queryRef2

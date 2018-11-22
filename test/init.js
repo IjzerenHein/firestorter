@@ -22,7 +22,7 @@ beforeAll(() => {
 	firestore.settings({ timestampsInSnapshots: true });
 
 	// Configure mobx strict-mode
-	// configure({ enforceActions: 'always' });
+	configure({ enforceActions: 'always' });
 
 	// Initialize firestorter
 	initFirestorter({ firebase: firebase, app: firebaseApp });

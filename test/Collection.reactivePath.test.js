@@ -1,4 +1,5 @@
 import { Document, Collection, observable, autorun } from './init';
+import { runInAction } from 'mobx';
 
 test('no path', () => {
 	const col = new Collection(() => undefined);
@@ -18,7 +19,7 @@ test('observable', () => {
 	const name = observable.box('FooFighters');
 	const col = new Collection(() => 'artists/' + name.get() + '/albums');
 	expect(col.path).toBe('artists/FooFighters/albums');
-	name.set('TheOffspring');
+	runInAction(() => name.set('TheOffspring'));
 	expect(col.path).toBe('artists/TheOffspring/albums');
 });
 
@@ -40,13 +41,14 @@ test('document data', async () => {
 	expect.assertions(9);
 	const doc = new Document('settings/setting');
 	expect(doc.isActive).toBe(false);
-	const col = new Collection(() => `artists/${doc.data.topArtistId}/albums`);
+	const col = new Collection(() => doc.hasData ? `artists/${doc.data.topArtistId}/albums` : undefined);
 	expect(doc.isActive).toBe(false);
 	expect(col.isActive).toBe(false);
 	const dispose = autorun(() => {
 		col.docs.length;
 	});
 	expect(doc.isActive).toBe(true);
+	await doc.ready();
 	expect(col.isActive).toBe(true);
 	await col.ready();
 	expect(col.path).toBe('artists/FooFighters/albums');
