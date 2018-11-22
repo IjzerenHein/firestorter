@@ -32,3 +32,28 @@ test('replace ref', () => {
 	expect(doc.path).toBe('todos/todo2');
 	expect(doc.ref).toBeDefined();
 });
+
+test('change path to unknown document', async () => {
+	expect.assertions(2);
+	const doc = new Document('artists/TheOffspring');
+	await doc.fetch();
+	expect(doc.hasData).toBe(true);
+	doc.path = 'readOnly/doesnotexist';
+	await doc.fetch();
+	expect(doc.hasData).toBe(false);
+});
+
+test('change path to inaccessible document', async () => {
+	expect.assertions(3);
+	const doc = new Document('artists/TheOffspring');
+	await doc.fetch();
+	expect(doc.hasData).toBe(true);
+	doc.path = 'forbidden/cantReadMe';
+	try {
+		await doc.fetch();
+	}
+	catch (err) {
+		expect(err).toBeDefined();
+	}
+	expect(doc.hasData).toBe(false);
+});

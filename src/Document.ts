@@ -399,6 +399,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		} catch (err) {
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
+				this._updateFromSnapshot(undefined);
 				this._ready(true);
 			});
 			throw err;
@@ -531,8 +532,8 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	/**
 	 * @private
 	 */
-	public _updateFromSnapshot(snapshot: firestore.DocumentSnapshot): void {
-		let data = snapshot.data();
+	public _updateFromSnapshot(snapshot?: firestore.DocumentSnapshot): void {
+		let data = snapshot ? snapshot.data() : undefined;
 		if (data) {
 			data = this._validateSchema(data);
 		} else {
