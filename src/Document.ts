@@ -323,7 +323,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 *   text: 'this is awesome'
 	 * });
 	 */
-	public set(data: any, options: any): Promise<void> {
+	public set(data: any, options?: any): Promise<void> {
 		if (this.docSchema) {
 			try {
 				if (options && options.merge) {
