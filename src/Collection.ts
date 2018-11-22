@@ -418,6 +418,7 @@ class Collection<T extends ICollectionDocument = Document>
 		} catch (err) {
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
+				this._updateFromSnapshot(undefined);
 				this._ready(true);
 			});
 			throw err;
@@ -788,25 +789,27 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	private _updateFromSnapshot(snapshot: firestore.QuerySnapshot): void {
+	private _updateFromSnapshot(snapshot?: firestore.QuerySnapshot): void {
 		const newDocs = [];
-		snapshot.docs.forEach((docSnapshot: firestore.DocumentSnapshot) => {
-			let doc = this.docLookup[docSnapshot.id];
-			try {
-				if (doc) {
-					doc.updateFromCollectionSnapshot(docSnapshot);
-				} else {
-					doc = this.createDocument(docSnapshot.ref, {
-						snapshot: docSnapshot
-					});
-					this.docLookup[doc.id] = doc;
+		if (snapshot) {
+			snapshot.docs.forEach((docSnapshot: firestore.DocumentSnapshot) => {
+				let doc = this.docLookup[docSnapshot.id];
+				try {
+					if (doc) {
+						doc.updateFromCollectionSnapshot(docSnapshot);
+					} else {
+						doc = this.createDocument(docSnapshot.ref, {
+							snapshot: docSnapshot
+						});
+						this.docLookup[doc.id] = doc;
+					}
+					doc.addCollectionRef();
+					newDocs.push(doc);
+				} catch (err) {
+					console.error(err.message);
 				}
-				doc.addCollectionRef();
-				newDocs.push(doc);
-			} catch (err) {
-				console.error(err.message);
-			}
-		});
+			});
+		}
 		this.docsObservable.forEach(doc => {
 			if (!doc.releaseCollectionRef()) {
 				delete this.docLookup[doc.id || ""];

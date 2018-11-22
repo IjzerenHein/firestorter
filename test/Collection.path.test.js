@@ -32,3 +32,28 @@ test('replace ref', () => {
 	expect(col.path).toBe('todos2');
 	expect(col.ref).toBeDefined();
 });
+
+test('change path to empty collection', async () => {
+	expect.assertions(2);
+	const col = new Collection('artists');
+	await col.fetch();
+	expect(col.docs.length).toBeGreaterThan(0);
+	col.path = 'emptyCollection';
+	await col.fetch();
+	expect(col.docs.length).toBe(0);
+});
+
+test('change path to forbidden collection', async () => {
+	expect.assertions(3);
+	const col = new Collection('artists');
+	await col.fetch();
+	expect(col.docs.length).toBeGreaterThan(0);
+	col.path = 'forbidden';
+	try {
+		await col.fetch();
+	}
+	catch (err) {
+		expect(err).toBeDefined();
+	}
+	expect(col.docs.length).toBe(0);
+});
