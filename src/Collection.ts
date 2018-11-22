@@ -312,10 +312,10 @@ class Collection<T extends ICollectionDocument = Document>
 	 * // Clear the query, will cause whole collection to be fetched
 	 * todos.query = undefined;
 	 */
-	public get query(): CollectionQuery {
+	public get query(): CollectionQuery | undefined {
 		return this.queryInput;
 	}
-	public set query(query: CollectionQuery) {
+	public set query(query: CollectionQuery | undefined) {
 		if (this.queryInput === query) {
 			return;
 		}

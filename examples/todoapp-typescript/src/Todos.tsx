@@ -71,7 +71,7 @@ class Todos extends Component<any, any> {
 		if (todos.query) {
 			todos.query = undefined;
 		} else {
-			todos.query = todos.ref.where("finished", "==", false).limit(10);
+			todos.query = (ref) => ref.where("finished", "==", false).limit(10);
 		}
 	};
 
