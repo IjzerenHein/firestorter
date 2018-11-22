@@ -9,6 +9,7 @@ script:
   - yarn doc
 deploy:
   provider: script
+  skip_cleanup: true
   script: bash scripts/deploy.sh $RELEASE_NOTES_TOKEN
   on:
     branch: master
