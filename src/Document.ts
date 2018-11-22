@@ -364,6 +364,11 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * console.log('data: ', doc.data);
 	 */
 	public async fetch(): Promise<Document> {
+		if (this.isVerbose) {
+			console.debug(
+				`${this.debugName} - fetching...`
+			);
+		}
 		if (this.collectionRefCount) {
 			throw new Error(
 				"Should not call fetch on Document that is controlled by a Collection"
@@ -389,14 +394,18 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 			const snapshot = await ref.get();
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
-				try {
-					this._updateFromSnapshot(snapshot);
-				} catch (err) {
-					console.error(err.message);
+				this._updateFromSnapshot(snapshot);
+				if (this.isVerbose) {
+					console.debug(
+						`${this.debugName} - fetched: ${JSON.stringify(toJS(this.data))}`
+					);
 				}
 			});
 			this._ready(true);
 		} catch (err) {
+			console.log(
+				`${this.debugName} - fetch failed: ${err.message}`
+			);
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				this._updateFromSnapshot(undefined);
