@@ -4,6 +4,21 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.1.0] - 2018-11-23
+
+### Added
+
+- Added support for MobX strict mode (`enforceActions: 'always'`)
+- Added `Document.hasData`, which can be used to check whether the document exists/has been fetched
+- Added Document `snapshotOptions` option, to control how Firestore server-timestamps are handled in snapshots
+- Added support for handling `Timestamp`s in schemas, using the new `isTimestamp` helper function
+
+### Fixed
+
+- Fixed various TypeScript type definition errors
+- Fixed `Document.data` not cleared after getting get a fetch-error
+- Fixed `Collection.docs` not cleared after changing path/ref to a non-accessible collection
+
 ## [1.0.4] - 2018-11-20
 
 ### Added
