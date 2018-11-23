@@ -132,7 +132,7 @@ test('ref change', async () => {
 	});
 	await col.fetch();
 	expect(col.docs[0].id).toBe('TheOffspring');
-	col.path = 'artists2';
+	col.path = 'emptyCollection';
 	await col.fetch();
 	expect(col.docs.length).toBe(0);
 	col.path = 'artists';

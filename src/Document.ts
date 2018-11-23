@@ -41,7 +41,8 @@ const EMPTY_OPTIONS = {};
  * @param {Object} [options] Configuration options
  * @param {String} [options.mode] See `Document.mode` (default: auto)
  * @param {Function} [options.schema] Superstruct schema for data validation
- * @param {DocumentSnapshot} [options.snapshot] Initial document snapshot
+ * @param {firestore.DocumentSnapshot} [options.snapshot] Initial document snapshot
+ * @param {firestore.SnapshotOptions} [options.snapshotOptions] Options that configure how data is retrieved from a snapshot
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
@@ -50,6 +51,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	private sourceDisposerFn: () => void;
 	private refObservable: any;
 	private snapshotObservable: any;
+	private snapshotOptions: firestore.SnapshotOptions;
 	private docSchema: (data: any) => any;
 	private isVerbose: boolean;
 	private debugInstanceName?: string;
@@ -62,17 +64,18 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	private readyPromise?: Promise<void>;
 	private readyResolveFn?: () => void;
 
-	constructor(source: DocumentSource, options: IDocumentOptions = {}) {
-		const { schema, snapshot, mode, debug, debugName } = options;
+	constructor(source?: DocumentSource, options: IDocumentOptions = {}) {
+		const { schema, snapshot, snapshotOptions, mode, debug, debugName } = options;
 		this.sourceInput = source;
 		this.refObservable = observable.box(resolveRef(source));
 		this.docSchema = schema;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
 		this.snapshotObservable = enhancedObservable(snapshot, this);
+		this.snapshotOptions = snapshotOptions;
 		this.collectionRefCount = 0;
 		this.observedRefCount = 0;
-		let data = snapshot ? snapshot.data() : undefined;
+		let data = snapshot ? snapshot.data(this.snapshotOptions) : undefined;
 		if (data) {
 			data = this._validateSchema(data);
 		}
@@ -542,7 +545,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * @private
 	 */
 	public _updateFromSnapshot(snapshot?: firestore.DocumentSnapshot): void {
-		let data = snapshot ? snapshot.data() : undefined;
+		let data = snapshot ? snapshot.data(this.snapshotOptions) : undefined;
 		if (data) {
 			data = this._validateSchema(data);
 		} else {

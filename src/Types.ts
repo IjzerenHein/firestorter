@@ -15,6 +15,7 @@ export type DocumentSource =
 export interface IDocumentOptions {
 	schema?: any;
 	snapshot?: firestore.DocumentSnapshot;
+	snapshotOptions?: firestore.SnapshotOptions;
 	mode?: Mode;
 	debug?: boolean;
 	debugName?: string;
