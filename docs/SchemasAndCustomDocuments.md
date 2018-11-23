@@ -30,6 +30,28 @@ const ArticleSchema = struct({
 });
 ```
 
+### Timestamps
+
+In Firestore, date/time is represented using `Timestamp` objects which have
+a higher precision than `Date`. To use these timestamps in schemas, use
+the `isTimestamp` helper function.
+
+```js
+import { isTimestamp } from 'firestorter';
+
+const TaskSchema = struct({
+  name: 'string',
+  startDate: isTimestamp,
+  duration: 'number'
+});
+
+const doc = new Document('tasks/mytask', {
+  schema: TaskSchema
+});
+await doc.fetch();
+console.log('startDate: ', doc.data.startDate.toDate());
+```
+
 ### Custom documents
 
 Once a schema has been created, it can be assigned to a Document.

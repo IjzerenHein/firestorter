@@ -51,6 +51,10 @@ function has changed.</p></dd>
 <dt><a href="#mergeUpdateData">mergeUpdateData(data, fields)</a> ⇒ <code>Object</code></dt>
 <dd><p>Helper function which merges data into the source
 and returns the new object.</p></dd>
+<dt><a href="#isTimestamp">isTimestamp(val)</a> ⇒ <code>Boolean</code></dt>
+<dd><p>Checks whether the provided value is a valid Firestore Timestamp or Date.</p>
+<p>Use this function in combination with schemas, in order to validate
+that the field in the document is indeed a timestamp.</p></dd>
 </dl>
 
 <a name="Collection"></a>
@@ -394,7 +398,8 @@ function has changed.</p>
 | [options] | <code>Object</code> | <p>Configuration options</p> |
 | [options.mode] | <code>String</code> | <p>See <code>Document.mode</code> (default: auto)</p> |
 | [options.schema] | <code>function</code> | <p>Superstruct schema for data validation</p> |
-| [options.snapshot] | <code>DocumentSnapshot</code> | <p>Initial document snapshot</p> |
+| [options.snapshot] | <code>firestore.DocumentSnapshot</code> | <p>Initial document snapshot</p> |
+| [options.snapshotOptions] | <code>firestore.SnapshotOptions</code> | <p>Options that configure how data is retrieved from a snapshot</p> |
 | [options.debug] | <code>Bool</code> | <p>Enables debug logging</p> |
 | [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
 
@@ -681,3 +686,32 @@ and returns the new object.</p>
 | data | <code>Object</code> | <p>JSON data</p> |
 | fields | <code>Object</code> | <p>JSON data that supports field-paths</p> |
 
+<a name="isTimestamp"></a>
+
+## isTimestamp(val) ⇒ <code>Boolean</code>
+<p>Checks whether the provided value is a valid Firestore Timestamp or Date.</p>
+<p>Use this function in combination with schemas, in order to validate
+that the field in the document is indeed a timestamp.</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| val | <code>Object</code> | <p>Value to check</p> |
+
+**Example**  
+```js
+import { isTimestamp } from 'firestorter';
+
+const TaskSchema = struct({
+ name: 'string',
+ startDate: isTimestamp,
+ duration: 'number'
+});
+
+const doc = new Document('tasks/mytask', {
+  schema: TaskSchema
+});
+await doc.fetch();
+console.log('startDate: ', doc.data.startDate.toDate());
+```

@@ -57,8 +57,31 @@ export function verifyMode(mode: Mode): Mode {
 	}
 }
 
+/**
+ * Checks whether the provided value is a valid Firestore Timestamp or Date.
+ * 
+ * Use this function in combination with schemas, in order to validate
+ * that the field in the document is indeed a timestamp.
+ * 
+ * @param {Object} val - Value to check
+ * @return {Boolean}
+ * 
+ * @example
+ * import { isTimestamp } from 'firestorter';
+ *
+ * const TaskSchema = struct({
+ *  name: 'string',
+ *  startDate: isTimestamp,
+ *  duration: 'number'
+ * });
+ * 
+ * const doc = new Document('tasks/mytask', {
+ *   schema: TaskSchema
+ * });
+ * await doc.fetch();
+ * console.log('startDate: ', doc.data.startDate.toDate());
+ */
 export function isTimestamp(val: any): boolean {
-	console.debug('WOOO: ', val);
 	if (val instanceof Date) {
 		return true;
 	}
