@@ -6,7 +6,7 @@ import {
 	getFirestore,
 	initFirestorter
 } from "./init";
-import { mergeUpdateData } from "./Utils";
+import { mergeUpdateData, isTimestamp } from "./Utils";
 
 export {
 	Collection,
@@ -15,5 +15,6 @@ export {
 	getFirestore,
 	getFirebase,
 	getFirebaseApp,
-	mergeUpdateData
+	mergeUpdateData,
+	isTimestamp
 };

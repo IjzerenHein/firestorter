@@ -56,3 +56,13 @@ export function verifyMode(mode: Mode): Mode {
 			throw new Error("Invalid mode mode: " + mode);
 	}
 }
+
+export function isTimestamp(val: any): boolean {
+	console.debug('WOOO: ', val);
+	if (val instanceof Date) {
+		return true;
+	}
+	return (typeof val === 'object') &&
+		(typeof val.seconds === 'number') &&
+		(typeof val.nanoseconds === 'number');
+}

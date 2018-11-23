@@ -6,7 +6,8 @@ import {
 	getFirebase,
 	getFirebaseApp,
 	Collection,
-	Document
+	Document,
+	isTimestamp
 } from '../src';
 import { autorun, reaction, observable, configure } from 'mobx';
 import firebaseConfig from './firebaseConfig.json';
@@ -44,6 +45,7 @@ export {
 	getFirebase,
 	Collection,
 	Document,
+	isTimestamp,
 	autorun,
 	reaction,
 	observable
