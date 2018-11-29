@@ -1,5 +1,6 @@
 import Collection from "./Collection";
 import Document from "./Document";
+import { Mode } from "./Types";
 import {
 	getFirebase,
 	getFirebaseApp,
@@ -16,5 +17,6 @@ export {
 	getFirebase,
 	getFirebaseApp,
 	mergeUpdateData,
+	Mode,
 	isTimestamp
 };

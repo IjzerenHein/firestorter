@@ -1,6 +1,6 @@
 import * as firebase from "firebase/app";
 import "firebase/firestore";
-import { initFirestorter, Collection, Document } from "firestorter";
+import { initFirestorter, Collection, Document, Mode } from "firestorter";
 import { DocumentSource, IDocumentOptions } from "firestorter/lib/Types";
 import { struct } from "superstruct";
 
@@ -31,7 +31,8 @@ class Todo extends Document {
 }
 
 const todos = new Collection("todos", {
-	DocumentClass: Todo
+	DocumentClass: Todo,
+	mode: Mode.Auto
 });
 
 export { todos };
