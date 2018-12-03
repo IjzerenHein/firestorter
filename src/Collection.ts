@@ -182,7 +182,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * from firestore.
 	 *
 	 * @type {Array}
-	 * 
+	 *
 	 * @example
 	 * collection.docs.forEach((doc) => {
 	 *   console.log(doc.data);
@@ -203,7 +203,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * reference in more a readable way.
 	 *
 	 * @type {firestore.CollectionReference | Function}
-	 * 
+	 *
 	 * @example
 	 * const col = new Collection(firebase.firestore().collection('albums/splinter/tracks'));
 	 * ...
@@ -225,7 +225,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Id of the Firestore collection (e.g. 'tracks').
 	 *
 	 * To get the full-path of the collection, use `path`.
-	 * 
+	 *
 	 * @type {string}
 	 */
 	public get id(): string | undefined {
@@ -241,7 +241,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * and readable way of setting a new ref.
 	 *
 	 * @type {string | Function}
-	 * 
+	 *
 	 * @example
 	 * const col = new Collection('artists/Metallica/albums');
 	 * ...
@@ -299,7 +299,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Firestore Query object.
 	 *
 	 * @type {firestore.Query | Function}
-	 * 
+	 *
 	 * @example
 	 * const todos = new Collection('todos');
 	 *
@@ -335,8 +335,11 @@ class Collection<T extends ICollectionDocument = Document>
 
 	/**
 	 * @private
+	 * firestore.Query -> a valid query exists, use that
+	 * null -> the query function returned `null` to disable the collection
+	 * undefined -> no query defined, use collection ref instead
 	 */
-	public get queryRef(): firestore.Query | undefined {
+	public get queryRef(): firestore.Query | null | undefined {
 		return this.queryRefObservable.get();
 	}
 
@@ -347,7 +350,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * - "auto" (enables real-time updating when the collection is observed)
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
-	 * 
+	 *
 	 * @type {string}
 	 */
 	public get mode(): Mode {
@@ -367,7 +370,7 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * Returns true when the Collection is actively listening
 	 * for changes in the firestore back-end.
-	 * 
+	 *
 	 * @type {boolean}
 	 */
 	public get isActive(): boolean {
@@ -377,7 +380,7 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * Fetches new data from firestore. Use this to manually fetch
 	 * new data when `mode` is set to 'off'.
-	 * 
+	 *
 	 * @return {Promise}
 	 * @fulfil {Collection} - This collection
 	 * @reject {Error} - Error describing the cause of the problem
@@ -399,7 +402,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 		const colRef = this._resolveRef(this.sourceInput);
 		const queryRef = this._resolveQuery(colRef, this.queryInput);
-		const ref = queryRef || colRef;
+		const ref = queryRef !== undefined ? queryRef : colRef;
 		if (!ref) {
 			throw new Error("No ref, path or query set on Collection");
 		}
@@ -469,7 +472,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * Use this method to for instance wait for
 	 * the initial snapshot update to complete, or to wait
 	 * for fresh data after changing the path/ref.
-	 * 
+	 *
 	 * @return {Promise}
 	 *
 	 * @example
@@ -699,7 +702,7 @@ class Collection<T extends ICollectionDocument = Document>
 	protected _resolveQuery(
 		collectionRef: firestore.CollectionReference,
 		query?: CollectionQuery
-	): firestore.Query {
+	): firestore.Query | null | undefined {
 		let ref: any = query;
 		if (typeof query === "function") {
 			ref = query(collectionRef);

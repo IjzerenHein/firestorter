@@ -40,7 +40,7 @@ export type CollectionSource =
  * Collection-query.
  */
 export type CollectionQuery =
-	| ((ref: firestore.CollectionReference) => firestore.Query | undefined)
+	| ((ref: firestore.CollectionReference) => firestore.Query | null | undefined)
 	| firestore.Query;
 
 /**
