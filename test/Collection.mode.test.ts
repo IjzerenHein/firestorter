@@ -1,5 +1,5 @@
 import { Collection } from "./init";
-import { Mode } from "../lib/Types";
+import { Mode } from "../src";
 
 describe("construct", () => {
 	test("default is auto", () => {
