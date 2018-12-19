@@ -487,6 +487,10 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 		return this.readyPromise;
 	}
 
+	public toString(): string {
+		return this.debugName;
+	}
+
 	/**
 	 * @private
 	 */

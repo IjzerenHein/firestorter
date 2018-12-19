@@ -569,6 +569,10 @@ class Collection<T extends ICollectionDocument = Document>
 		return;
 	}
 
+	public toString(): string {
+		return this.debugName
+	}
+
 	/**
 	 * @private
 	 */
