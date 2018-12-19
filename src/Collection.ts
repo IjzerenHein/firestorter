@@ -1,6 +1,6 @@
 import { IObservableArray, observable, reaction, runInAction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
-import { getFirestore } from "./init";
+import { IContext, IHasContext, getFirestore } from "./init";
 import { verifyMode } from "./Utils";
 import { firestore } from "firebase";
 import {
@@ -87,7 +87,7 @@ import Document from "./Document";
  * console.log(col.isLoading);
  */
 class Collection<T extends ICollectionDocument = Document>
-	implements IEnhancedObservableDelegate {
+	implements IEnhancedObservableDelegate, IHasContext {
 	private sourceInput: CollectionSource;
 	private sourceCache: CollectionSource;
 	private sourceCacheRef: firestore.CollectionReference;
@@ -115,6 +115,7 @@ class Collection<T extends ICollectionDocument = Document>
 	private readyResolveFn?: () => void;
 	private initialLocalSnapshotStartTime?: number;
 	private initialLocalSnapshotDebounceTimer?: any;
+	private ctx?: IContext;
 	// private _limit: any;
 	// private _cursor: any;
 
@@ -129,7 +130,8 @@ class Collection<T extends ICollectionDocument = Document>
 			debugName,
 			minimizeUpdates = false,
 			initialLocalSnapshotDetectTime = 50,
-			initialLocalSnapshotDebounceTime = 1000
+			initialLocalSnapshotDebounceTime = 1000,
+			context,
 		} = options;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
@@ -147,6 +149,7 @@ class Collection<T extends ICollectionDocument = Document>
 		this.modeObservable = observable.box(verifyMode(mode || Mode.Auto));
 		this.isLoadingObservable = observable.box(false);
 		this.docsObservable = enhancedObservable([], this);
+		this.ctx = context;
 
 		if (createDocument) {
 			if (DocumentClass) {
@@ -530,6 +533,7 @@ class Collection<T extends ICollectionDocument = Document>
 
 		// Validate schema using a dummy snapshot
 		this.createDocument(undefined, {
+			context: this.context,
 			snapshot: {
 				data: () => data,
 				exists: true,
@@ -538,13 +542,14 @@ class Collection<T extends ICollectionDocument = Document>
 				isEqual: () => false,
 				metadata: undefined,
 				ref: undefined
-			}
+			},
 		});
 
 		// Add to firestore
 		const ref2 = await ref.add(data);
 		const snapshot = await ref2.get();
 		const doc = this.createDocument(snapshot.ref, {
+			context: this.context,
 			snapshot
 		});
 		return doc;
@@ -569,6 +574,13 @@ class Collection<T extends ICollectionDocument = Document>
 	 */
 	public get debugName(): string {
 		return `${this.debugInstanceName || this.constructor.name} (${this.path})`;
+	}
+
+	/**
+	 * @private
+	 */
+	public get context(): IContext {
+		return this.ctx;
 	}
 
 	/**
@@ -687,7 +699,7 @@ class Collection<T extends ICollectionDocument = Document>
 		}
 		let ref;
 		if (typeof source === "string") {
-			ref = getFirestore().collection(source);
+			ref = getFirestore(this).collection(source);
 		} else if (typeof source === "function") {
 			ref = this._resolveRef(source());
 			return ref; // don't set cache in this case
@@ -802,6 +814,7 @@ class Collection<T extends ICollectionDocument = Document>
 						doc.updateFromCollectionSnapshot(docSnapshot);
 					} else {
 						doc = this.createDocument(docSnapshot.ref, {
+							context: this.context,
 							snapshot: docSnapshot
 						});
 						this.docLookup[doc.id] = doc;
