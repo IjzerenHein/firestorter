@@ -42,6 +42,7 @@ let globalContext: IContext;
 function initFirestorter(config: {
 	firebase: typeof firebaseT;
 	app?: string | app.App;
+	firestore?: firestore.Firestore;
 }): void {
 	if (globalContext) {
 		throw new Error(
@@ -49,11 +50,52 @@ function initFirestorter(config: {
 		);
 	}
 
+	globalContext = makeContext(config)
+}
+
+/**
+ * If you need to use different firestore instances for different
+ * collections, or otherwise want to avoid global state, you can
+ * instead provide a "context" opton when creating Document and
+ * Collection instances.
+ *
+ * This function takes the same arguments as initFirestore and returns
+ * a context suitable for Document and Collection creation.
+ *
+ * @example
+ * import firebase from 'firebase';
+ * import 'firebase/firestore'
+ * import * as firetest from '@firebase/testing'
+ * import {makeContext, Collection, Document} from "firestorter"
+ *
+ * function makeTestContext(fbtestArgs) {
+ * 	 const app = firetest.initializeTestApp(fbtestArgs)
+ *   return makeContext({
+ *     firestore,
+ *     app,
+ *   })
+ * }
+ *
+ * // create collection or document without global state
+ * test('collection and document using different apps', () => {
+ *   const context1 = makeTestContext({ projectId: 'foo' })
+ *   const context2 = makeTestContext({ projectId: 'bar' })
+ *
+ *   // Create collection or document
+ *   const albums = new Collection('artists/Metallica/albums', {context: context1});
+ *   ...
+ *   const album = new Document('artists/Metallica/albums/BlackAlbum', {context: context2});
+ *   ...
+ * })
+ */
+export function makeContext(config: {
+	firebase: typeof firebaseT;
+	app?: string | app.App;
+	firestore?: firestore.Firestore;
+}): IContext {
 	// Set firebase object
 	if (!config.firebase) {
-		throw new Error(
-			"Missing argument `firebase` specified to `initFirestorter()`"
-		);
+		throw new Error("Missing argument `config.firebase`");
 	}
 	const globalFirebase = config.firebase;
 
@@ -65,10 +107,10 @@ function initFirestorter(config: {
 		: globalFirebase.app();
 
 	// Get firestore instance
-	const globalFirestore = globalFirebaseApp.firestore();
+	const globalFirestore = config.firestore || globalFirebaseApp.firestore();
 	if (!globalFirestore) {
 		throw new Error(
-			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';`"
+			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';` ?"
 		);
 	}
 
@@ -77,11 +119,11 @@ function initFirestorter(config: {
 		globalFirebase.firestore.FieldValue.delete();
 	} catch (err) {
 		throw new Error(
-			"invalid `firebase` argument specified to `initFirestorter()`, `firebase.firestore.FieldValue.delete` does not exist"
+			"Invalid `firebase` argument specified: `firebase.firestore.FieldValue.delete` does not exist"
 		);
 	}
 
-	globalContext = {
+	return {
 		app: globalFirebaseApp,
 		firebase: globalFirebase,
 		firestore: globalFirestore,
