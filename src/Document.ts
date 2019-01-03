@@ -68,12 +68,12 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 
 	constructor(source?: DocumentSource, options: IDocumentOptions = {}) {
 		const { schema, snapshot, snapshotOptions, mode, debug, debugName, context } = options;
+		this.debugInstanceName = debugName;
 		this.sourceInput = source;
 		this.ctx = context;
 		this.refObservable = observable.box(resolveRef(source, this));
 		this.docSchema = schema;
 		this.isVerbose = debug || false;
-		this.debugInstanceName = debugName;
 		this.snapshotObservable = enhancedObservable(snapshot, this);
 		this.snapshotOptions = snapshotOptions;
 		this.collectionRefCount = 0;
@@ -189,7 +189,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * doc.path = () => 'artists/' + doc2.data.artistId;
 	 */
 	public get path(): string | (() => string | undefined) | undefined {
-		let ref = this.refObservable.get();
+		// if we call toString() during initialization, eg to throw an error referring to this
+		// document, this would throw an undefined error without the guard.
+		let ref = this.refObservable && this.refObservable.get();
 		if (!ref) {
 			return undefined;
 		}
