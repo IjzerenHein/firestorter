@@ -1,4 +1,10 @@
-import { IObservableArray, observable, reaction, runInAction } from "mobx";
+import {
+	IObservableArray,
+	observable,
+	reaction,
+	runInAction,
+	IObservableValue
+} from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { IContext, IHasContext, getFirestore } from "./init";
 import { verifyMode } from "./Utils";
@@ -92,12 +98,16 @@ class Collection<T extends ICollectionDocument = Document>
 	private sourceCache: CollectionSource;
 	private sourceCacheRef: firestore.CollectionReference;
 	private refDisposerFn: () => void;
-	private refObservable: any;
+	private refObservable: IObservableValue<
+		firestore.CollectionReference | undefined
+	>;
 	private queryInput?: CollectionQuery;
-	private queryRefObservable: any;
+	private queryRefObservable: IObservableValue<
+		firestore.Query | null | undefined
+	>;
 	private onSnapshotRefCache?: firestore.Query;
-	private modeObservable: any;
-	private isLoadingObservable: any;
+	private modeObservable: IObservableValue<Mode>;
+	private isLoadingObservable: IObservableValue<boolean>;
 	private docLookup: { [name: string]: T };
 	private docsObservable: IObservableArray<T>;
 	private createDocument: (
@@ -131,7 +141,7 @@ class Collection<T extends ICollectionDocument = Document>
 			minimizeUpdates = false,
 			initialLocalSnapshotDetectTime = 50,
 			initialLocalSnapshotDebounceTime = 1000,
-			context,
+			context
 		} = options;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
@@ -542,7 +552,7 @@ class Collection<T extends ICollectionDocument = Document>
 				isEqual: () => false,
 				metadata: undefined,
 				ref: undefined
-			},
+			}
 		});
 
 		// Add to firestore
@@ -570,7 +580,7 @@ class Collection<T extends ICollectionDocument = Document>
 	}
 
 	public toString(): string {
-		return this.debugName
+		return this.debugName;
 	}
 
 	/**
