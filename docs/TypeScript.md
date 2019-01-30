@@ -22,12 +22,32 @@ firestore.settings({ timestampsInSnapshots: true });
 initFirestorter({ firebase });
 ```
 
+### Document & Collection generics
+
+The used data-type for documents and collections can be specified as such.
+
+```ts
+import { Document, Collection } from "firestorter";
+
+type TodoType = {
+	text: string;
+	finished: boolean;
+};
+
+// Specify the document data-type
+type TodoDoc = Document<TodoType>;
+const todo = new TodoDoc();
+const { data } = todo; // data is of type `TodoType`
+
+// Will create documents with the type
+const todos = new Collection<TodoDoc>("todos");
+await todos.fetch();
+const { data } = todos.docs[0]; // data is of type `TodoType`
+```
 
 ### Additional types
 
-Besides the Collection and Document classes, Firestorter contains additional types
-which are needed when writing for instance custom Documents. These type-definitions
-are located in:
+Besides the Collection and Document classes, Firestorter contains additional types which are needed when writing for instance custom Documents. These type-definitions are located in:
 
 [firestorter/lib/Types.ts](../src/Types.ts)
 
@@ -38,72 +58,29 @@ import { ICollectionOptions, CollectionQuery, IDocument } from 'firestorter/lib/
 ...
 ```
 
-### Collection generics
-
-Collection can be extended to create and use your custom Document types.
-In the following example, a custom document is created that adds several methods
-to the standard Document class.
-
-#### todo.ts
+To create for instance, a collection with a custom Document creator, use:
 
 ```ts
-import { Document } from 'firestorter';
-import { DocumentSource, IDocumentOptions } from 'firestorter/lib/Types';
-import { struct } from 'superstruct';
+type TodoType = {
+	text: string;
+	finished: boolean;
+};
 
-class Todo extends Document {
-	constructor(source: DocumentSource, options: IDocumentOptions) {
+class TodoDoc extends Document<TodoType> {
+	setFinished(val: boolean): Promise<void> {
+		return this.update({
+			finished: val
+		});
+	}
+}
+
+class Todos extends Collection<TodoDoc> {
+	constructor(source: CollectionSource, options: ICollectionOptions) {
 		super(source, {
 			...(options || {}),
-			schema: struct({
-				finished: "boolean?",
-				text: "string"
-			})
+			createDocument: (source: CollectionSource, options: ICollectionOptions) =>
+				new TodoDoc(source, options)
 		});
-    }
-    
-    finish(): Promise<void> {
-        return this.update({
-            finished: true
-        });
-    }
-
-    unfinish(): Promise<void> {
-        return this.update({
-            finished: false
-        });
-    }
+	}
 }
-```
-
-#### todos.ts
-
-```ts
-import { Collection } from 'firestorter';
-import { CollectionSource, ICollectionOptions } from 'firestorter/lib/Types';
-import Todo from './Todo';
-
-class Todos<Todo> extends Collection {
-    constructor(source: CollectionSource, options: ICollectionOptions) {
-        super(source, {
-			...(options || {}),
-			createDocument: (source: CollectionSource, options: ICollectionOptions) => new Todo(source, options)
-		});
-    }
-}
-```
-
-#### app.ts
-
-```ts
-import Todo from './Todo';
-import Todos from './Todos';
-
-...
-const todos = new Todos('mytodos');
-const todo: Todo = todos.add({
-    finished: false
-});
-...
-await todo.finish();
 ```
