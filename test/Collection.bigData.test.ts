@@ -12,7 +12,7 @@ import { autorun } from "mobx";
 	}
 }, 1000000000);*/
 
-test("unobserve", async () => {
+test.skip("unobserve", async () => {
 	expect.assertions(1);
 	const col = new Collection("bigData");
 	const dispose = autorun(() => {
