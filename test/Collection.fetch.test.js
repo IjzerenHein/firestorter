@@ -14,7 +14,8 @@ test('fetch', async () => {
 	expect.assertions(1);
 	const col = new Collection('artists');
 	await col.fetch();
-	expect(col.docs.length).toBe(2);
+	const docs = col.docs.filter(doc => doc.id !== 'TEMP');
+	expect(docs.length).toBe(2);
 });
 
 test('already in progress', async () => {
@@ -35,5 +36,6 @@ test('ready', async () => {
 	expect(col.isLoading).toBe(true);
 	await col.ready();
 	expect(col.isLoading).toBe(false);
-	expect(col.docs.length).toBe(2);
+	const docs = col.docs.filter(doc => doc.id !== 'TEMP');
+	expect(docs.length).toBe(2);
 });
