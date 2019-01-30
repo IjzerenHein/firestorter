@@ -9,12 +9,9 @@ import TodoItem from "./TodoItem";
 import "./todos.css";
 
 class Todos extends Component<any, any> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			disabled: false
-		};
-	}
+	state = {
+		disabled: false
+	};
 
 	public render() {
 		const { disabled } = this.state;
@@ -71,7 +68,7 @@ class Todos extends Component<any, any> {
 		if (todos.query) {
 			todos.query = undefined;
 		} else {
-			todos.query = (ref) => ref.where("finished", "==", false).limit(10);
+			todos.query = ref => ref.where("finished", "==", false).limit(10);
 		}
 	};
 

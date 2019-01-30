@@ -7,12 +7,13 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Paper from "@material-ui/core/Paper";
 import "./todo.css";
+import { Todo } from "./store";
 
-interface ITodoItemProps {
-	todo: any;
-}
+type PropsType = {
+	todo: Todo;
+};
 
-class TodoItem extends Component<ITodoItemProps, any> {
+class TodoItem extends Component<PropsType, any> {
 	private isDeleting: boolean = false;
 
 	public render() {
