@@ -5,7 +5,9 @@ import {
 	getFirebase,
 	getFirebaseApp,
 	getFirestore,
-	initFirestorter
+	initFirestorter,
+	makeContext,
+	IContext,
 } from "./init";
 import { mergeUpdateData, isTimestamp } from "./Utils";
 
@@ -18,5 +20,7 @@ export {
 	getFirebaseApp,
 	mergeUpdateData,
 	Mode,
-	isTimestamp
+	isTimestamp,
+	makeContext,
+	IContext,
 };

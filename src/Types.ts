@@ -1,4 +1,5 @@
 import { firestore } from "firebase";
+import { IContext } from "./init"
 
 /**
  * Document Source.
@@ -19,6 +20,7 @@ export interface IDocumentOptions {
 	mode?: Mode;
 	debug?: boolean;
 	debugName?: string;
+	context?: IContext;
 }
 
 /**
@@ -56,6 +58,7 @@ export interface ICollectionOptions<T> {
 	minimizeUpdates?: boolean;
 	initialLocalSnapshotDetectTime?: number;
 	initialLocalSnapshotDebounceTime?: number;
+	context?: IContext;
 }
 
 /**

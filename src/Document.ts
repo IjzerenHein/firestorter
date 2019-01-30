@@ -1,7 +1,7 @@
 import { firestore } from "firebase";
 import { observable, reaction, toJS, runInAction } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
-import { getFirestore } from "./init";
+import { getFirestore, IContext, IHasContext } from "./init";
 import { mergeUpdateData, verifyMode } from "./Utils";
 import {
 	DocumentSource,
@@ -17,12 +17,13 @@ const isEqual = require("lodash.isequal"); //tslint:disable-line
  * @private
  */
 function resolveRef(
-	value: DocumentSource
+	value: DocumentSource,
+	hasContext: IHasContext,
 ): firestore.DocumentReference | undefined {
 	if (typeof value === "string") {
-		return getFirestore().doc(value);
+		return getFirestore(hasContext).doc(value);
 	} else if (typeof value === "function") {
-		return resolveRef(value());
+		return resolveRef(value(), hasContext);
 	} else {
 		return value;
 	}
@@ -46,7 +47,7 @@ const EMPTY_OPTIONS = {};
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
-class Document implements ICollectionDocument, IEnhancedObservableDelegate {
+class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext {
 	private sourceInput: DocumentSource;
 	private sourceDisposerFn: () => void;
 	private refObservable: any;
@@ -63,14 +64,16 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	private onSnapshotUnsubscribeFn: () => void;
 	private readyPromise?: Promise<void>;
 	private readyResolveFn?: () => void;
+	private ctx?: IContext;
 
 	constructor(source?: DocumentSource, options: IDocumentOptions = {}) {
-		const { schema, snapshot, snapshotOptions, mode, debug, debugName } = options;
+		const { schema, snapshot, snapshotOptions, mode, debug, debugName, context } = options;
+		this.debugInstanceName = debugName;
 		this.sourceInput = source;
-		this.refObservable = observable.box(resolveRef(source));
+		this.ctx = context;
+		this.refObservable = observable.box(resolveRef(source, this));
 		this.docSchema = schema;
 		this.isVerbose = debug || false;
-		this.debugInstanceName = debugName;
 		this.snapshotObservable = enhancedObservable(snapshot, this);
 		this.snapshotOptions = snapshotOptions;
 		this.collectionRefCount = 0;
@@ -186,7 +189,9 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 	 * doc.path = () => 'artists/' + doc2.data.artistId;
 	 */
 	public get path(): string | (() => string | undefined) | undefined {
-		let ref = this.refObservable.get();
+		// if we call toString() during initialization, eg to throw an error referring to this
+		// document, this would throw an undefined error without the guard.
+		let ref = this.refObservable && this.refObservable.get();
 		if (!ref) {
 			return undefined;
 		}
@@ -221,7 +226,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		this.sourceInput = source;
 		this._updateSourceObserver();
 		runInAction(() => {
-			this.refObservable.set(resolveRef(source));
+			this.refObservable.set(resolveRef(source, this));
 			this._updateRealtimeUpdates(true);
 		});
 	}
@@ -484,11 +489,22 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 		return this.readyPromise;
 	}
 
+	public toString(): string {
+		return this.debugName;
+	}
+
 	/**
 	 * @private
 	 */
 	public get debugName(): string {
 		return `${this.debugInstanceName || this.constructor.name} (${this.path})`;
+	}
+
+	/**
+	 * @private
+	 */
+	public get context(): IContext {
+		return this.ctx;
 	}
 
 	/**
@@ -676,7 +692,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate {
 				value => {
 					runInAction(() => {
 						// TODO, check whether path has changed
-						this.refObservable.set(resolveRef(value));
+						this.refObservable.set(resolveRef(value, this));
 						this._updateRealtimeUpdates(true);
 					});
 				}

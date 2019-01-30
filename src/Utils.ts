@@ -1,4 +1,4 @@
-import { getFirebase } from "./init";
+import { getFirebase, IHasContext } from "./init";
 import { Mode } from "./Types";
 
 /**
@@ -9,15 +9,15 @@ import { Mode } from "./Types";
  * @param {Object} fields - JSON data that supports field-paths
  * @return {Object} Result
  */
-export function mergeUpdateData(data: object, fields: object) {
+export function mergeUpdateData(data: object, fields: object, hasContext?: IHasContext) {
 	const res = {
 		...data
 	};
+	const canonicalDelete = getFirebase(hasContext).firestore.FieldValue.delete();
 	for (const key in fields) {
 		if (fields.hasOwnProperty(key)) {
 			const val = fields[key];
-			const isDelete =
-				val === (getFirebase() as any).firestore.FieldValue.delete();
+			const isDelete = canonicalDelete.isEqual(val);
 			const paths = key.split(".");
 			let dataVal = res;
 			for (let i = 0; i < paths.length - 1; i++) {
