@@ -1,5 +1,11 @@
 import { firestore } from "firebase";
-import { observable, reaction, toJS, runInAction } from "mobx";
+import {
+	observable,
+	reaction,
+	toJS,
+	runInAction,
+	IObservableValue
+} from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore, IContext, IHasContext } from "./init";
 import { mergeUpdateData, verifyMode } from "./Utils";
@@ -18,7 +24,7 @@ const isEqual = require("lodash.isequal"); //tslint:disable-line
  */
 function resolveRef(
 	value: DocumentSource,
-	hasContext: IHasContext,
+	hasContext: IHasContext
 ): firestore.DocumentReference | undefined {
 	if (typeof value === "string") {
 		return getFirestore(hasContext).doc(value);
@@ -47,27 +53,38 @@ const EMPTY_OPTIONS = {};
  * @param {Bool} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
-class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext {
+class Document<T extends object = object>
+	implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext {
 	private sourceInput: DocumentSource;
 	private sourceDisposerFn: () => void;
-	private refObservable: any;
-	private snapshotObservable: any;
+	private refObservable: IObservableValue<any>;
+	private snapshotObservable: IObservableValue<
+		firestore.DocumentSnapshot | undefined
+	>;
 	private snapshotOptions: firestore.SnapshotOptions;
-	private docSchema: (data: any) => any;
+	private docSchema: (data: object) => object;
 	private isVerbose: boolean;
 	private debugInstanceName?: string;
 	private collectionRefCount: number;
 	private observedRefCount: number;
-	private dataObservable: any;
-	private modeObservable: any;
-	private isLoadingObservable: any;
+	private dataObservable: IObservableValue<T>;
+	private modeObservable: IObservableValue<Mode>;
+	private isLoadingObservable: IObservableValue<boolean>;
 	private onSnapshotUnsubscribeFn: () => void;
 	private readyPromise?: Promise<void>;
 	private readyResolveFn?: () => void;
 	private ctx?: IContext;
 
 	constructor(source?: DocumentSource, options: IDocumentOptions = {}) {
-		const { schema, snapshot, snapshotOptions, mode, debug, debugName, context } = options;
+		const {
+			schema,
+			snapshot,
+			snapshotOptions,
+			mode,
+			debug,
+			debugName,
+			context
+		} = options;
 		this.debugInstanceName = debugName;
 		this.sourceInput = source;
 		this.ctx = context;
@@ -94,7 +111,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	/**
 	 * Returns the superstruct schema used to validate the
 	 * document, or undefined.
-	 * 
+	 *
 	 * @type {Function}
 	 */
 	public get schema(): (data: any) => any {
@@ -115,18 +132,18 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 *   // }
 	 * });
 	 */
-	public get data(): any {
+	public get data(): T {
 		return this.dataObservable.get();
 	}
 
 	/**
 	 * True whenever the document has fetched any data.
-	 * 
+	 *
 	 * @type {boolean}
 	 */
 	public get hasData(): boolean {
 		const { snapshot } = this;
-		return (snapshot && snapshot.exists) ? true : false;
+		return snapshot && snapshot.exists ? true : false;
 	}
 
 	/**
@@ -139,7 +156,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * reference in more a readable way.
 	 *
 	 * @type {firestore.DocumentReference | Function}
-	 * 
+	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
 	 *
@@ -160,7 +177,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * Id of the firestore document.
 	 *
 	 * To get the full-path of the document, use `path`.
-	 * 
+	 *
 	 * @type {string}
 	 */
 	public get id(): string | undefined {
@@ -176,7 +193,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * and readable way of setting a new ref.
 	 *
 	 * @type {string | Function}
-	 * 
+	 *
 	 * @example
 	 * const doc = new Document('artists/Metallica');
 	 * ...
@@ -238,7 +255,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * - "auto" (enables real-time updating when the document becomes observed)
 	 * - "off" (no real-time updating, you need to call fetch explicitly)
 	 * - "on" (real-time updating is permanently enabled)
-	 * 
+	 *
 	 * @type {string}
 	 */
 	public get mode(): Mode {
@@ -258,7 +275,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	/**
 	 * Returns true when the Document is actively listening
 	 * for changes in the firestore back-end.
-	 * 
+	 *
 	 * @type {boolean}
 	 */
 	public get isActive(): boolean {
@@ -267,7 +284,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 
 	/**
 	 * Underlying firestore snapshot.
-	 * 
+	 *
 	 * @type {firestore.DocumentSnapshot}
 	 */
 	public get snapshot(): firestore.DocumentSnapshot | undefined {
@@ -282,7 +299,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 *
 	 * @param {Object} fields - Fields to update
 	 * @return {Promise}
-	 * 
+	 *
 	 * @example
 	 * await todoDoc.update({
 	 *   finished: true,
@@ -352,7 +369,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * Returns a promise that resolves once the document has been
 	 * successfully deleted from the backend (Note that it won't
 	 * resolve while you're offline).
-	 * 
+	 *
 	 * @return {Promise}
 	 */
 	public delete(): Promise<void> {
@@ -365,7 +382,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 *
 	 * @return {Promise}
 	 * @fullfil {Document} This document
-	 * 
+	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
 	 * await doc.fetch();
@@ -373,9 +390,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 */
 	public async fetch(): Promise<Document> {
 		if (this.isVerbose) {
-			console.debug(
-				`${this.debugName} - fetching...`
-			);
+			console.debug(`${this.debugName} - fetching...`);
 		}
 		if (this.collectionRefCount) {
 			throw new Error(
@@ -411,9 +426,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 			});
 			this._ready(true);
 		} catch (err) {
-			console.log(
-				`${this.debugName} - fetch failed: ${err.message}`
-			);
+			console.log(`${this.debugName} - fetch failed: ${err.message}`);
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				this._updateFromSnapshot(undefined);
@@ -469,7 +482,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * for fresh data after changing the path/ref.
 	 *
 	 * @return {Promise}
-	 * 
+	 *
 	 * @example
 	 * const doc = new Document('albums/splinter', {mode: 'on'});
 	 * await doc.ready();
@@ -561,7 +574,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	 * @private
 	 */
 	public _updateFromSnapshot(snapshot?: firestore.DocumentSnapshot): void {
-		let data = snapshot ? snapshot.data(this.snapshotOptions) : undefined;
+		let data: any = snapshot ? snapshot.data(this.snapshotOptions) : undefined;
 		if (data) {
 			data = this._validateSchema(data);
 		} else {
@@ -703,7 +716,7 @@ class Document implements ICollectionDocument, IEnhancedObservableDelegate, IHas
 	/**
 	 * @private
 	 */
-	private _validateSchema(data: any): any {
+	private _validateSchema(data: any): T {
 		if (!this.docSchema) {
 			return data;
 		}
