@@ -4,6 +4,19 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-01-30
+
+### Added
+
+- Added "context" option which makes it possible to use multiple firebase projects (thanks @justjake)
+- Added document data generics for `Document`
+
+### Fixed
+
+- Fixed query function type in TypeScript, which could not return `null` to disable the collection
+- Fixed peer-dependency warning when using Firestorter with MobX 4 (e.g. on react-native)
+- Improved the (somewhat) confusing TypeScript documentation
+
 ## [1.1.1] - 2018-11-29
 
 ### Fixed
