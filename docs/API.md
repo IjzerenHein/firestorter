@@ -609,7 +609,7 @@ resolve while you're offline).</p>
 new data when <code>mode</code> is set to 'off'.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
-**Fullfil**: [<code>Document</code>](#Document) This document  
+**Fullfil**: <code>Document&lt;T&gt;</code> This document  
 **Example**  
 ```js
 const doc = new Document('albums/splinter');
