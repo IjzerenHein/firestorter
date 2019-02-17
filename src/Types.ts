@@ -1,5 +1,5 @@
 import { firestore } from "firebase";
-import { IContext } from "./init"
+import { IContext } from "./init";
 
 /**
  * Document Source.

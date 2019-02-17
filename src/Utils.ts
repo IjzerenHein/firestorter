@@ -9,7 +9,11 @@ import { Mode } from "./Types";
  * @param {Object} fields - JSON data that supports field-paths
  * @return {Object} Result
  */
-export function mergeUpdateData(data: object, fields: object, hasContext?: IHasContext) {
+export function mergeUpdateData(
+	data: object,
+	fields: object,
+	hasContext?: IHasContext
+) {
 	const res = {
 		...data
 	};
@@ -59,13 +63,13 @@ export function verifyMode(mode: Mode): Mode {
 
 /**
  * Checks whether the provided value is a valid Firestore Timestamp or Date.
- * 
+ *
  * Use this function in combination with schemas, in order to validate
  * that the field in the document is indeed a timestamp.
- * 
+ *
  * @param {Object} val - Value to check
  * @return {Boolean}
- * 
+ *
  * @example
  * import { isTimestamp } from 'firestorter';
  *
@@ -74,7 +78,7 @@ export function verifyMode(mode: Mode): Mode {
  *  startDate: isTimestamp,
  *  duration: 'number'
  * });
- * 
+ *
  * const doc = new Document('tasks/mytask', {
  *   schema: TaskSchema
  * });
@@ -85,7 +89,9 @@ export function isTimestamp(val: any): boolean {
 	if (val instanceof Date) {
 		return true;
 	}
-	return (typeof val === 'object') &&
-		(typeof val.seconds === 'number') &&
-		(typeof val.nanoseconds === 'number');
+	return (
+		typeof val === "object" &&
+		typeof val.seconds === "number" &&
+		typeof val.nanoseconds === "number"
+	);
 }

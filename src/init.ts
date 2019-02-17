@@ -1,7 +1,7 @@
 import { app, firestore } from "firebase";
 import * as firebaseT from "firebase";
 
-export const ModuleName = 'firestorter';
+export const ModuleName = "firestorter";
 
 export interface IContext {
 	readonly firebase: typeof firebaseT;
@@ -50,7 +50,7 @@ function initFirestorter(config: {
 		);
 	}
 
-	globalContext = makeContext(config)
+	globalContext = makeContext(config);
 }
 
 /**
@@ -126,48 +126,52 @@ export function makeContext(config: {
 	return {
 		app: globalFirebaseApp,
 		firebase: globalFirebase,
-		firestore: globalFirestore,
-	}
+		firestore: globalFirestore
+	};
 }
 
 function getContext(obj?: IHasContext): IContext {
 	if (obj && obj.context) {
-		return obj.context
+		return obj.context;
 	}
 
 	if (globalContext) {
-		return globalContext
+		return globalContext;
 	}
 
 	if (obj) {
-		throw new Error(`No context for ${obj} or globally. Did you forget to call \`initFirestorter\` or pass {context: ...} option?`)
+		throw new Error(
+			`No context for ${obj} or globally. Did you forget to call \`initFirestorter\` or pass {context: ...} option?`
+		);
 	}
 
 	throw new Error(
 		`No global Firestore context. Did you forget to call \`initFirestorter\` ?`
-	)
+	);
 }
 
 function contextWithProperty(key: keyof IContext, obj?: IHasContext) {
 	try {
-		const context = getContext(obj)
-		if (context[key]) { return context }
-		throw new Error(`Context does not contain ${key}`)
-	} catch(err) {
-		throw new Error(`${ModuleName}: cannot get ${key}: ${err}`)
+		const context = getContext(obj);
+		if (context[key]) {
+			return context;
+		}
+		throw new Error(`Context does not contain ${key}`);
+	} catch (err) {
+		throw new Error(`${ModuleName}: cannot get ${key}: ${err}`);
 	}
 }
 
 function getFirebase(obj?: IHasContext): typeof firebaseT {
-	return contextWithProperty('firebase', obj).firebase
+	return contextWithProperty("firebase", obj).firebase;
 }
 
 function getFirebaseApp(obj?: IHasContext): app.App {
-	return contextWithProperty('app', obj).app
+	return contextWithProperty("app", obj).app;
 }
 
 function getFirestore(obj?: IHasContext): firestore.Firestore {
-	return contextWithProperty('firestore', obj).firestore
+	return contextWithProperty("firestore", obj).firestore;
 }
 
 export { initFirestorter, getFirestore, getFirebase, getFirebaseApp };
