@@ -381,14 +381,14 @@ class Document<T extends object = object>
 	 * new data when `mode` is set to 'off'.
 	 *
 	 * @return {Promise}
-	 * @fullfil {Document} This document
+	 * @fullfil {Document<T>} This document
 	 *
 	 * @example
 	 * const doc = new Document('albums/splinter');
 	 * await doc.fetch();
 	 * console.log('data: ', doc.data);
 	 */
-	public async fetch(): Promise<Document> {
+	public async fetch(): Promise<Document<T>> {
 		if (this.isVerbose) {
 			console.debug(`${this.debugName} - fetching...`);
 		}
