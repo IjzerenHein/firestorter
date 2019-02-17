@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.2.1] - 2019-02-17
+
+### Fixed
+
+- Fixed return type definition for `Document.fetch` to be `Promise<Document<T>>` (thanks @damonmaria)
+
 ## [1.2.0] - 2019-01-30
 
 ### Added
