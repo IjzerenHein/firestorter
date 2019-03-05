@@ -50,7 +50,7 @@ const EMPTY_OPTIONS = {};
  * @param {Function} [options.schema] Superstruct schema for data validation
  * @param {firestore.DocumentSnapshot} [options.snapshot] Initial document snapshot
  * @param {firestore.SnapshotOptions} [options.snapshotOptions] Options that configure how data is retrieved from a snapshot
- * @param {Bool} [options.debug] Enables debug logging
+ * @param {boolean} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
 class Document<T extends object = object>
@@ -143,7 +143,7 @@ class Document<T extends object = object>
 	 */
 	public get hasData(): boolean {
 		const { snapshot } = this;
-		return snapshot && snapshot.exists ? true : false;
+		return !!snapshot && snapshot.exists;
 	}
 
 	/**

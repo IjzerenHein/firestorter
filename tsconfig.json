@@ -10,7 +10,8 @@
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitThis": false
+		"noImplicitThis": false,
+		"experimentalDecorators": true
 	},
 	"include": ["./src/**/*.ts"]
 }

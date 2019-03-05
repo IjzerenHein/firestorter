@@ -1,12 +1,13 @@
 import {
+	computed,
 	IObservableArray,
+	IObservableValue,
 	observable,
 	reaction,
-	runInAction,
-	IObservableValue
+	runInAction
 } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
-import { IContext, IHasContext, getFirestore } from "./init";
+import { getFirestore, IContext, IHasContext } from "./init";
 import { verifyMode } from "./Utils";
 import { firestore } from "firebase";
 import {
@@ -58,8 +59,8 @@ import Document from "./Document";
  * @param {Function|Query} [options.query] See `Collection.query`
  * @param {String} [options.mode] See `Collection.mode`
  * @param {Function} [options.createDocument] Factory function for creating documents `(source, options) => new Document(source, options)`
- * @param {Bool} [options.minimizeUpdates] Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)
- * @param {Bool} [options.debug] Enables debug logging
+ * @param {boolean} [options.minimizeUpdates] Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)
+ * @param {boolean} [options.debug] Enables debug logging
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  *
  * @example
@@ -203,6 +204,16 @@ class Collection<T extends ICollectionDocument = Document>
 	 */
 	public get docs(): T[] {
 		return this.docsObservable;
+	}
+
+	/**
+	 * True whenever the collection has docs.
+	 *
+	 * @type {boolean}
+	 */
+	@computed
+	public get hasDocs(): boolean {
+		return this.docs.length > 0;
 	}
 
 	/**
@@ -541,6 +552,7 @@ class Collection<T extends ICollectionDocument = Document>
 			throw new Error("No valid collection reference");
 		}
 
+		// REVISIT: can we know to skip this if schemas not in use?
 		// Validate schema using a dummy snapshot
 		this.createDocument(undefined, {
 			context: this.context,
@@ -558,11 +570,10 @@ class Collection<T extends ICollectionDocument = Document>
 		// Add to firestore
 		const ref2 = await ref.add(data);
 		const snapshot = await ref2.get();
-		const doc = this.createDocument(snapshot.ref, {
+		return this.createDocument(snapshot.ref, {
 			context: this.context,
 			snapshot
 		});
-		return doc;
 	}
 
 	/**
