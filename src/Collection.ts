@@ -1,5 +1,6 @@
 import {
 	computed,
+	decorate,
 	IObservableArray,
 	IObservableValue,
 	observable,
@@ -207,11 +208,10 @@ class Collection<T extends ICollectionDocument = Document>
 	}
 
 	/**
-	 * True whenever the collection has docs.
+	 * True whenever the docs array is not empty.
 	 *
 	 * @type {boolean}
 	 */
-	@computed
 	public get hasDocs(): boolean {
 		return this.docs.length > 0;
 	}
@@ -1017,5 +1017,7 @@ class Collection<T extends ICollectionDocument = Document>
 		);
 	}
 }
+
+decorate(Collection, { hasDocs: computed });
 
 export default Collection;

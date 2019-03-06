@@ -99,6 +99,7 @@ created or modified.</p>
 * [Collection](#Collection)
     * [new Collection([source], [options])](#new_Collection_new)
     * [.docs](#Collection+docs) : <code>Array</code>
+    * [.hasDocs](#Collection+hasDocs) : <code>boolean</code>
     * [.ref](#Collection+ref) : <code>firestore.CollectionReference</code> \| <code>function</code>
     * [.id](#Collection+id) : <code>string</code>
     * [.path](#Collection+path) : <code>string</code> \| <code>function</code>
@@ -121,8 +122,8 @@ created or modified.</p>
 | [options.query] | <code>function</code> \| <code>Query</code> | <p>See <code>Collection.query</code></p> |
 | [options.mode] | <code>String</code> | <p>See <code>Collection.mode</code></p> |
 | [options.createDocument] | <code>function</code> | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
-| [options.minimizeUpdates] | <code>Bool</code> | <p>Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)</p> |
-| [options.debug] | <code>Bool</code> | <p>Enables debug logging</p> |
+| [options.minimizeUpdates] | <code>boolean</code> | <p>Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)</p> |
+| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
 | [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
 
 **Example**  
@@ -170,6 +171,12 @@ collection.docs.forEach((doc) => {
   console.log(doc.data);
 });
 ```
+<a name="Collection+hasDocs"></a>
+
+### collection.hasDocs : <code>boolean</code>
+<p>True whenever the docs array is not empty.</p>
+
+**Kind**: instance property of [<code>Collection</code>](#Collection)  
 <a name="Collection+ref"></a>
 
 ### collection.ref : <code>firestore.CollectionReference</code> \| <code>function</code>
@@ -407,7 +414,7 @@ function has changed.</p>
 | [options.schema] | <code>function</code> | <p>Superstruct schema for data validation</p> |
 | [options.snapshot] | <code>firestore.DocumentSnapshot</code> | <p>Initial document snapshot</p> |
 | [options.snapshotOptions] | <code>firestore.SnapshotOptions</code> | <p>Options that configure how data is retrieved from a snapshot</p> |
-| [options.debug] | <code>Bool</code> | <p>Enables debug logging</p> |
+| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
 | [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
 
 <a name="Document+schema"></a>
@@ -609,7 +616,7 @@ resolve while you're offline).</p>
 new data when <code>mode</code> is set to 'off'.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
-**Fullfil**: [<code>Document</code>](#Document) This document  
+**Fullfil**: <code>Document&lt;T&gt;</code> This document  
 **Example**  
 ```js
 const doc = new Document('albums/splinter');
