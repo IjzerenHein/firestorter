@@ -416,6 +416,9 @@ class Collection<T extends ICollectionDocument = Document>
 	 * });
 	 */
 	public async fetch(): Promise<Collection<T>> {
+		if (this.isVerbose) {
+			console.debug(`${this.debugName} - fetching...`);
+		}
 		if (this.isActive) {
 			throw new Error(
 				"Should not call fetch when real-time updating is active"
@@ -439,10 +442,16 @@ class Collection<T extends ICollectionDocument = Document>
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				this._updateFromSnapshot(snapshot);
+				if (this.isVerbose) {
+					console.debug(
+						`${this.debugName} - fetched ${snapshot.docs.length} documents`
+					);
+				}
 			});
 			this._ready(true);
 			return this;
 		} catch (err) {
+			console.log(`${this.debugName} - fetch failed: ${err.message}`);
 			runInAction(() => {
 				this.isLoadingObservable.set(false);
 				this._updateFromSnapshot(undefined);
