@@ -4,6 +4,13 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.2.2] - 2019-03-19
+
+### Fixed
+
+- Added `Document.hasDocs` which only reacts when the collection becomes empty/non-empty, but not when the document-count changes (thanks @damonmaria)
+- Added debug logging for `Collection.fetch`
+
 ## [1.2.1] - 2019-02-17
 
 ### Fixed
