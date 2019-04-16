@@ -315,12 +315,20 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * Use this property to set any order-by, where,
 	 * limit or start/end criteria. When set, that query
-	 * is used to retrieve any data. When cleared, the collection
-	 * reference is used.
+	 * is used to retrieve any data. When cleared (`undefined`),
+	 * the collection reference is used.
 	 *
-	 * The query can be either a Function of the form
-	 * `(firestore.CollectionReference) => firestore.Query` (preferred), or a direct
-	 * Firestore Query object.
+	 * The query can be a Function of the form
+	 * `(firestore.CollectionReference) => firestore.Query | null | undefined`.
+	 * Where returning `null` will result in an empty collection,
+	 * and returning `undefined` will revert to using the collection
+	 * reference (the entire collection).
+	 *
+	 * If the query function makes use of any observable values then
+	 * it will be re-run when those values change.
+	 *
+	 * query can be set to a direct Firestore `Query` object but this
+	 * is an uncommon usage.
 	 *
 	 * @type {firestore.Query | Function}
 	 *
@@ -332,6 +340,9 @@ class Collection<T extends ICollectionDocument = Document>
 	 *
 	 * // Order, filter & limit
 	 * todos.query = (ref) => ref.where('finished', '==', false).orderBy('finished', 'asc').limit(20);
+	 *
+	 * // React to changes in observable and force empty collection when required
+	 * todos.query = (ref) => authStore.uid ? ref.where('owner', '==', authStore.uid) : null;
 	 *
 	 * // Clear the query, will cause whole collection to be fetched
 	 * todos.query = undefined;
