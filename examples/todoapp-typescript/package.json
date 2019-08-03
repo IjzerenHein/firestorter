@@ -3,24 +3,25 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@material-ui/core": "^3.4.0",
-		"@material-ui/icons": "^3.0.1",
-		"@types/jest": "^23.3.9",
-		"@types/node": "^10.12.3",
-		"@types/react": "^16.7.1",
-		"@types/react-dom": "^16.0.9",
+		"@material-ui/core": "^4.3.0",
+		"@material-ui/icons": "^4.2.1",
+		"@types/jest": "^24.0.16",
+		"@types/node": "^12.6.9",
+		"@types/react": "^16.8.24",
+		"@types/react-dom": "^16.8.5",
 		"@types/superstruct": "^0.5.0",
-		"firebase": "^5.5.8",
-		"mobx": "^5.6.0",
-		"mobx-react": "^5.3.6",
-		"prettier": "^1.15.1",
-		"react": "^16.6.1",
-		"react-dom": "^16.6.1",
+		"firebase": "^6.3.4",
+		"firestorter": "file:.yalc/firestorter",
+		"mobx": "^5.13.0",
+		"mobx-react": "^6.1.1",
+		"prettier": "^1.18.2",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
 		"react-flip-move": "^3.0.3",
 		"react-scripts": "2.1.1",
-		"tslint": "^5.11.0",
-		"tslint-config-prettier": "^1.15.0",
-		"typescript": "^3.1.6"
+		"tslint": "^5.18.0",
+		"tslint-config-prettier": "^1.18.0",
+		"typescript": "^3.5.3"
 	},
 	"scripts": {
 		"start": "react-scripts start",
@@ -33,10 +34,16 @@
 	"eslintConfig": {
 		"extends": "react-app"
 	},
-	"browserslist": [
-		">0.2%",
-		"not dead",
-		"not ie <= 11",
-		"not op_mini all"
-	]
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

@@ -12,8 +12,6 @@ firebase.initializeApp({
 	messagingSenderId: '680642766706'
 });
 
-const firestore = firebase.firestore();
-
 initFirestorter({ firebase: firebase });
 
 class Todo extends Document {

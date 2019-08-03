@@ -23,7 +23,7 @@ class App extends Component {
 				</div>
 				<Todos />
 				<div className="app-add">
-					<Button variant="fab" onClick={this.onPressAdd}>
+					<Button variant="contained" onClick={this.onPressAdd}>
 						<ContentAddIcon />
 					</Button>
 				</div>
