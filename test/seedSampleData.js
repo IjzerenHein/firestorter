@@ -8,7 +8,6 @@ const sampleData = require('./sampleData.json');
 // Initialize firestore
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
-firestore.settings({ timestampsInSnapshots: true });
 
 const addDoc = (colId, docId, docData) => {
 	const path = colId + '/' + docId;

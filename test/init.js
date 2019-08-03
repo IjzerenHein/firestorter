@@ -21,7 +21,6 @@ beforeAll(() => {
 	// Initialize firebase
 	firebaseApp = firebase.initializeApp(firebaseConfig);
 	const firestore = firebase.firestore();
-	firestore.settings({ timestampsInSnapshots: true });
 
 	// Configure mobx strict-mode
 	configure({ enforceActions: 'always' });
