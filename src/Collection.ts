@@ -166,17 +166,13 @@ class Collection<T extends ICollectionDocument = Document>
 		if (createDocument) {
 			if (DocumentClass) {
 				throw new Error(
-					`${
-						this.debugName
-					} - The \`createDocument\` and deprecated \`DocumentClass\` options cannot be specified both, remove the \`DocumentClass\` option`
+					`${this.debugName} - The \`createDocument\` and deprecated \`DocumentClass\` options cannot be specified both, remove the \`DocumentClass\` option`
 				);
 			}
 			this.createDocument = createDocument;
 		} else if (DocumentClass) {
 			console.warn(
-				`${
-					this.debugName
-				} - \`DocumentClass\` option has been deprecated, use \`createDocument\` instead`
+				`${this.debugName} - \`DocumentClass\` option has been deprecated, use \`createDocument\` instead`
 			);
 			this.createDocument = (
 				docSource: DocumentSource,
@@ -798,9 +794,7 @@ class Collection<T extends ICollectionDocument = Document>
 			this.initialLocalSnapshotDebounceTimer = undefined;
 			if (this.isVerbose) {
 				console.debug(
-					`${
-						this.debugName
-					} - cancelling initial debounced snapshot, because a newer snapshot has been received`
+					`${this.debugName} - cancelling initial debounced snapshot, because a newer snapshot has been received`
 				);
 			}
 		}
@@ -813,11 +807,7 @@ class Collection<T extends ICollectionDocument = Document>
 			) {
 				if (this.isVerbose) {
 					console.debug(
-						`${this.debugName} - local snapshot detected (${timeElapsed}ms < ${
-							this.initialLocalSnapshotDetectTime
-						}ms threshold), debouncing ${
-							this.initialLocalSnapshotDebounceTime
-						} msec...`
+						`${this.debugName} - local snapshot detected (${timeElapsed}ms < ${this.initialLocalSnapshotDetectTime}ms threshold), debouncing ${this.initialLocalSnapshotDebounceTime} msec...`
 					);
 				}
 				this.initialLocalSnapshotDebounceTimer = setTimeout(() => {

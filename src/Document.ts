@@ -314,9 +314,7 @@ class Document<T extends object = object>
 		if (this.docSchema) {
 			if (!this.snapshot) {
 				console.warn(
-					`${
-						this.debugName
-					} - Unable to verify schema in .update() because the document has not been fetched yet`
+					`${this.debugName} - Unable to verify schema in .update() because the document has not been fetched yet`
 				);
 			} else {
 				try {
