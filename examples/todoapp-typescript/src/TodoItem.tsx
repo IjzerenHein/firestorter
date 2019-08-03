@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import "./todo.css";
 import { Todo } from "./store";
 
-type PropsType = {
+interface PropsType {
 	todo: Todo;
 };
 

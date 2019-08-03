@@ -16,10 +16,10 @@ firestore.settings({ timestampsInSnapshots: true });
 
 initFirestorter({ firebase });
 
-export type TodoType = {
+export interface TodoType {
 	finished?: boolean;
 	text: string;
-};
+}
 
 export type Todo = Document<TodoType>;
 

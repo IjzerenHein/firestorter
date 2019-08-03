@@ -9,7 +9,7 @@ import TodoItem from "./TodoItem";
 import "./todos.css";
 
 class Todos extends Component<any, any> {
-	state = {
+	public state = {
 		disabled: false
 	};
 
