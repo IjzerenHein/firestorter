@@ -26,9 +26,7 @@ fs.removeSync('.build.es');
 
 function runTypeScriptBuild(outDir, target, declarations) {
 	console.log(
-		`Running typescript build (target: ${
-			ts.ScriptTarget[target]
-		}) in ${outDir}/`
+		`Running typescript build (target: ${ts.ScriptTarget[target]}) in ${outDir}/`
 	);
 
 	const tsConfig = path.resolve('tsconfig.json');
@@ -81,17 +79,17 @@ function generateBundledModule(inputFile, outputFile, format, moduleName) {
 
 	return rollup
 		.rollup({
-			entry: inputFile,
+			input: inputFile,
 			plugins: rollupPlugins,
 			external: ['mobx']
 		})
 		.then(bundle =>
 			bundle.write({
-				dest: outputFile,
+				file: outputFile,
 				format,
-				moduleName,
+				name: moduleName,
 				banner:
-					'/** Firestorter - (c) Hein Rutjes 2017 - 2018 - MIT Licensed */',
+					'/** Firestorter - (c) Hein Rutjes 2017 - 2019 - MIT Licensed */',
 				exports: 'named',
 				globals: {
 					mobx: 'mobx'
@@ -113,7 +111,7 @@ function generateMinified() {
 	exec(
 		`${getCmd(
 			'uglifyjs'
-		)} --toplevel -m -c warnings=false --preamble "/** Firestorter - (c) Hein Rutjes 2017 - 2018 - MIT Licensed */" --source-map -o lib/firestorter.min.js lib/firestorter.prod.js`
+		)} --toplevel -m -c warnings=false --preamble "/** Firestorter - (c) Hein Rutjes 2017 - 2019 - MIT Licensed */" --source-map -o lib/firestorter.min.js lib/firestorter.prod.js`
 	);
 	exec(
 		`${getCmd(`envify`)} lib/firestorter.umd.js > lib/firestorter.prod.umd.js`,
@@ -124,7 +122,7 @@ function generateMinified() {
 	exec(
 		`${getCmd(
 			`uglifyjs`
-		)} --toplevel -m -c warnings=false --preamble "/** Firestorter - (c) Hein Rutjes 2017 - 2018 - MIT Licensed */" --source-map -o lib/firestorter.umd.min.js lib/firestorter.prod.umd.js`
+		)} --toplevel -m -c warnings=false --preamble "/** Firestorter - (c) Hein Rutjes 2017 - 2019 - MIT Licensed */" --source-map -o lib/firestorter.umd.min.js lib/firestorter.prod.umd.js`
 	);
 	shell.rm('lib/firestorter.prod.js', 'lib/firestorter.prod.umd.js');
 }
