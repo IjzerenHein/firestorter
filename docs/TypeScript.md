@@ -14,10 +14,6 @@ const app = firebase.initializeApp({
 	...
 });
 
-// Optionally enable timestamps in snapshots
-const firestore = app.firestore();
-firestore.settings({ timestampsInSnapshots: true });
-
 // Initialize firestorter
 initFirestorter({ firebase });
 ```
