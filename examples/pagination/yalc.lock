@@ -2,7 +2,8 @@
   "version": "v1",
   "packages": {
     "firestorter": {
-      "signature": "9d49321b900ab758ac3940e76e6310e4"
+      "signature": "c1812cb18386722bf3c2cf45bcc96447",
+      "file": true
     }
   }
 }

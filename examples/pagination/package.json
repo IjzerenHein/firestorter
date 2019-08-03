@@ -4,21 +4,19 @@
 	"private": true,
 	"homepage": ".",
 	"dependencies": {
-		"@firebase/app": "^0.3.3",
-		"@firebase/app-types": "^0.3.2",
-		"@firebase/firestore": "^0.5.4",
-		"@firebase/firestore-types": "^0.4.3",
-		"firestorter": "^0.11.1",
+		"@firebase/app": "^0.4.13",
+		"@firebase/app-types": "^0.4.3",
+		"@firebase/firestore": "^1.4.8",
+		"@firebase/firestore-types": "^1.4.4",
+		"firestorter": "file:.yalc/firestorter",
 		"material-ui": "^0.19.4",
-		"mobx": "^4.3.1",
-		"mobx-react": "^5.2.0",
-		"react": "^16.4.0",
-		"react-dom": "^16.4.0"
+		"mobx": "^5.13.0",
+		"mobx-react": "^6.1.1",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6"
 	},
 	"devDependencies": {
-		"eslint": "^4.19.1",
-		"eslint-plugin-react": "^7.9.1",
-		"react-scripts": "1.0.14"
+		"react-scripts": "^3.0.1"
 	},
 	"scripts": {
 		"start": "react-scripts start",
@@ -26,5 +24,17 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test --env=jsdom",
 		"eject": "react-scripts eject"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	}
 }
