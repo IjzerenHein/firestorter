@@ -5,7 +5,7 @@
 <dd><p>The Collection class lays at the heart of <code>firestorter</code>.
 It represents a collection in Firestore and its queried data. It is
 observable so that it can be efficiently linked to a React Component
-using <code>mobx-react</code>&#39;s <code>observer</code> pattern.</p>
+using <code>mobx-react</code>'s <code>observer</code> pattern.</p>
 <p>Collection supports three modes of real-time updating:</p>
 <ul>
 <li>&quot;auto&quot; (real-time updating is enabled on demand) (default)</li>
@@ -31,7 +31,7 @@ created or modified.</p></dd>
 <dt><a href="#Document">Document</a></dt>
 <dd><p>Document represents a document stored in the firestore database.
 Document is observable so that it can be efficiently linked to for instance
-a React Component using <code>mobx-react</code>&#39;s <code>observer</code> pattern. This ensures that
+a React Component using <code>mobx-react</code>'s <code>observer</code> pattern. This ensures that
 a component is only re-rendered when data that is accessed in the <code>render</code>
 function has changed.</p></dd>
 </dl>
