@@ -41,7 +41,9 @@ test('document data', async () => {
 	expect.assertions(9);
 	const doc = new Document('settings/setting');
 	expect(doc.isActive).toBe(false);
-	const col = new Collection(() => doc.hasData ? `artists/${doc.data.topArtistId}/albums` : undefined);
+	const col = new Collection(() =>
+		doc.hasData ? `artists/${doc.data.topArtistId}/albums` : undefined
+	);
 	expect(doc.isActive).toBe(false);
 	expect(col.isActive).toBe(false);
 	const dispose = autorun(() => {

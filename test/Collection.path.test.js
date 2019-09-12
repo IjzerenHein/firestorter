@@ -51,8 +51,7 @@ test('change path to forbidden collection', async () => {
 	col.path = 'forbidden';
 	try {
 		await col.fetch();
-	}
-	catch (err) {
+	} catch (err) {
 		expect(err).toBeDefined();
 	}
 	expect(col.docs.length).toBe(0);

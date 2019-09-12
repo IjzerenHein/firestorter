@@ -51,8 +51,7 @@ test('change path to inaccessible document', async () => {
 	doc.path = 'forbidden/cantReadMe';
 	try {
 		await doc.fetch();
-	}
-	catch (err) {
+	} catch (err) {
 		expect(err).toBeDefined();
 	}
 	expect(doc.hasData).toBe(false);

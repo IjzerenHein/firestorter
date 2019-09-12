@@ -1,27 +1,25 @@
-import { autorun, Collection, Mode } from "./init";
+import { autorun, Collection } from "./init";
 
 test("false when missing ref/path", async () => {
-	const col = new Collection();
+	const col = new Collection(undefined, { mode: "off" });
 	expect(col.hasDocs).toBeFalsy();
 });
 
 test("false when collection empty", async () => {
 	expect.assertions(1);
 	const col = new Collection("artists", {
-		mode: Mode.On,
+		mode: "off",
 		query: ref => ref.where("genre", "==", "none")
 	});
-	await col.ready();
-	expect(col.hasDocs).toBeFalsy();
-	col.mode = "off";
+	await col.fetch();
+	expect(col.hasDocs).toEqual(false);
 });
 
 test("true when collection not empty", async () => {
 	expect.assertions(1);
-	const col = new Collection("artists", { mode: "on" });
-	await col.ready();
-	expect(col.hasDocs).toBeTruthy();
-	col.mode = "off";
+	const col = new Collection("artists", { mode: "off" });
+	await col.fetch();
+	expect(col.hasDocs).toEqual(true);
 });
 
 test("should not react when number of docs changes", async () => {

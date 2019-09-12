@@ -5,7 +5,7 @@ const ArtistSchema = struct({
 	genre: 'string',
 	memberCount: 'number?',
 	members: 'object?',
-	topAlbumId: 'string',
+	topAlbumId: 'string'
 });
 
 test('update field', async () => {
@@ -83,6 +83,10 @@ test('update field with invalid schema', async () => {
 			blaat: 10
 		});
 	} catch (e) {
-		expect(e).toEqual(new Error('Invalid value at "blaat" for Document with id "FooFighters": Expected a value of type `undefined` for `blaat` but received `10`.'));
+		expect(e).toEqual(
+			new Error(
+				'Invalid value at "blaat" for Document with id "FooFighters": Expected a value of type `undefined` for `blaat` but received `10`.'
+			)
+		);
 	}
 });

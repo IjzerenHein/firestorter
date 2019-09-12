@@ -209,6 +209,18 @@ class Collection<T extends ICollectionDocument = Document>
 	 * @type {boolean}
 	 */
 	public get hasDocs(): boolean {
+		if (this.mode === Mode.Off) {
+			// Avoid computed property
+			return this.docs.length > 0;
+		}
+		return this._hasDocsComputed;
+	}
+
+	/**
+	 * @private
+	 * Internal getter so we can avoid computed properties when mobx configure computedRequiresReaction and mode is Off
+	 */
+	public get _hasDocsComputed(): boolean {
 		return this.docs.length > 0;
 	}
 
@@ -1028,6 +1040,6 @@ class Collection<T extends ICollectionDocument = Document>
 	}
 }
 
-decorate(Collection, { hasDocs: computed });
+decorate(Collection, { _hasDocsComputed: computed });
 
 export default Collection;
