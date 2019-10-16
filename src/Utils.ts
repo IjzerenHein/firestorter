@@ -1,5 +1,6 @@
 import { getFirebase, IHasContext } from "./init";
 import { Mode } from "./Types";
+const isEqual = require("lodash.isequal"); //tslint:disable-line
 
 /**
  * Helper function which merges data into the source
@@ -21,7 +22,9 @@ export function mergeUpdateData(
 	for (const key in fields) {
 		if (fields.hasOwnProperty(key)) {
 			const val = fields[key];
-			const isDelete = canonicalDelete.isEqual(val);
+			const isDelete = canonicalDelete.isEqual
+				? canonicalDelete.isEqual(val)
+				: isEqual(canonicalDelete, val);
 			const paths = key.split(".");
 			let dataVal = res;
 			for (let i = 0; i < paths.length - 1; i++) {
