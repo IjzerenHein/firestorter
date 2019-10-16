@@ -8,6 +8,7 @@ import {
 	Collection,
 	Document,
 	isTimestamp,
+	mergeUpdateData,
 	Mode
 } from '../src';
 import { autorun, reaction, observable, configure } from 'mobx';
@@ -46,6 +47,7 @@ export {
 	Collection,
 	Document,
 	isTimestamp,
+	mergeUpdateData,
 	autorun,
 	reaction,
 	observable,
