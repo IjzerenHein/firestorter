@@ -24,7 +24,7 @@ beforeAll(() => {
 	const firestore = firebase.firestore();
 
 	// Configure mobx strict-mode
-	configure({ enforceActions: 'always' });
+	configure({ enforceActions: 'always', computedRequiresReaction: true });
 
 	// Initialize firestorter
 	initFirestorter({ firebase: firebase, app: firebaseApp });
