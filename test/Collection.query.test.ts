@@ -97,7 +97,7 @@ test("reset & fetch", async () => {
 	expect(col.docs.length).toBe(1);
 	col.query = undefined;
 	await col.fetch();
-	expect(col.docs.length).toBe(2);
+	expect(col.docs.length).toBeGreaterThanOrEqual(2);
 });
 
 test("re-fetch", async () => {
