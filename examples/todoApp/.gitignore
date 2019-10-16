@@ -5,3 +5,4 @@
 *.map
 .yalc
 /build
+yarn.lock
