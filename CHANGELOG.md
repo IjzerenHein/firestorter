@@ -4,6 +4,16 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [1.2.3] - 2019-10-16
+
+### Fixed
+
+- Fixed `mergeUpdateData` throwing an exception when FieldValue.delete() is used with react-native-firebase
+
+### Changed
+
+- Improved `Collection.hasDocs` to be more efficient and work nicely with `computedRequiresReaction` (it's no longer computed)
+
 ## [1.2.2] - 2019-03-19
 
 ### Fixed
