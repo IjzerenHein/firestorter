@@ -1,5 +1,9 @@
-import { Collection } from "./init";
+import { Collection, Document } from "./init";
 import { autorun } from "mobx";
+
+interface IBigData {
+	number: number;
+}
 
 /* test.skip("insert", async () => {
 	expect.assertions(1);
@@ -14,7 +18,7 @@ import { autorun } from "mobx";
 
 test.skip("unobserve", async () => {
 	expect.assertions(1);
-	const col = new Collection("bigData");
+	const col = new Collection<Document<IBigData>>("bigData");
 	const dispose = autorun(() => {
 		const { length } = col.docs;
 		col.docs.reduce((c, d) => c + d.data.number || 0, 0);
