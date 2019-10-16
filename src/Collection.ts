@@ -1,6 +1,4 @@
 import {
-	computed,
-	decorate,
 	IObservableArray,
 	IObservableValue,
 	observable,
@@ -112,6 +110,7 @@ class Collection<T extends ICollectionDocument = Document>
 	private isLoadingObservable: IObservableValue<boolean>;
 	private docLookup: { [name: string]: T };
 	private docsObservable: IObservableArray<T>;
+	private hasDocsObservable: IObservableValue<boolean>;
 	private createDocument: (
 		source: DocumentSource,
 		options: IDocumentOptions
@@ -160,6 +159,7 @@ class Collection<T extends ICollectionDocument = Document>
 		// this._cursor = observable.box(undefined);
 		this.modeObservable = observable.box(verifyMode(mode || Mode.Auto));
 		this.isLoadingObservable = observable.box(false);
+		this.hasDocsObservable = enhancedObservable(false, this);
 		this.docsObservable = enhancedObservable([], this);
 		this.ctx = context;
 
@@ -209,7 +209,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * @type {boolean}
 	 */
 	public get hasDocs(): boolean {
-		return this.docs.length > 0;
+		return this.hasDocsObservable.get();
 	}
 
 	/**
@@ -867,6 +867,7 @@ class Collection<T extends ICollectionDocument = Document>
 			}
 		});
 
+		this.hasDocsObservable.set(!!newDocs.length);
 		if (this.docsObservable.length !== newDocs.length) {
 			this.docsObservable.replace(newDocs);
 		} else {
@@ -1027,7 +1028,5 @@ class Collection<T extends ICollectionDocument = Document>
 		);
 	}
 }
-
-decorate(Collection, { hasDocs: computed });
 
 export default Collection;
