@@ -127,10 +127,10 @@ function generateMinified() {
 	shell.rm('lib/firestorter.prod.js', 'lib/firestorter.prod.umd.js');
 }
 
-/* function copyFlowDefinitions() {
+function copyFlowDefinitions() {
 	console.log('Copying flowtype definitions');
-	exec(`${getCmd(`ncp`)} flow-typed/firestorter.js lib/firestorter.js.flow`);
-}*/
+	fs.copyFileSync('flow-typed/firestorter.js', 'lib/firestorter.js.flow');
+}
 
 function build() {
 	runTypeScriptBuild('.build.es5', ts.ScriptTarget.ES5, true);
@@ -162,7 +162,7 @@ function build() {
 		)
 	]).then(() => {
 		generateMinified();
-		// copyFlowDefinitions();
+		copyFlowDefinitions();
 	});
 }
 
