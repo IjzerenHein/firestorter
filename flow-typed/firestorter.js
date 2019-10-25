@@ -232,7 +232,7 @@ declare export function encodeGeohash(
 	location: IGeoPoint,
 	precision?: number
 ): string;
-declare export function decodeGeohash(geohash: string): IGeoPoint[];
+declare export function decodeGeohash(geohash: string): IGeoPoint;
 declare export function getGeohashesForRadius(
 	center: IGeoPoint,
 	radius: number
@@ -246,6 +246,11 @@ declare export function calculateGeoDistance(
 	location1: IGeoPoint,
 	location2: IGeoPoint
 ): number;
+declare export function metersToLongitudeDegrees(
+	distance: number,
+	latitude: number
+): number;
+declare export function metersToLatitudeDegrees(distance: number): number;
 
 ///////////////////////////////
 // GeoQuery.ts
