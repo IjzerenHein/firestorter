@@ -12,9 +12,13 @@
   - [X] ICollection interface which is shared with Collection
   - [X] optional createDocument
 - [X] GeoQuery class 
-- [ ] GeoQuery documentation
+- [X] GeoQuery documentation
 - [X] Geo-hashing functions
-- [ ] Geo-hashing functions documentation
+- [X] Geo-hashing functions documentation
+- [ ] Docs for AggregateCollection
+- [ ] Tests for AggregateCollection
+- [ ] Tests for GeoQuery
+- [ ] Tests for Geo-functions
 - [ ] Medium article
 
 Nice to have:
