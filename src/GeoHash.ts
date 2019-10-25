@@ -9,8 +9,6 @@ export interface IGeoPoint {
 }
 
 export interface IGeoRegion extends IGeoPoint {
-	latitude: number;
-	longitude: number;
 	latitudeDelta: number;
 	longitudeDelta: number;
 }

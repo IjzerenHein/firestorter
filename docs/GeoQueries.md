@@ -104,3 +104,16 @@ doc.update({
   geohash: encodeGeohash(doc.location)
 });
 ```
+
+### Geographical functions
+
+Besides the `GeoQuery` class and `encodeGeohash` fumnction, firestorter also contains other useful functions for building geo-aware applications (see [API documentation](./API.md) for more details).
+
+- `encodeGeohash(point: IGeoPoint): string`
+- `decodeGeohash(geohash: string): IGeoPoint`
+- `getGeohashesForRadius(center: IGeoPoint, radius: number): string[][]`
+- `getGeohashesForRegion(region: IGeoRegion): string[][]`
+- `flattenGeohashes(geohash1: string, geohash2: string): string[]`
+- `calculateGeoDistance(point1: IGeoPoint, point2: IGeoPoint): number`
+- `metersToLatitudeDegrees(distance: number): number`
+- `metersToLongitudeDegrees(resolution: number, latitude: number): number`
