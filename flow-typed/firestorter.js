@@ -167,13 +167,13 @@ export interface IAggregateCollectionQuery {
 	query: (ref: firestore.CollectionReference) => firestore.Query | void;
 }
 export type AggregateCollectionQueries<Y> = Y[] | null;
-export type AggregateCollectionGetQueries<
+export type AggregateCollectionQueriesFn<
 	Y: IAggregateCollectionQuery
 > = () => AggregateCollectionQueries<Y>;
 
 export interface IAggregateCollectionOptions<T, Y: IAggregateCollectionQuery> {
 	createDocument: (source: DocumentSource, options: IDocumentOptions) => T;
-	getQueries: AggregateCollectionGetQueries<Y>;
+	queries: AggregateCollectionQueriesFn<Y>;
 	debug?: boolean;
 	debugName?: string;
 	orderBy?: AggregateCollectionOrderBy<T>;
@@ -189,7 +189,12 @@ declare export class AggregateCollection<
 		options?: IAggregateCollectionOptions<T, Y>
 	): void;
 	+docs: T[];
-	getQueries(): Y[] | null;
+	+hasDocs: boolean;
+	+cols: Array<Collection<Y>>;
+	queries(): AggregateCollectionQueriesFn<Y>;
+	+isLoading: boolean;
+	toString(): string;
+	+debugName: string;
 	// IHasContext
 	+context: IContext;
 	// IEnhancedObservableDelegate
@@ -256,21 +261,13 @@ export type IGeoQueryQuery = IAggregateCollectionQuery & {
 export type IGeoQueryOptions<T> = $Diff<
 	IAggregateCollectionOptions<T, IGeoQueryQuery>,
 	{|
-		getQueries: AggregateCollectionGetQueries<IGeoQueryQuery>,
+		queries: AggregateCollectionQueriesFn<IGeoQueryQuery>,
 		filterBy?: AggregateCollectionFilterBy<T>
 	|}
 > & {
 	region?: GeoQueryRegion,
 	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean
 };
-/*
-export type IGeoQueryOptions<T> = IAggregateCollectionOptions<
-	T,
-	IGeoQueryQuery
-> & {
-	region?: GeoQueryRegion,
-	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean
-};*/
 
 declare export class GeoQuery<
 	T: ICollectionDocument

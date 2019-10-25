@@ -25,9 +25,46 @@ export interface IGeoQueryOptions<T>
 	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean;
 }
 
-export class GeoQuery<
-	T extends ICollectionDocument
-> extends AggregateCollection<T, IGeoQueryQuery> {
+/**
+ * GeoQuery makes it possible to perform efficient geographical based queries
+ * with the use of geo-hashes.
+ *
+ * In order to use GeoQuery, each document needs a `geohash` field stored in the
+ * root of the document. The value of the `geohash` field should be a geo-hash
+ * encoded using `encodeGeohash`.
+ *
+ * @extends AggregateCollection
+ * @param {CollectionSource} [source] String-path, ref or function that returns a path or ref
+ * @param {Object} [options] Configuration options
+ * @param {IGeoRegion} [options.region] See `GeoQuery.region`
+ *
+ * @example
+ *
+ * const query = new GeoQuery('bookings', {
+ *   region = {
+ *     latitude: 51.45663,
+ *     longitude: 5.223,
+ *     latitudeDelta: 0.1,
+ *     longitudeDelta: 0.1,
+ *   }
+ * });
+ *
+ * // Bookings needs to contain documents with a `geohash`
+ * // field in the root, like this:
+ * // {
+ * //   ...
+ * //   geohash: 'jhdb23'
+ * //   ...
+ * // }
+ *
+ * autorun(() => {
+ *   query.docs.map(doc => console.log('doc: ', doc.id, doc.data));
+ * });
+ */
+class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
+	T,
+	IGeoQueryQuery
+> {
 	private regionObservable: IObservableValue<GeoQueryRegion>;
 
 	constructor(source: CollectionSource, options: IGeoQueryOptions<T>) {
@@ -42,7 +79,7 @@ export class GeoQuery<
 						return filterBy(doc, regionVal);
 				  }
 				: undefined,
-			getQueries: () => {
+			queries: () => {
 				let regionVal = regionObservable.get();
 				regionVal = typeof regionVal === "function" ? regionVal() : regionVal;
 				const geoHashes = regionVal
@@ -60,12 +97,39 @@ export class GeoQuery<
 							.where("geoHash", "<", geoHash[1])
 				}));
 			},
-
 			...otherOptions
 		});
 		this.regionObservable = regionObservable;
 	}
 
+	/**
+	 * Geographical region to query for.
+	 *
+	 * Use this property to get or set the region in which
+	 * to perform a aggregate geohash query.
+	 *
+	 * @type {GeoQueryRegion}
+	 *
+	 * @example
+	 * const query = new GeoQuery('bookings');
+	 *
+	 * // Bookings needs to contain documents with a `geohash`
+	 * // field in the root, like this:
+	 * // {
+	 * //   ...
+	 * //   geohash: 'jhdb23'
+	 * //   ...
+	 * // }
+	 *
+	 * ...
+	 * // Set the region to query for
+	 * query.region = {
+	 *   latitude: 51.45663,
+	 *   longitude: 5.223,
+	 *   latitudeDelta: 0.1,
+	 *   longitudeDelta: 0.1,
+	 * }
+	 */
 	get region(): GeoQueryRegion {
 		return this.regionObservable.get();
 	}
@@ -73,8 +137,27 @@ export class GeoQuery<
 		runInAction(() => this.regionObservable.set(val));
 	}
 
+	/**
+	 * Geo-hashes that are queries for the given region.
+	 *
+	 * @type {GeoQueryHash[]}
+	 *
+	 * @example
+	 * const query = new GeoQuery('bookings', {
+	 *   region: {
+	 *     latitude: 51.45663,
+	 *     longitude: 5.223,
+	 *     latitudeDelta: 0.1,
+	 *     longitudeDelta: 0.1
+	 *   }
+	 * });
+	 * ...
+	 * // Get the in-use geohashes
+	 * console.log(query.geohashes);
+	 * // [['todo', 'todo2], ...]
+	 */
 	get geohashes(): GeoQueryHash[] {
-		const queries = this.getQueries();
+		const queries = this.queries();
 		return queries ? queries.map(query => query.geoHash) : [];
 	}
 }

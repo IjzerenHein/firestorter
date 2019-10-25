@@ -15,6 +15,7 @@ import {
 	DocumentSource,
 	ICollectionDocument,
 	ICollectionOptions,
+	ICollection,
 	IDocumentOptions,
 	IEnhancedObservableDelegate,
 	Mode
@@ -93,7 +94,7 @@ import Document from "./Document";
  * console.log(col.isLoading);
  */
 class Collection<T extends ICollectionDocument = Document>
-	implements IEnhancedObservableDelegate, IHasContext {
+	implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
 	private sourceInput: CollectionSource;
 	private sourceCache: CollectionSource;
 	private sourceCacheRef: firestore.CollectionReference;

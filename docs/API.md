@@ -1,6 +1,13 @@
 ## Classes
 
 <dl>
+<dt><a href="#AggregateCollection">AggregateCollection</a></dt>
+<dd><p>Collection that aggregates the documents of one or more collections into
+a single, easy accessible collection.</p>
+<p>AggregateCollection is driven by the <code>queries</code> function, which defines what
+queries should be executed on the Firestore cloud back-end. GeoQuery is
+for instance a more specific use-case of a aggregated-collection using a range
+of geo-hash queries.</p></dd>
 <dt><a href="#Collection">Collection</a></dt>
 <dd><p>The Collection class lays at the heart of <code>firestorter</code>.
 It represents a collection in Firestore and its queried data. It is
@@ -34,6 +41,12 @@ Document is observable so that it can be efficiently linked to for instance
 a React Component using <code>mobx-react</code>'s <code>observer</code> pattern. This ensures that
 a component is only re-rendered when data that is accessed in the <code>render</code>
 function has changed.</p></dd>
+<dt><a href="#GeoQuery">GeoQuery</a> ⇐ <code><a href="#AggregateCollection">AggregateCollection</a></code></dt>
+<dd><p>GeoQuery makes it possible to perform efficient geographical based queries
+with the use of geo-hashes.</p>
+<p>In order to use GeoQuery, each document needs a <code>geohash</code> field stored in the
+root of the document. The value of the <code>geohash</code> field should be a geo-hash
+encoded using <code>encodeGeohash</code>.</p></dd>
 </dl>
 
 ## Members
@@ -46,6 +59,27 @@ function has changed.</p></dd>
 ## Functions
 
 <dl>
+<dt><a href="#encodeGeohash">encodeGeohash(location, [precision])</a> ⇒</dt>
+<dd><p>Generates a geohash of the specified precision/string length from the  [latitude, longitude]
+pair, specified as an array.</p></dd>
+<dt><a href="#decodeGeohash">decodeGeohash(geohash)</a></dt>
+<dd><p>Returns SW/NE latitude/longitude bounds of specified geohash.</p></dd>
+<dt><a href="#metersToLongitudeDegrees">metersToLongitudeDegrees(distance, latitude)</a> ⇒</dt>
+<dd><p>Calculates the number of degrees a given distance is at a given latitude.</p></dd>
+<dt><a href="#metersToLatitudeDegrees">metersToLatitudeDegrees(distance)</a> ⇒</dt>
+<dd><p>Calculates the number of degrees for a given latitude span in meters.</p></dd>
+<dt><a href="#getGeohashesForRadius">getGeohashesForRadius(center, radius)</a> ⇒</dt>
+<dd><p>Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p></dd>
+<dt><a href="#getGeohashesForRegion">getGeohashesForRegion(region)</a> ⇒</dt>
+<dd><p>Calculates a set of queries for a given region box. A query is a [start, end] pair
+where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p></dd>
+<dt><a href="#flattenGeohashes">flattenGeohashes(geohash1, geohash2)</a></dt>
+<dd><p>Flattens a query start-geohash; and end-geohash into all its individual geohash components.</p></dd>
+<dt><a href="#calculateGeoDistance">calculateGeoDistance(location1, location2)</a> ⇒</dt>
+<dd><p>Method which calculates the distance, in meters, between two locations,
+via the Haversine formula. Note that this is approximate due to the fact that the
+Earth's radius varies between 6356.752 km and 6378.137 km.</p></dd>
 <dt><a href="#initFirestorter">initFirestorter(config)</a></dt>
 <dd><p>Initializes <code>firestorter</code> with the firebase-app.</p></dd>
 <dt><a href="#makeContext">makeContext()</a></dt>
@@ -64,6 +98,91 @@ and returns the new object.</p></dd>
 that the field in the document is indeed a timestamp.</p></dd>
 </dl>
 
+<a name="AggregateCollection"></a>
+
+## AggregateCollection
+<p>Collection that aggregates the documents of one or more collections into
+a single, easy accessible collection.</p>
+<p>AggregateCollection is driven by the <code>queries</code> function, which defines what
+queries should be executed on the Firestore cloud back-end. GeoQuery is
+for instance a more specific use-case of a aggregated-collection using a range
+of geo-hash queries.</p>
+
+**Kind**: global class  
+
+* [AggregateCollection](#AggregateCollection)
+    * [new AggregateCollection([source], [options])](#new_AggregateCollection_new)
+    * [.docs](#AggregateCollection+docs) : <code>Array</code>
+    * [.hasDocs](#AggregateCollection+hasDocs) : <code>boolean</code>
+    * [.cols](#AggregateCollection+cols) : <code>Array</code>
+    * [.queries](#AggregateCollection+queries) : <code>function</code>
+
+<a name="new_AggregateCollection_new"></a>
+
+### new AggregateCollection([source], [options])
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
+| [options] | <code>Object</code> | <p>Configuration options</p> |
+| [options.queries] | <code>AggregateCollectionQueriesFn</code> | <p>See <code>AggregateCollection.queries</code></p> |
+| [options.createDocument] | <code>function</code> | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
+| [options.orderBy] | <code>function</code> | <p>Client side sort function</p> |
+| [options.filterBy] | <code>function</code> | <p>Client side filter function</p> |
+| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
+| [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
+
+**Example**  
+```js
+import {AggregateCollection} from 'firestorter';
+
+// Query all unfinished todos for a set of users
+const userIds = ['pinky', 'brain'];
+const col = new AggregateCollection('todos', {
+  queries: () => userIds.map(userId => ({
+    key: userId, // unique-key by which the query is re-used/cached
+    query: (ref) => ref.where('userId', '==', userId).where('finished', '==', false)
+  }))
+});
+```
+<a name="AggregateCollection+docs"></a>
+
+### aggregateCollection.docs : <code>Array</code>
+<p>Array of all the documents that have been fetched
+from firestore.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
+**Example**  
+```js
+aggregateCollection.docs.forEach((doc) => {
+  console.log(doc.data);
+});
+```
+<a name="AggregateCollection+hasDocs"></a>
+
+### aggregateCollection.hasDocs : <code>boolean</code>
+<p>True whenever any documents have been fetched.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
+<a name="AggregateCollection+cols"></a>
+
+### aggregateCollection.cols : <code>Array</code>
+<p>Array of all the collections inside this aggregate
+collection.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
+**Example**  
+```js
+aggregateCollection.cols.forEach((col) => {
+  console.log(col.docs.length);
+});
+```
+<a name="AggregateCollection+queries"></a>
+
+### aggregateCollection.queries : <code>function</code>
+<p>Queries function.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
 <a name="Collection"></a>
 
 ## Collection
@@ -658,12 +777,262 @@ doc.path = 'albums/americana';
 await doc.ready();
 console.log('data: ', doc.data);
 ```
+<a name="GeoQuery"></a>
+
+## GeoQuery ⇐ [<code>AggregateCollection</code>](#AggregateCollection)
+<p>GeoQuery makes it possible to perform efficient geographical based queries
+with the use of geo-hashes.</p>
+<p>In order to use GeoQuery, each document needs a <code>geohash</code> field stored in the
+root of the document. The value of the <code>geohash</code> field should be a geo-hash
+encoded using <code>encodeGeohash</code>.</p>
+
+**Kind**: global class  
+**Extends**: [<code>AggregateCollection</code>](#AggregateCollection)  
+
+* [GeoQuery](#GeoQuery) ⇐ [<code>AggregateCollection</code>](#AggregateCollection)
+    * [new GeoQuery([source], [options])](#new_GeoQuery_new)
+    * [.region](#GeoQuery+region) : <code>GeoQueryRegion</code>
+    * [.geohashes](#GeoQuery+geohashes) : <code>Array.&lt;GeoQueryHash&gt;</code>
+    * [.docs](#AggregateCollection+docs) : <code>Array</code>
+    * [.hasDocs](#AggregateCollection+hasDocs) : <code>boolean</code>
+    * [.cols](#AggregateCollection+cols) : <code>Array</code>
+    * [.queries](#AggregateCollection+queries) : <code>function</code>
+
+<a name="new_GeoQuery_new"></a>
+
+### new GeoQuery([source], [options])
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
+| [options] | <code>Object</code> | <p>Configuration options</p> |
+| [options.region] | <code>IGeoRegion</code> | <p>See <code>GeoQuery.region</code></p> |
+
+**Example**  
+```js
+const query = new GeoQuery('bookings', {
+  region = {
+    latitude: 51.45663,
+    longitude: 5.223,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1,
+  }
+});
+
+// Bookings needs to contain documents with a `geohash`
+// field in the root, like this:
+// {
+//   ...
+//   geohash: 'jhdb23'
+//   ...
+// }
+
+autorun(() => {
+  query.docs.map(doc => console.log('doc: ', doc.id, doc.data));
+});
+```
+<a name="GeoQuery+region"></a>
+
+### geoQuery.region : <code>GeoQueryRegion</code>
+<p>Geographical region to query for.</p>
+<p>Use this property to get or set the region in which
+to perform a aggregate geohash query.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Example**  
+```js
+const query = new GeoQuery('bookings');
+
+// Bookings needs to contain documents with a `geohash`
+// field in the root, like this:
+// {
+//   ...
+//   geohash: 'jhdb23'
+//   ...
+// }
+
+...
+// Set the region to query for
+query.region = {
+  latitude: 51.45663,
+  longitude: 5.223,
+  latitudeDelta: 0.1,
+  longitudeDelta: 0.1,
+}
+```
+<a name="GeoQuery+geohashes"></a>
+
+### geoQuery.geohashes : <code>Array.&lt;GeoQueryHash&gt;</code>
+<p>Geo-hashes that are queries for the given region.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Example**  
+```js
+const query = new GeoQuery('bookings', {
+  region: {
+    latitude: 51.45663,
+    longitude: 5.223,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1
+  }
+});
+...
+// Get the in-use geohashes
+console.log(query.geohashes);
+// [['todo', 'todo2], ...]
+```
+<a name="AggregateCollection+docs"></a>
+
+### geoQuery.docs : <code>Array</code>
+<p>Array of all the documents that have been fetched
+from firestore.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Overrides**: [<code>docs</code>](#AggregateCollection+docs)  
+**Example**  
+```js
+aggregateCollection.docs.forEach((doc) => {
+  console.log(doc.data);
+});
+```
+<a name="AggregateCollection+hasDocs"></a>
+
+### geoQuery.hasDocs : <code>boolean</code>
+<p>True whenever any documents have been fetched.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Overrides**: [<code>hasDocs</code>](#AggregateCollection+hasDocs)  
+<a name="AggregateCollection+cols"></a>
+
+### geoQuery.cols : <code>Array</code>
+<p>Array of all the collections inside this aggregate
+collection.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Overrides**: [<code>cols</code>](#AggregateCollection+cols)  
+**Example**  
+```js
+aggregateCollection.cols.forEach((col) => {
+  console.log(col.docs.length);
+});
+```
+<a name="AggregateCollection+queries"></a>
+
+### geoQuery.queries : <code>function</code>
+<p>Queries function.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Overrides**: [<code>queries</code>](#AggregateCollection+queries)  
 <a name="Mode"></a>
 
 ## Mode : [<code>Mode</code>](#Mode)
 <p>Real-time updating mode.</p>
 
 **Kind**: global variable  
+<a name="encodeGeohash"></a>
+
+## encodeGeohash(location, [precision]) ⇒
+<p>Generates a geohash of the specified precision/string length from the  [latitude, longitude]
+pair, specified as an array.</p>
+
+**Kind**: global function  
+**Returns**: <p>The geohash of the inputted location.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| location | <code>object</code> | <p>The {latitude, longitude} to encode into a geohash.</p> |
+| [precision] | <code>number</code> | <p>The length of the geohash to create. If no precision is specified, the global default is used.</p> |
+
+<a name="decodeGeohash"></a>
+
+## decodeGeohash(geohash)
+<p>Returns SW/NE latitude/longitude bounds of specified geohash.</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| geohash | <code>string</code> | <p>Cell that bounds are required of.</p> |
+
+<a name="metersToLongitudeDegrees"></a>
+
+## metersToLongitudeDegrees(distance, latitude) ⇒
+<p>Calculates the number of degrees a given distance is at a given latitude.</p>
+
+**Kind**: global function  
+**Returns**: <p>The number of degrees the distance corresponds to.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| distance | <code>number</code> | <p>The distance to convert.</p> |
+| latitude | <code>number</code> | <p>The latitude at which to calculate.</p> |
+
+<a name="metersToLatitudeDegrees"></a>
+
+## metersToLatitudeDegrees(distance) ⇒
+<p>Calculates the number of degrees for a given latitude span in meters.</p>
+
+**Kind**: global function  
+**Returns**: <p>The number of degrees the distance corresponds to.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| distance | <code>number</code> | <p>The distance to convert.</p> |
+
+<a name="getGeohashesForRadius"></a>
+
+## getGeohashesForRadius(center, radius) ⇒
+<p>Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p>
+
+**Kind**: global function  
+**Returns**: <p>An array of geohashes containing a [start, end] pair.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| center | <code>object</code> | <p>The center given as {latitude, longitude}.</p> |
+| radius | <code>number</code> | <p>The radius of the circle in meters.</p> |
+
+<a name="getGeohashesForRegion"></a>
+
+## getGeohashesForRegion(region) ⇒
+<p>Calculates a set of queries for a given region box. A query is a [start, end] pair
+where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p>
+
+**Kind**: global function  
+**Returns**: <p>An array of geohashes containing a [start, end] pair.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| region | <code>object</code> | <p>The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.</p> |
+
+<a name="flattenGeohashes"></a>
+
+## flattenGeohashes(geohash1, geohash2)
+<p>Flattens a query start-geohash; and end-geohash into all its individual geohash components.</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| geohash1 | <code>string</code> | <p>The geohash from range</p> |
+| geohash2 | <code>string</code> | <p>The geohash to range</p> |
+
+<a name="calculateGeoDistance"></a>
+
+## calculateGeoDistance(location1, location2) ⇒
+<p>Method which calculates the distance, in meters, between two locations,
+via the Haversine formula. Note that this is approximate due to the fact that the
+Earth's radius varies between 6356.752 km and 6378.137 km.</p>
+
+**Kind**: global function  
+**Returns**: <p>The distance, in meters, between the inputted locations.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| location1 | <code>object</code> | <p>The {latitude, longitude} of the first location.</p> |
+| location2 | <code>object</code> | <p>The {latitude, longitude} of the second location.</p> |
+
 <a name="initFirestorter"></a>
 
 ## initFirestorter(config)

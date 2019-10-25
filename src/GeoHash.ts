@@ -48,11 +48,12 @@ const E2 = 0.00669447819799;
 // Cutoff for rounding errors on double calculations
 const EPSILON = 1e-12;
 
-export function fromGeoPoint(point: IGeoPoint): number[] {
+/*
+function fromGeoPoint(point: IGeoPoint): number[] {
 	return [point.latitude, point.longitude];
-}
+}*/
 
-export function toGeoPoint(location: number[]): IGeoPoint {
+function toGeoPoint(location: number[]): IGeoPoint {
 	return {
 		latitude: location[0],
 		longitude: location[1]
@@ -65,8 +66,8 @@ function log2(x: number): number {
 
 /**
  * Validates the inputted location and throws an error if it is invalid.
- *
- * @param location The [latitude, longitude] pair to be verified.
+ * @private
+ * @param {object} location The {latitude, longitude} to be verified.
  */
 function validateLatitude(latitude: number): void {
 	if (typeof latitude !== "number" || isNaN(latitude)) {
@@ -75,6 +76,10 @@ function validateLatitude(latitude: number): void {
 		throw new Error("latitude must be within the range [-90, 90]");
 	}
 }
+
+/**
+ * @private
+ */
 function validateLongitude(longitude: number): void {
 	if (typeof longitude !== "number" || isNaN(longitude)) {
 		throw new Error("longitude must be a number");
@@ -82,6 +87,10 @@ function validateLongitude(longitude: number): void {
 		throw new Error("longitude must be within the range [-180, 180]");
 	}
 }
+
+/**
+ * @private
+ */
 function validateLocation(location: IGeoPoint): void {
 	try {
 		if (!location) {
@@ -93,6 +102,10 @@ function validateLocation(location: IGeoPoint): void {
 		throw new Error(`Invalid location "${location}": ${err.message}`);
 	}
 }
+
+/**
+ * @private
+ */
 function validateRegion(region: IGeoRegion): void {
 	try {
 		if (!region) {
@@ -109,10 +122,10 @@ function validateRegion(region: IGeoRegion): void {
 
 /**
  * Validates the inputted geohash and throws an error if it is invalid.
- *
- * @param geohash The geohash to be validated.
+ * @private
+ * @param {string} geohash The geohash to be validated.
  */
-export function validateGeohash(geohash: string): void {
+function validateGeohash(geohash: string): void {
 	let error;
 
 	if (typeof geohash !== "string") {
@@ -132,7 +145,7 @@ export function validateGeohash(geohash: string): void {
 	}
 }
 
-export function getRegionPoints(
+function getRegionPoints(
 	region: IGeoRegion
 ): {
 	northEast: IGeoPoint;
@@ -162,11 +175,11 @@ export function getRegionPoints(
 
 /**
  * Converts degrees to radians.
- *
- * @param degrees The number of degrees to be converted to radians.
+ * @private
+ * @param {number} degrees The number of degrees to be converted to radians.
  * @returns The number of radians equal to the inputted number of degrees.
  */
-export function degreesToRadians(degrees: number): number {
+function degreesToRadians(degrees: number): number {
 	if (typeof degrees !== "number" || isNaN(degrees)) {
 		throw new Error("Error: degrees must be a number");
 	}
@@ -178,8 +191,8 @@ export function degreesToRadians(degrees: number): number {
  * Generates a geohash of the specified precision/string length from the  [latitude, longitude]
  * pair, specified as an array.
  *
- * @param location The [latitude, longitude] pair to encode into a geohash.
- * @param precision The length of the geohash to create. If no precision is specified, the
+ * @param {object} location The {latitude, longitude} to encode into a geohash.
+ * @param {number} [precision] The length of the geohash to create. If no precision is specified, the
  * global default is used.
  * @returns The geohash of the inputted location.
  */
@@ -242,7 +255,7 @@ export function encodeGeohash(
 /**
  * Returns SW/NE latitude/longitude bounds of specified geohash.
  *
- * @param   {string} geohash - Cell that bounds are required of.
+ * @param {string} geohash - Cell that bounds are required of.
  */
 export function decodeGeohash(geohash: string): IGeoPoint[] {
 	validateGeohash(geohash);
@@ -292,8 +305,8 @@ export function decodeGeohash(geohash: string): IGeoPoint[] {
 /**
  * Calculates the number of degrees a given distance is at a given latitude.
  *
- * @param distance The distance to convert.
- * @param latitude The latitude at which to calculate.
+ * @param {number} distance The distance to convert.
+ * @param {number} latitude The latitude at which to calculate.
  * @returns The number of degrees the distance corresponds to.
  */
 export function metersToLongitudeDegrees(
@@ -311,6 +324,12 @@ export function metersToLongitudeDegrees(
 	}
 }
 
+/**
+ * Calculates the number of degrees for a given latitude span in meters.
+ *
+ * @param {number} distance The distance to convert.
+ * @returns The number of degrees the distance corresponds to.
+ */
 export function metersToLatitudeDegrees(distance: number): number {
 	return distance / METERS_PER_DEGREE_LATITUDE;
 }
@@ -318,9 +337,9 @@ export function metersToLatitudeDegrees(distance: number): number {
 /**
  * Calculates the bits necessary to reach a given resolution, in meters, for the longitude at a
  * given latitude.
- *
- * @param resolution The desired resolution.
- * @param latitude The latitude used in the conversion.
+ * @ignore
+ * @param {number} resolution The desired resolution.
+ * @param {number} latitude The latitude used in the conversion.
  * @return The bits necessary to reach a given resolution, in meters.
  */
 export function longitudeBitsForResolution(
@@ -333,8 +352,8 @@ export function longitudeBitsForResolution(
 
 /**
  * Calculates the bits necessary to reach a given resolution, in meters, for the latitude.
- *
- * @param resolution The bits necessary to reach a given resolution, in meters.
+ * @ignore
+ * @param {number} resolution The bits necessary to reach a given resolution, in meters.
  * @returns Bits necessary to reach a given resolution, in meters, for the latitude.
  */
 export function latitudeBitsForResolution(resolution: number): number {
@@ -346,8 +365,8 @@ export function latitudeBitsForResolution(resolution: number): number {
 
 /**
  * Wraps the longitude to [-180,180].
- *
- * @param longitude The longitude to wrap.
+ * @private
+ * @param {number} longitude The longitude to wrap.
  * @returns longitude The resulting longitude.
  */
 export function wrapLongitude(longitude: number): number {
@@ -365,9 +384,9 @@ export function wrapLongitude(longitude: number): number {
 /**
  * Calculates the maximum number of bits of a geohash to get a bounding box that is larger than a
  * given size at the given coordinate.
- *
- * @param coordinate The coordinate as a [latitude, longitude] pair.
- * @param size The size of the bounding box.
+ * @ignore
+ * @param {object} coordinate The coordinate as a {latitude, longitude}.
+ * @param {number} size The size of the bounding box.
  * @returns The number of bits necessary for the geohash.
  */
 function boundingBoxBits(coordinate: IGeoPoint, size: number): number {
@@ -424,9 +443,9 @@ function boundingBoxBitsForRegion(region: IGeoRegion): number {
  * Calculates eight points on the bounding box and the center of a given circle. At least one
  * geohash of these nine coordinates, truncated to a precision of at most radius, are guaranteed
  * to be prefixes of any geohash that lies within the circle.
- *
- * @param center The center given as [latitude, longitude].
- * @param radius The radius of the circle in meters.
+ * @ignore
+ * @param {object} center The center given as {latitude, longitude}.
+ * @param {number} radius The radius of the circle in meters.
  * @returns The eight bounding box points.
  */
 function boundingBoxCoordinates(center: IGeoPoint, radius: number): number[][] {
@@ -450,12 +469,11 @@ function boundingBoxCoordinates(center: IGeoPoint, radius: number): number[][] {
 }
 
 /**
- * Calculates eight points on the bounding box and the center of a given circle. At least one
+ * Calculates eight points on the bounding box and the center of a region box. At least one
  * geohash of these nine coordinates, truncated to a precision of at most radius, are guaranteed
  * to be prefixes of any geohash that lies within the circle.
- *
- * @param center The center given as [latitude, longitude].
- * @param radius The radius of the circle in meters.
+ * @ignore
+ * @param {object} region The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.
  * @returns The eight bounding box points.
  */
 function boundingBoxCoordinatesForRegion(region: IGeoRegion): number[][] {
@@ -475,9 +493,9 @@ function boundingBoxCoordinatesForRegion(region: IGeoRegion): number[][] {
 
 /**
  * Calculates the bounding box query for a geohash with x bits precision.
- *
- * @param geohash The geohash whose bounding box query to generate.
- * @param bits The number of bits of precision.
+ * @ignore
+ * @param {string} geohash The geohash whose bounding box query to generate.
+ * @param {number} bits The number of bits of precision.
  * @returns A [start, end] pair of geohashes.
  */
 export function geohashQuery(geohash1: string, bits: number): string[] {
@@ -505,8 +523,8 @@ export function geohashQuery(geohash1: string, bits: number): string[] {
  * Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
  * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
  *
- * @param center The center given as [latitude, longitude] pair.
- * @param radius The radius of the circle in meters.
+ * @param {object} center The center given as {latitude, longitude}.
+ * @param {number} radius The radius of the circle in meters.
  * @return An array of geohashes containing a [start, end] pair.
  */
 export function getGeohashesForRadius(
@@ -533,6 +551,13 @@ export function getGeohashesForRadius(
 	});
 }
 
+/**
+ * Calculates a set of queries for a given region box. A query is a [start, end] pair
+ * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
+ *
+ * @param {object} region The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.
+ * @return An array of geohashes containing a [start, end] pair.
+ */
 export function getGeohashesForRegion(region: IGeoRegion): string[][] {
 	validateRegion(region);
 	const queryBits = Math.max(1, boundingBoxBitsForRegion(region));
@@ -555,10 +580,10 @@ export function getGeohashesForRegion(region: IGeoRegion): string[][] {
 }
 
 /**
- * Flattens a range of geohashes, into all its individual components.
+ * Flattens a query start-geohash; and end-geohash into all its individual geohash components.
  *
- * @param geohash1 The geohash from range
- * @param geohash2 The geohash to range
+ * @param {string} geohash1 The geohash from range
+ * @param {string} geohash2 The geohash to range
  */
 export function flattenGeohashes(geohash1: string, geohash2: string): string[] {
 	if (geohash1.length !== geohash2.length) {
@@ -591,8 +616,8 @@ export function flattenGeohashes(geohash1: string, geohash2: string): string[] {
  * via the Haversine formula. Note that this is approximate due to the fact that the
  * Earth's radius varies between 6356.752 km and 6378.137 km.
  *
- * @param location1 The [latitude, longitude] pair of the first location.
- * @param location2 The [latitude, longitude] pair of the second location.
+ * @param {object} location1 The {latitude, longitude} of the first location.
+ * @param {object} location2 The {latitude, longitude} of the second location.
  * @returns The distance, in meters, between the inputted locations.
  */
 export function calculateGeoDistance(

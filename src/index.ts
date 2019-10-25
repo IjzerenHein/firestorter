@@ -8,7 +8,9 @@ import {
 	getGeohashesForRadius,
 	getGeohashesForRegion,
 	flattenGeohashes,
-	calculateGeoDistance
+	calculateGeoDistance,
+	metersToLatitudeDegrees,
+	metersToLongitudeDegrees
 } from "./GeoHash";
 import { Mode } from "./Types";
 import {
@@ -41,5 +43,7 @@ export {
 	getGeohashesForRadius,
 	getGeohashesForRegion,
 	flattenGeohashes,
-	calculateGeoDistance
+	calculateGeoDistance,
+	metersToLatitudeDegrees,
+	metersToLongitudeDegrees
 };

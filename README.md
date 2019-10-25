@@ -4,6 +4,28 @@
   Firestorter
 </h1>
 
+# GeoQuery & AggregateCollection todos
+- [X] AggregateCollection class
+  - [X] Base implementation
+  - [X] `toString'
+  - [X] `debugName`
+  - [X] ICollection interface which is shared with Collection
+  - [X] optional createDocument
+- [X] GeoQuery class 
+- [ ] GeoQuery documentation
+- [X] Geo-hashing functions
+- [ ] Geo-hashing functions documentation
+- [ ] Medium article
+
+Nice to have:
+- AggregateCollection class, manual fetch support
+  - [ ] `mode` support
+  - [ ] `fetch` support
+  - [ ] `ready` function
+- [ ] Better documentation structure, iso 1 large MD file (like latest mobx?)
+
+
+
 <span class="badge-npmversion"><a href="https://npmjs.org/package/badges" title="View this project on NPM"><img src="https://img.shields.io/npm/v/firestorter.svg" alt="NPM version" /></a></span>
 [![Build Status](https://travis-ci.org/IjzerenHein/firestorter.svg?branch=master)](https://travis-ci.org/IjzerenHein/firestorter)
 [![codecov](https://codecov.io/gh/IjzerenHein/firestorter/branch/master/graph/badge.svg)](https://codecov.io/gh/IjzerenHein/firestorter)
@@ -24,14 +46,15 @@ Because, React `+` Firestore `+` Mobx `===` ❤️
 
 ## Index
 
-- [Index](#index)
-- [Installation](#installation)
-- [Usage](#usage)
-- [How it works](#how-it-works)
-- [Examples](#examples)
-- [Documentation](#documentation)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
+- [GeoQuery & AggregateCollection todos](#geoquery--aggregatecollection-todos)
+  - [Index](#index)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [How it works](#how-it-works)
+  - [Examples](#examples)
+  - [Documentation](#documentation)
+  - [License](#license)
+  - [Acknowledgements](#acknowledgements)
 
 ## Installation
 
@@ -105,6 +128,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 * [Paths & References](./docs/PathsAndReferences.md)
 * [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
 * [Using Queries](./docs/Queries.md)
+* [Geo Queries](./docs/GeoQueries.md)
 * [Schemas & Custom documents](./docs/SchemasAndCustomDocuments.md)
 * [Using Collections and Documents with a store](./docs/Store.md)
 * [Using Sub-collections](./docs/SubCollections.md)

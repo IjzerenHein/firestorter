@@ -31,6 +31,14 @@ export interface IDocument {
 }
 
 /**
+ * Collection interface.
+ */
+export interface ICollection<T> {
+	readonly docs: T[];
+	readonly hasDocs: boolean;
+}
+
+/**
  * Collection-source.
  */
 export type CollectionSource =
