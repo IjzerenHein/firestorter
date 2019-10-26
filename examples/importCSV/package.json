@@ -1,12 +1,13 @@
 {
-  "name": "firestorter-importcli-example",
-  "version": "1.0.0",
-  "description": "CSV import example using firestorter",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ./index.js"
-  },
-  "dependencies": {
-    "csv-parse": "^2.0.0"
-  }
+	"name": "firestorter-importcli-example",
+	"version": "1.0.0",
+	"description": "CSV import example using firestorter",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./index.js"
+	},
+	"dependencies": {
+		"@google/maps": "^1.0.2",
+		"csv-parse": "^4.6.5"
+	}
 }
