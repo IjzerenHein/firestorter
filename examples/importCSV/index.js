@@ -10,16 +10,11 @@
 const fs = require('fs');
 const csvParse = require('csv-parse');
 const firebase = require('firebase');
+const firebaseConfig = require('../../test/firebaseConfig.json');
+const { encodeGeohash } = require('../../lib/firestorter.js');
 require('firebase/firestore');
 
-const firebaseApp = firebase.initializeApp({
-	apiKey: 'AIzaSyDgDX7GD9b8h8JxEB-ANs9LjlRkXpYpS3U',
-	authDomain: 'firestorter-tests.firebaseapp.com',
-	databaseURL: 'https://firestorter-tests.firebaseio.com',
-	projectId: 'firestorter-tests',
-	storageBucket: 'firestorter-tests.appspot.com',
-	messagingSenderId: '667453207099'
-});
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 function loadCSV(filename) {
 	return new Promise((resolve, reject) => {
@@ -114,11 +109,11 @@ async function importCSVRows(rows) {
 			rating: Number(row[6]),
 			beanType: row[7].trim(),
 			broadBeanOrigin: row[8].trim(),
-			location: new firebase.firestore.GeoPoint(latitude, longitude)
-			/*geohash: encodeGeohash({
+			location: new firebase.firestore.GeoPoint(latitude, longitude),
+			geohash: encodeGeohash({
 				latitude,
 				longitude
-			})*/
+			})
 		};
 		// console.info('Adding ' + i + ' of ' + count + ': ' + row);
 		const ref = firebase.firestore().doc('chocolateBars/' + id);
