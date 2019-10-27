@@ -67,8 +67,8 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 > {
 	private regionObservable: IObservableValue<GeoQueryRegion>;
 
-	constructor(source: CollectionSource, options: IGeoQueryOptions<T>) {
-		const { region, filterBy, ...otherOptions } = options;
+	constructor(source: CollectionSource, options?: IGeoQueryOptions<T>) {
+		const { region, filterBy, ...otherOptions } = options || {};
 		const regionObservable = observable.box(region);
 		super(source, {
 			filterBy: filterBy
