@@ -16,12 +16,13 @@ export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void) | void;
 export type GeoQueryHash = string[];
 
 export interface IGeoQueryQuery extends IAggregateCollectionQuery {
-	geoHash: GeoQueryHash;
+	geohash: GeoQueryHash;
 }
 
 export interface IGeoQueryOptions<T>
 	extends IAggregateCollectionOptions<T, IGeoQueryQuery> {
 	region?: GeoQueryRegion;
+	fieldPath?: string;
 	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean;
 }
 
@@ -37,6 +38,7 @@ export interface IGeoQueryOptions<T>
  * @param {CollectionSource} [source] String-path, ref or function that returns a path or ref
  * @param {Object} [options] Configuration options
  * @param {IGeoRegion} [options.region] See `GeoQuery.region`
+ * @param {string} [options.fieldPath] Field to query on (default = `geohash`)
  *
  * @example
  *
@@ -68,7 +70,8 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 	private regionObservable: IObservableValue<GeoQueryRegion>;
 
 	constructor(source: CollectionSource, options?: IGeoQueryOptions<T>) {
-		const { region, filterBy, ...otherOptions } = options || {};
+		const { region, fieldPath = "geohash", filterBy, ...otherOptions } =
+			options || {};
 		const regionObservable = observable.box(region);
 		super(source, {
 			filterBy: filterBy
@@ -82,19 +85,19 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 			queries: () => {
 				let regionVal = regionObservable.get();
 				regionVal = typeof regionVal === "function" ? regionVal() : regionVal;
-				const geoHashes = regionVal
+				const geohashes = regionVal
 					? getGeohashesForRegion(regionVal)
 					: undefined;
-				if (!geoHashes) {
+				if (!geohashes) {
 					return null;
 				}
-				return geoHashes.map(geoHash => ({
-					geoHash,
-					key: `${geoHash[0]}-${geoHash[1]}`,
+				return geohashes.map(geohash => ({
+					geohash,
+					key: `${geohash[0]}-${geohash[1]}`,
 					query: ref =>
 						ref
-							.where("geoHash", ">=", geoHash[0])
-							.where("geoHash", "<", geoHash[1])
+							.where(fieldPath, ">=", geohash[0])
+							.where(fieldPath, "<", geohash[1])
 				}));
 			},
 			...otherOptions
@@ -158,7 +161,7 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 	 */
 	get geohashes(): GeoQueryHash[] {
 		const queries = this.queries();
-		return queries ? queries.map(query => query.geoHash) : [];
+		return queries ? queries.map(query => query.geohash) : [];
 	}
 }
 

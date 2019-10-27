@@ -143,11 +143,11 @@ class AggregateCollection<
 
 		// Aggregrate all docs from the queries
 		let hasAllData = true;
-		this.collections.forEach(query => {
-			if (query.isLoading) {
+		this.collections.forEach(col => {
+			if (col.isLoading) {
 				hasAllData = false;
 			}
-			query.docs.forEach(doc => docs.push(doc));
+			col.docs.forEach(doc => docs.push(doc));
 		});
 
 		// If new queries have been added but have not yet
@@ -156,8 +156,8 @@ class AggregateCollection<
 		if (!hasAllData && this.prevCollections.length) {
 			// console.log('usingPrevQueries');
 			docs = [];
-			this.prevCollections.forEach(query => {
-				query.docs.forEach(doc => docs.push(doc));
+			this.prevCollections.forEach(col => {
+				col.docs.forEach(doc => docs.push(doc));
 			});
 		} else if (hasAllData) {
 			// console.log('+++ ALL DATA AVAIL');
@@ -307,7 +307,7 @@ class AggregateCollection<
 				col = new Collection(this.collectionSource, {
 					createDocument: this._onCreateDocument,
 					debug: this.debug,
-					debugName: this.debugName + ".Collection",
+					debugName: this.debugName + ".col: " + query.key,
 					query: ref => (ref ? query.query(ref) : ref)
 				});
 			}
