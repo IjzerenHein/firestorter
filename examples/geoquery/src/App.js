@@ -46,8 +46,8 @@ export default observer(
 
 			// Calculate region
 			const span = new maps.LatLngBounds(bounds.sw, bounds.ne).toSpan();
-			const latDelta = span.lat() * 0.2;
-			const lngDelta = span.lng() * 0.2;
+			const latDelta = span.lat() * 0.1;
+			const lngDelta = span.lng() * 0.1;
 
 			// Update query-bounds state
 			const newBounds = {
@@ -64,8 +64,8 @@ export default observer(
 			geoQuery.region = {
 				latitude: center.lat,
 				longitude: center.lng,
-				latitudeDelta: latDelta,
-				longitudeDelta: lngDelta
+				latitudeDelta: latDelta * 2,
+				longitudeDelta: lngDelta * 2
 			};
 		};
 
