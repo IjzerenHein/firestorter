@@ -99,7 +99,7 @@ async function importCSVRows(rows) {
 		const row = rows[i];
 		const id = Number(row[2]);
 		const latitude = Number(row[9]);
-		const longitude = Number(row[9]);
+		const longitude = Number(row[10]);
 		const json = {
 			company: row[0].trim(),
 			origin: row[1].trim(),
