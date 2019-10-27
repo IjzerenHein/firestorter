@@ -583,7 +583,10 @@ export function getGeohashesForRegion(region: IGeoRegion): string[][] {
  * @param {string} geohash1 The geohash from range
  * @param {string} geohash2 The geohash to range
  */
-export function flattenGeohashes(geohash1: string, geohash2: string): string[] {
+export function flattenGeohashRange(
+	geohash1: string,
+	geohash2: string
+): string[] {
 	if (geohash1.length !== geohash2.length) {
 		throw new Error("Geohash lengths must be the same");
 	}
@@ -607,6 +610,19 @@ export function flattenGeohashes(geohash1: string, geohash2: string): string[] {
 		}
 	}
 	return res;
+}
+
+/**
+ * Flattens a set of geo-hash queries into a single array of geohash tiles.
+ *
+ * @param {string[][]} geohashes The geohashes array
+ */
+export function flattenGeohashes(geohashes: string[][]): string[] {
+	const set = new Set<string>();
+	geohashes.forEach(a =>
+		flattenGeohashRange(a[0], a[1]).forEach(geohash => set.add(geohash))
+	);
+	return Array.from(set);
 }
 
 /**

@@ -238,10 +238,11 @@ declare export function getGeohashesForRadius(
 	radius: number
 ): string[][];
 declare export function getGeohashesForRegion(region: IGeoRegion): string[][];
-declare export function flattenGeohashes(
+declare export function flattenGeohashRange(
 	geohash1: string,
 	geohash2: string
 ): string[];
+declare export function flattenGeohashes(geohashes: string[][]): string[];
 declare export function calculateGeoDistance(
 	location1: IGeoPoint,
 	location2: IGeoPoint
