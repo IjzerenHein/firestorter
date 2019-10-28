@@ -30,7 +30,7 @@
 		"lib"
 	],
 	"scripts": {
-		"build": "node scripts/build.js",
+		"build": "yarn tsc && node scripts/build.js",
 		"lint": "tslint -p tsconfig.json",
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
 		"test": "node ./test/seedSampleData.js && jest",
