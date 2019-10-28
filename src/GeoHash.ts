@@ -4,13 +4,13 @@
 // And slightly modified to remove warnings and add the IGeoPoint type.
 
 export interface IGeoPoint {
-	latitude: number;
-	longitude: number;
+	readonly latitude: number;
+	readonly longitude: number;
 }
 
 export interface IGeoRegion extends IGeoPoint {
-	latitudeDelta: number;
-	longitudeDelta: number;
+	readonly latitudeDelta: number;
+	readonly longitudeDelta: number;
 }
 
 export type GeoHash = string;

@@ -172,7 +172,7 @@ export type AggregateCollectionQueriesFn<
 > = () => AggregateCollectionQueries<Y>;
 
 export interface IAggregateCollectionOptions<T, Y: IAggregateCollectionQuery> {
-	createDocument: (source: DocumentSource, options: IDocumentOptions) => T;
+	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
 	queries: AggregateCollectionQueriesFn<Y>;
 	debug?: boolean;
 	debugName?: string;
@@ -218,21 +218,21 @@ declare export function isTimestamp(val: any): boolean;
 // GeoHash.ts
 ///////////////////////////////
 
-export type IGeoPoint = {
-	latitude: number,
-	longitude: number
-};
+export interface IGeoPoint {
+	+latitude: number;
+	+longitude: number;
+}
 
-export type IGeoRegion = IGeoPoint & {
-	latitudeDelta: number,
-	longitudeDelta: number
-};
+export interface IGeoRegion extends IGeoPoint {
+	+latitudeDelta: number;
+	+longitudeDelta: number;
+}
 
 declare export function encodeGeohash(
 	location: IGeoPoint,
 	precision?: number
 ): string;
-declare export function decodeGeohash(geohash: string): IGeoPoint;
+declare export function decodeGeohash(geohash: string): IGeoPoint[];
 declare export function getGeohashesForRadius(
 	center: IGeoPoint,
 	radius: number
@@ -257,12 +257,12 @@ declare export function metersToLatitudeDegrees(distance: number): number;
 // GeoQuery.ts
 ///////////////////////////////
 
-export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void) | void;
+export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void);
 export type GeoQueryHash = string[];
 
-export type IGeoQueryQuery = IAggregateCollectionQuery & {
-	geoHash: GeoQueryHash
-};
+export interface IGeoQueryQuery extends IAggregateCollectionQuery {
+	geoHash: GeoQueryHash;
+}
 
 export type IGeoQueryOptions<T> = $Diff<
 	IAggregateCollectionOptions<T, IGeoQueryQuery>,
@@ -270,15 +270,16 @@ export type IGeoQueryOptions<T> = $Diff<
 		queries: AggregateCollectionQueriesFn<IGeoQueryQuery>,
 		filterBy?: AggregateCollectionFilterBy<T>
 	|}
-> & {
+> & {|
 	region?: GeoQueryRegion,
+	fieldPath?: string,
 	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean
-};
+|};
 
 declare export class GeoQuery<
 	T: ICollectionDocument
 > extends AggregateCollection<T, IGeoQueryQuery> {
 	constructor(source: CollectionSource, options: IGeoQueryOptions<T>): void;
-	region: GeoQueryRegion;
+	region: ?GeoQueryRegion;
 	+geohashes: GeoQueryHash[];
 }

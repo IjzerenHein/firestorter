@@ -9,10 +9,11 @@ import { CollectionSource, ICollectionDocument } from "./Types";
 import { IGeoRegion, getGeohashesForRegion } from "./GeoHash";
 import AggregateCollection, {
 	IAggregateCollectionOptions,
-	IAggregateCollectionQuery
+	IAggregateCollectionQuery,
+	AggregateCollectionQueriesFn
 } from "./AggregateCollection";
 
-export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void) | void;
+export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void);
 export type GeoQueryHash = string[];
 
 export interface IGeoQueryQuery extends IAggregateCollectionQuery {
@@ -20,7 +21,8 @@ export interface IGeoQueryQuery extends IAggregateCollectionQuery {
 }
 
 export interface IGeoQueryOptions<T>
-	extends IAggregateCollectionOptions<T, IGeoQueryQuery> {
+	extends Omit<IAggregateCollectionOptions<T, IGeoQueryQuery>, "queries"> {
+	queries?: AggregateCollectionQueriesFn<IGeoQueryQuery>;
 	region?: GeoQueryRegion;
 	fieldPath?: string;
 	filterBy?: (doc: T, region?: IGeoRegion | void) => boolean;
@@ -133,10 +135,10 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 	 *   longitudeDelta: 0.1,
 	 * }
 	 */
-	get region(): GeoQueryRegion {
+	get region(): GeoQueryRegion | void {
 		return this.regionObservable.get();
 	}
-	set region(val: GeoQueryRegion) {
+	set region(val: GeoQueryRegion | void) {
 		runInAction(() => this.regionObservable.set(val));
 	}
 
