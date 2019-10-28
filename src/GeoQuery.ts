@@ -69,12 +69,14 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<
 	T,
 	IGeoQueryQuery
 > {
-	private regionObservable: IObservableValue<GeoQueryRegion>;
+	private regionObservable: IObservableValue<GeoQueryRegion | void>;
 
 	constructor(source: CollectionSource, options?: IGeoQueryOptions<T>) {
 		const { region, fieldPath = "geohash", filterBy, ...otherOptions } =
 			options || {};
-		const regionObservable = observable.box(region);
+		const regionObservable: IObservableValue<GeoQueryRegion | void> = observable.box(
+			region
+		);
 		super(source, {
 			filterBy: filterBy
 				? (doc: T) => {
