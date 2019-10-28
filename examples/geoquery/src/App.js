@@ -35,7 +35,7 @@ export default observer(
 			map: null,
 			bounds: null,
 			geoQuery: new GeoQuery('chocolateBars', {
-				//debug: true
+				debug: true
 			})
 		};
 
@@ -79,6 +79,8 @@ export default observer(
 		render() {
 			const { bounds, map, maps, geoQuery } = this.state;
 			const { docs, geohashes } = geoQuery;
+			const flattenedGeohashes = flattenGeohashes(geohashes);
+			console.log(geohashes);
 			return (
 				<div className="App">
 					<GoogleMapReact
@@ -88,7 +90,7 @@ export default observer(
 						onChange={this.onRegionChange}
 					>
 						<MapRect maps={maps} map={map} color="red" bounds={bounds} />
-						{flattenGeohashes(geohashes).map(geohash => {
+						{flattenedGeohashes.map(geohash => {
 							const [sw, ne] = decodeGeohash(geohash);
 							const bounds = {
 								east: ne.longitude,
@@ -101,8 +103,10 @@ export default observer(
 									key={geohash}
 									maps={maps}
 									map={map}
-									color="blue"
 									bounds={bounds}
+									color="blue"
+									label={geohash}
+									labelColor="white"
 								/>
 							);
 						})}
