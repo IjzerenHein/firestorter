@@ -656,3 +656,20 @@ export function calculateGeoDistance(
 
 	return radius * c * 1000;
 }
+
+export function insideGeoRegion(point: IGeoPoint, region: IGeoRegion): boolean {
+	if (
+		point.latitude < region.latitude - region.latitudeDelta * 0.5 ||
+		point.latitude > region.latitude + region.latitudeDelta * 0.5
+	) {
+		return false;
+	}
+	// TODO - wrap longitude?
+	if (
+		point.longitude < region.longitude - region.longitudeDelta * 0.5 ||
+		point.longitude > region.longitude + region.longitudeDelta * 0.5
+	) {
+		return false;
+	}
+	return true;
+}

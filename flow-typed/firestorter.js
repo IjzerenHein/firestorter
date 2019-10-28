@@ -247,6 +247,10 @@ declare export function calculateGeoDistance(
 	location1: IGeoPoint,
 	location2: IGeoPoint
 ): number;
+declare export function insideGeoRegion(
+	point: IGeoPoint,
+	region: IGeoRegion
+): boolean;
 declare export function metersToLongitudeDegrees(
 	distance: number,
 	latitude: number
