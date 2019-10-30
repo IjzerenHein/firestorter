@@ -74,8 +74,10 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 <dt><a href="#getGeohashesForRegion">getGeohashesForRegion(region)</a> ⇒</dt>
 <dd><p>Calculates a set of queries for a given region box. A query is a [start, end] pair
 where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p></dd>
-<dt><a href="#flattenGeohashes">flattenGeohashes(geohash1, geohash2)</a></dt>
+<dt><a href="#flattenGeohashRange">flattenGeohashRange(geohash1, geohash2)</a></dt>
 <dd><p>Flattens a query start-geohash; and end-geohash into all its individual geohash components.</p></dd>
+<dt><a href="#flattenGeohashes">flattenGeohashes(geohashes)</a></dt>
+<dd><p>Flattens a set of geo-hash queries into a single array of geohash tiles.</p></dd>
 <dt><a href="#calculateGeoDistance">calculateGeoDistance(location1, location2)</a> ⇒</dt>
 <dd><p>Method which calculates the distance, in meters, between two locations,
 via the Haversine formula. Note that this is approximate due to the fact that the
@@ -116,6 +118,7 @@ of geo-hash queries.</p>
     * [.hasDocs](#AggregateCollection+hasDocs) : <code>boolean</code>
     * [.cols](#AggregateCollection+cols) : <code>Array</code>
     * [.queries](#AggregateCollection+queries) : <code>function</code>
+    * [.isLoading](#AggregateCollection+isLoading) : <code>boolean</code>
 
 <a name="new_AggregateCollection_new"></a>
 
@@ -181,6 +184,12 @@ aggregateCollection.cols.forEach((col) => {
 
 ### aggregateCollection.queries : <code>function</code>
 <p>Queries function.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
+<a name="AggregateCollection+isLoading"></a>
+
+### aggregateCollection.isLoading : <code>boolean</code>
+<p>True when new data is being loaded.</p>
 
 **Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
 <a name="Collection"></a>
@@ -797,6 +806,7 @@ encoded using <code>encodeGeohash</code>.</p>
     * [.hasDocs](#AggregateCollection+hasDocs) : <code>boolean</code>
     * [.cols](#AggregateCollection+cols) : <code>Array</code>
     * [.queries](#AggregateCollection+queries) : <code>function</code>
+    * [.isLoading](#AggregateCollection+isLoading) : <code>boolean</code>
 
 <a name="new_GeoQuery_new"></a>
 
@@ -807,6 +817,7 @@ encoded using <code>encodeGeohash</code>.</p>
 | [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
 | [options] | <code>Object</code> | <p>Configuration options</p> |
 | [options.region] | <code>IGeoRegion</code> | <p>See <code>GeoQuery.region</code></p> |
+| [options.fieldPath] | <code>string</code> | <p>Field to query on (default = <code>geohash</code>)</p> |
 
 **Example**  
 ```js
@@ -923,6 +934,13 @@ aggregateCollection.cols.forEach((col) => {
 
 **Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
 **Overrides**: [<code>queries</code>](#AggregateCollection+queries)  
+<a name="AggregateCollection+isLoading"></a>
+
+### geoQuery.isLoading : <code>boolean</code>
+<p>True when new data is being loaded.</p>
+
+**Kind**: instance property of [<code>GeoQuery</code>](#GeoQuery)  
+**Overrides**: [<code>isLoading</code>](#AggregateCollection+isLoading)  
 <a name="Mode"></a>
 
 ## Mode : [<code>Mode</code>](#Mode)
@@ -1006,9 +1024,9 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 | --- | --- | --- |
 | region | <code>object</code> | <p>The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.</p> |
 
-<a name="flattenGeohashes"></a>
+<a name="flattenGeohashRange"></a>
 
-## flattenGeohashes(geohash1, geohash2)
+## flattenGeohashRange(geohash1, geohash2)
 <p>Flattens a query start-geohash; and end-geohash into all its individual geohash components.</p>
 
 **Kind**: global function  
@@ -1017,6 +1035,17 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 | --- | --- | --- |
 | geohash1 | <code>string</code> | <p>The geohash from range</p> |
 | geohash2 | <code>string</code> | <p>The geohash to range</p> |
+
+<a name="flattenGeohashes"></a>
+
+## flattenGeohashes(geohashes)
+<p>Flattens a set of geo-hash queries into a single array of geohash tiles.</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| geohashes | <code>Array.&lt;Array.&lt;string&gt;&gt;</code> | <p>The geohashes array</p> |
 
 <a name="calculateGeoDistance"></a>
 
