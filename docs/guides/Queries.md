@@ -30,7 +30,7 @@ When the Query Function accesses an observable, it will automatically be re-eval
 
 **React Example:**
 
-```js
+```jsx
 const TodosView extends Component {
   constructor(props) {
     super(props);

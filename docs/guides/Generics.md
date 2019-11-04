@@ -8,7 +8,7 @@ If you are looking for run-time type validation, have a look at [Schema validati
 
 To use document generics, pass a `type` or `interface` to the Document class.
 
-```js
+```tsx
 import { Document } from "firestorter";
 
 type TodoType = {
@@ -27,7 +27,7 @@ console.log('is done: ' + todo.data.done);// <-- Error, `done` does not exist in
 
 Similar to Document generics, Collections can be provided a custom Document type.
 
-```js
+```tsx
 import { Document, Collection } from "firestorter";
 
 type TodoType = {

@@ -20,7 +20,7 @@ class Chat extends Document {
 
 Usage with a React Component example.
 
-```js
+```jsx
 import * as React from 'react';
 import { observer } from 'mobx-react';
 

@@ -23,7 +23,7 @@ In order to make this work, access to the Collection or Document should be perfo
 export const todos = new Collection('todos');
 ```
 
-```js
+```jsx
 // TodoList.js
 import { observer } from 'mobx-react';
 import { todos } from './store';
@@ -85,11 +85,12 @@ const col = new Collection('todos', {
 });
 ```
 
-> Using `mode = "on"` is however dangerous and can cause memory and resource leaks when used incorrectly. This is because when `"on"` is used, the snapshot listeners are permanently turned on and keep the object alive, even when it is no longer accessed by any JavaScript code.
+> [!DANGER]
+> Using `mode = "on"` is dangerous and can cause memory and resource leaks when used incorrectly. This is because when `"on"` is used, the snapshot listeners are permanently turned on and keep the object alive, even when it is no longer accessed by any JavaScript code.
 
 The following construct should therefore be avoided:
 
-```js
+```jsx
 export default observer(class TodoList extends Component {
   // Bad use of `mode = "on"`, which will cause a memory/resource leak
   // when the component class is destroyed

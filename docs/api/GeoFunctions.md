@@ -38,7 +38,7 @@ pair, specified as an array.</p>
 | Param | Type | Description |
 | --- | --- | --- |
 | location | <code>object</code> | <p>The {latitude, longitude} to encode into a geohash.</p> |
-| [precision] | <code>number</code> | <p>The length of the geohash to create. If no precision is specified, the global default is used.</p> |
+| [precision] | <code>number</code> | <p>The length of the geohash to create. If no precision is specified, the default precision of <code>10</code> is used.</p> |
 
 <a name="decodeGeohash"></a>
 

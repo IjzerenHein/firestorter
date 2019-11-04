@@ -49,7 +49,8 @@ artist.path = 'artists/Metallica';
 console.log(albums.path); // 'artists/Metallica/albums';
 ```
 
-_Reactive-paths behave smartly and only start collection/document snapshot updates when needed. When for instance the reactive path function of a sub-collection accesses the `data` field of a document, it will only start snapshot updates on that document when the subcollection is accessed._
+> [!NOTE]
+> Reactive-paths behave smartly and only start collection/document snapshot updates when needed. When for instance the reactive path function of a sub-collection accesses the `data` field of a document, it will only start snapshot updates on that document when the subcollection is accessed.
 
 
 ## References
@@ -88,8 +89,9 @@ album.ref = firebase()
 	.doc('albums/myalbum2');
 ```
 
-_Paths and references can be intermixed. Under the hood, a path is simple
-converted into a ref, and refs can be translated back into paths._
+> [!NOTE]
+> Paths and references can be intermixed. Under the hood, a path is simple
+converted into a ref, and refs can be translated back into paths.
 
 
 ## Source Properties

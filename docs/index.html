@@ -16,6 +16,7 @@
 			content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
 		/>
 		<link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css" />
+		<script src="//unpkg.com/docsify-edit-on-github/index.js"></script>
 	</head>
 	<body>
 		<div id="app"></div>
@@ -23,9 +24,23 @@
 			window.$docsify = {
 				name: "firestorter",
 				repo: "https://github.com/IjzerenHein/firestorter",
-				loadSidebar: true
+				loadSidebar: true,
+				plugins: [
+					EditOnGithubPlugin.create(
+						"https://github.com/IjzerenHein/firestorter/blob/feature-geoquery/docs/"
+						/*function(docName, vm) {
+							// Point the auto-generated docs to the correct source file
+							if (docName.indexOf('api') >= 0) {
+								return "https://github.com/IjzerenHein/firestorter/edit/feature-geoquery/src/" + docName.trim('.md') + '.ts';
+							}
+						}*/
+					)
+				]
 			};
 		</script>
 		<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+		<script src="//unpkg.com/prismjs/components/prism-jsx.min.js"></script>
+		<script src="//unpkg.com/prismjs/components/prism-tsx.min.js"></script>
+		<script src="//unpkg.com/docsify-plugin-flexible-alerts"></script>
 	</body>
 </html>

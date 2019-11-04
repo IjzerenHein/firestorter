@@ -35,7 +35,6 @@
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
 		"test": "node ./test/seedSampleData.js && jest",
 		"cov": "jest --coverage",
-		"doc": "jsdoc2md --files 'src/**/*.ts' --configure jsdoc2md.json > ./docs/API.md",
 		"docs:document": "jsdoc2md --files 'src/Document.ts' --configure jsdoc2md.json > ./docs/api/Document.md",
 		"docs:collection": "jsdoc2md --files 'src/Collection.ts' --configure jsdoc2md.json > ./docs/api/Collection.md",
 		"docs:aggregatecollection": "jsdoc2md --files 'src/AggregateCollection.ts' --configure jsdoc2md.json > ./docs/api/AggregateCollection.md",

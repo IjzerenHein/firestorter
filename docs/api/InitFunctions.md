@@ -19,11 +19,11 @@ a context suitable for Document and Collection creation.</p></dd>
 
 **Kind**: global function  
 
-| Param           | Type                                            | Description                                                      |
-| --------------- | ----------------------------------------------- | ---------------------------------------------------------------- |
-| config          | <code>Object</code>                             | <p>Configuration options</p>                                     |
-| config.firebase | <code>Firebase</code>                           | <p>Firebase reference</p>                                        |
-| [config.app]    | <code>String</code> \| <code>FirebaseApp</code> | <p>FirebaseApp to use (when omitted the default app is used)</p> |
+| Param | Type | Description |
+| --- | --- | --- |
+| config | <code>Object</code> | <p>Configuration options</p> |
+| config.firebase | <code>Firebase</code> | <p>Firebase reference</p> |
+| [config.app] | <code>String</code> \| <code>FirebaseApp</code> | <p>FirebaseApp to use (when omitted the default app is used)</p> |
 
 **Example**  
 ```js
@@ -48,7 +48,7 @@ const album = new Document('artists/Metallica/albums/BlackAlbum');
 ## makeContext()
 <p>If you need to use different firestore instances for different
 collections, or otherwise want to avoid global state, you can
-instead provide a &quot;context&quot; opton when creating Document and
+instead provide a &quot;context&quot; option when creating Document and
 Collection instances.</p>
 <p>This function takes the same arguments as initFirestore and returns
 a context suitable for Document and Collection creation.</p>

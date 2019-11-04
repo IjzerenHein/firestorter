@@ -37,7 +37,7 @@ export store;
 When `ArtistsView` is mounted, real-time updating is automatically enabled on the `artists` collection
 because its `mode` property is set to `auto` (=default).
 
-```js
+```jsx
 import { artists, albums } from './store';
 import { observer } from 'mobx-react';
 
@@ -83,7 +83,7 @@ switched to a new Firestore colllection reference. When AlbumView is visible
 or becomes visible, it will automatically update to show that data from
 back-end, as efficiently as possible.
 
-```js
+```jsx
 import {albums} from './store';
 import {observer} from 'mobx-react';
 
