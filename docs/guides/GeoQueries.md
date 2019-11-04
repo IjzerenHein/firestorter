@@ -1,4 +1,4 @@
-## Geo Queries
+# Geo Queries
 
 Geo-queries make it possible to query within a certain geographical area.
 
@@ -7,7 +7,7 @@ box, this is not yet the case. This means that we developers need to implement
 this functionality ourselves in our apps. Firestorter adds support for geo-queries
 using the well known [geohash method](https://en.wikipedia.org/wiki/Geohash). A geo-hash is a string that encodes a specific latitude/longitude with a specific precision. Because of how these geo-hashes are encoded, it is possible to efficiently query on geographical regions, even on very large datasets.
 
-### Store a `geohash` per document
+## Store a geohash per document
 
 In order to make geo-hash searches possible, each document that you want to search by geographically, needs to contain a geo-hash. The firestorter `GeoQuery` class assumes that each document contains a field named `geohash`, in the root of the document.
 
@@ -32,7 +32,7 @@ doc.update({
 });
 ```
 
-### Query for documents within a certain region
+## Query for documents within a certain region
 
 To query by geographical location, you can use the `GeoQuery` class. The
 GeoQuery class takes in a a geographical region and converts this into a 
@@ -63,7 +63,7 @@ autorun(() => {
 })
 ```
 
-### Changing the search region for a query
+## Changing the search region for a query
 
 When for instance building a map application, the search region might change when the user pans or zooms the map. In this case creating a new `GeoQuery` causes all the queries to be re-executed, and all documents to be re-created. In this case it is better to update the `GeoQuery.region` property, which will cause GeoQuery class to fetch only the new queries, and re-use as much of the documents as possible.
 
@@ -78,11 +78,11 @@ function onMapRegionChange(region) {
 }
 ```
 
-### Geo-queries update in real-time!!
+## Geo-queries update in real-time!!
 
 As geo-queries are built upon Firestorter Collections and MobX, they are fully real-time by nature. This means that whenever you add a document with a `geohash` to a Firestore collection, it causes the geo-query to automatically return the new result *(\*if the new geohash is included within the queried region that is)*. This is pretty frickin awesome!
 
-### Excluding documents from geo-queries
+## Excluding documents from geo-queries
 
 In order to exclude a document from a geo-query, the `geohash` field needs to be removed or set to an empty string.
 
@@ -105,9 +105,9 @@ doc.update({
 });
 ```
 
-### Geographical functions
+## Geographical functions
 
-Besides the `GeoQuery` class and `encodeGeohash` fumnction, firestorter also contains other useful functions for building geo-aware applications (see [API documentation](./API.md) for more details).
+Besides the `GeoQuery` class and `encodeGeohash` functions, firestorter also contains other useful functions for building geo-aware applications (see [API documentation](./API.md) for more details).
 
 - `encodeGeohash(point: IGeoPoint): string`
 - `decodeGeohash(geohash: string): IGeoPoint`

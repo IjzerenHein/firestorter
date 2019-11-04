@@ -1,4 +1,4 @@
-## Using Collections and Documents with a store
+# Creating stores
 
 When creating an application you need to think about how
 to structure your data. When a Collection is used in multiple
@@ -6,7 +6,7 @@ React Components, it can be useful to put it in a shared store. The
 following example shows a simple store with collections and a
 document.
 
-#### store.js
+## Store.js
 
 ```js
 import firebase from 'firebase';
@@ -32,7 +32,7 @@ const store = {
 export store;
 ```
 
-#### Artists.js
+## Artists.js
 
 When `ArtistsView` is mounted, real-time updating is automatically enabled on the `artists` collection
 because its `mode` property is set to `auto` (=default).
@@ -76,7 +76,7 @@ const ArtistView = observer(
 );
 ```
 
-#### Albums.js
+## Albums.js
 
 In `Artists.js`, whenever an album is clicked, the `albums` collection is
 switched to a new Firestore colllection reference. When AlbumView is visible
@@ -98,5 +98,4 @@ class AlbumView extends Component {
 }
 
 export default observer(AlbumView);
-...
 ```

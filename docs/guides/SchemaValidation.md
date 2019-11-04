@@ -1,11 +1,10 @@
-## Schema validation and Custom documents
+# Schema validation
 
-Firestorter offers document JSON data validation through [superstruct](https://github.com/ianstormtaylor/superstruct)
-schemas. These schemas validate that the data is as expected and adds an
-important safe-guard when writing to Firestore, to ensure the data conforms
-to your data-specification.
+Firestorter offers run-time document JSON data validation through [superstruct](https://github.com/ianstormtaylor/superstruct) schemas. These schemas validate that the data is as expected and adds an important safe-guard when writing to Firestore, to ensure the data conforms to your data-specification.
 
-### Creating schemas
+If you are looking for static type validation, have a look at [Generics](./guides/Generics.md).
+
+## Creating schemas
 
 Schemas can be created using the [superstruct](https://github.com/ianstormtaylor/superstruct) library.
 Superstruct allows you to define a function that can verify JavaScript objects
@@ -30,7 +29,7 @@ const ArticleSchema = struct({
 });
 ```
 
-### Timestamps
+## Timestamps
 
 In Firestore, date/time is represented using `Timestamp` objects which have
 a higher precision than `Date`. To use these timestamps in schemas, use
@@ -52,7 +51,7 @@ await doc.fetch();
 console.log('startDate: ', doc.data.startDate.toDate());
 ```
 
-### Custom documents
+## Custom documents
 
 Once a schema has been created, it can be assigned to a Document.
 
@@ -90,7 +89,7 @@ await doc.update({
 });
 ```
 
-### Using with Collections
+## Usage with Collections
 
 By default, Collections create and use **plain** documents without
 any schema validation. To use schema validation with Collections, 
@@ -108,7 +107,7 @@ When using TypeScript, you can take this one step further and
 use generics to ensure that `.docs` and `.add` use your custom
 document type.
 
-```ts
+```js
 import { Collection } from 'firestorter';
 
 const articles = new Collection<Article>('articles', {

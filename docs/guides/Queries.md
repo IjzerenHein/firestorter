@@ -1,8 +1,8 @@
-## Queries
+# Queries
 
 Using queries, you can filter, sort and limit the data that is returned in a Collection. Queries can be set in the constructor or afterwards using the `query` property.
 
-### The Query Function
+## Query functions
 
 To set a query on a Collection, create a function that returns a [Firestore Query](https://firebase.google.com/docs/reference/js/firebase.firestore.Query) object. The function takes a [Firestore CollectionReference](https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference) as input and should return a Firestore Query. The function is "smart", in such a way that it is automatically re-evaluated whenever the `Collection.ref` changes or when an observable changes that was accessed inside the Query Function.
 
@@ -24,7 +24,7 @@ col.query = (ref) => ref.where('finished', '==', false).limit(10);
 col.query = undefined;
 ```
 
-### Reactive Query Functions
+## Reactive query functions
 
 When the Query Function accesses an observable, it will automatically be re-evaluated whenever that observable changes.
 
@@ -69,7 +69,7 @@ autorun(() => {
 });
 ```
 
-### Disabling the Collection from within a Query
+## Disabling a Collection from within a Query
 
 In some cases, the observed data inside the Query function indicates that the Collection should not query any data. In that case the query function may return `null` to disable the Collection.
 
@@ -95,13 +95,4 @@ userId.set('mjkhasdjk8278238223');
 
 // User logs out
 userId.set(undefined);
-```
-
-### Using explicit [Firestore Query](https://firebase.google.com/docs/reference/js/firebase.firestore.Query) references
-
-[Firestore Query](https://firebase.google.com/docs/reference/js/firebase.firestore.Query) references can also be assigned directly to a Collection. For instance, like this:
-
-```js
-const col = new Collection('artists');
-col.query = col.ref.where('name', '>=', 'D').orderBy('name', 'desc');
 ```

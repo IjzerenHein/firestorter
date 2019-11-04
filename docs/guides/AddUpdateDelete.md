@@ -1,4 +1,4 @@
-### Adding documents
+# Adding documents
 
 Adding documents can be best done using Collection.add, which automatically assigns it a document ID:
 
@@ -25,14 +25,14 @@ todo.set({
 });
 ```
 
-### Updating documents
+# Updating documents
 
 Updating documents can be done in 3 different ways:
 
-| Method | Action |
-|---|---|
-| `.update(...)` | Updates an existing document, but fails when document doesn't exist |
-| `.set(...)` | Replaces whole document contents or create document if it doesn't exist |
+| Method                     | Action                                                                    |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `.update(...)`             | Updates an existing document, but fails when document doesn't exist       |
+| `.set(...)`                | Replaces whole document contents or create document if it doesn't exist   |
 | `.set(..., {merge: true})` | Merges data into existing document or create document if it doesn't exist |
 
 
@@ -81,7 +81,7 @@ await doc.set({
 }, {merge: true});
 ```
 
-### Deleting documents
+# Deleting documents
 
 To delete a document, use Document.delete:
 
@@ -90,6 +90,6 @@ const todo = new Document('todos/akskladlkasd887asj');
 await doc.delete();
 ```
 
-### Deleting collections
+## Deleting whole collections
 
-Work in progress, not yet supported
+Firestorter does not yet support deleting whole collections. In order to do that, delete all the documents explicitly and Firestore will delete the Collection automatically.

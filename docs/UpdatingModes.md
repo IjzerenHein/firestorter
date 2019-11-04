@@ -1,3 +1,0 @@
-## Updating modes
-
-TODO

@@ -124,16 +124,16 @@ of geo-hash queries.</p>
 
 ### new AggregateCollection([source], [options])
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
-| [options] | <code>Object</code> | <p>Configuration options</p> |
-| [options.queries] | <code>AggregateCollectionQueriesFn</code> | <p>See <code>AggregateCollection.queries</code></p> |
-| [options.createDocument] | <code>function</code> | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
-| [options.orderBy] | <code>function</code> | <p>Client side sort function</p> |
-| [options.filterBy] | <code>function</code> | <p>Client side filter function</p> |
-| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
-| [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
+| Param                    | Type                                      | Description                                                                                                       |
+| ------------------------ | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [source]                 | <code>CollectionSource</code>             | <p>String-path, ref or function that returns a path or ref</p>                                                    |
+| [options]                | <code>Object</code>                       | <p>Configuration options</p>                                                                                      |
+| [options.queries]        | <code>AggregateCollectionQueriesFn</code> | <p>See <code>AggregateCollection.queries</code></p>                                                               |
+| [options.createDocument] | <code>function</code>                     | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
+| [options.orderBy]        | <code>function</code>                     | <p>Client side sort function</p>                                                                                  |
+| [options.filterBy]       | <code>function</code>                     | <p>Client side filter function</p>                                                                                |
+| [options.debug]          | <code>boolean</code>                      | <p>Enables debug logging</p>                                                                                      |
+| [options.debugName]      | <code>String</code>                       | <p>Name to use when debug logging is enabled</p>                                                                  |
 
 **Example**  
 ```js
@@ -243,16 +243,16 @@ created or modified.</p>
 
 ### new Collection([source], [options])
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
-| [options] | <code>Object</code> | <p>Configuration options</p> |
-| [options.query] | <code>function</code> \| <code>Query</code> | <p>See <code>Collection.query</code></p> |
-| [options.mode] | <code>String</code> | <p>See <code>Collection.mode</code></p> |
-| [options.createDocument] | <code>function</code> | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p> |
-| [options.minimizeUpdates] | <code>boolean</code> | <p>Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)</p> |
-| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
-| [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
+| Param                     | Type                                        | Description                                                                                                                |
+| ------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [source]                  | <code>CollectionSource</code>               | <p>String-path, ref or function that returns a path or ref</p>                                                             |
+| [options]                 | <code>Object</code>                         | <p>Configuration options</p>                                                                                               |
+| [options.query]           | <code>function</code> \| <code>Query</code> | <p>See <code>Collection.query</code></p>                                                                                   |
+| [options.mode]            | <code>String</code>                         | <p>See <code>Collection.mode</code></p>                                                                                    |
+| [options.createDocument]  | <code>function</code>                       | <p>Factory function for creating documents <code>(source, options) =&gt; new Document(source, options)</code></p>          |
+| [options.minimizeUpdates] | <code>boolean</code>                        | <p>Enables additional algorithms to reduces updates to your app (e.g. when snapshots are received in rapid succession)</p> |
+| [options.debug]           | <code>boolean</code>                        | <p>Enables debug logging</p>                                                                                               |
+| [options.debugName]       | <code>String</code>                         | <p>Name to use when debug logging is enabled</p>                                                                           |
 
 **Example**  
 ```js
@@ -276,7 +276,7 @@ const col3 = new Collection('artists', {
 ```
 **Example**  
 ```js
-// In manual mode, just call `fetch` explicitely
+// In manual mode, just call `fetch` explicitly
 const col = new Collection('albums', {mode: 'off'});
 col.fetch().then((collection) => {
   collection.docs.forEach((doc) => console.log(doc));
@@ -408,7 +408,7 @@ for changes in the firestore back-end.</p>
 <li>When real-time updating is started</li>
 <li>When a different <code>ref</code> or <code>path</code> is set</li>
 <li>When a <code>query</code> is set or cleared</li>
-<li>When <code>fetch</code> is explicitely called</li>
+<li>When <code>fetch</code> is explicitly called</li>
 </ul>
 
 **Kind**: instance property of [<code>Collection</code>](#Collection)  
@@ -485,9 +485,9 @@ data, assigning it a document ID automatically.</p>
 **Fulfil**: [<code>Document</code>](#Document) - The newly created document  
 **Reject**: <code>Error</code> - Error, e.g. a schema validation error or Firestore error  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| data | <code>Object</code> | <p>JSON data for the new document</p> |
+| Param | Type                | Description                           |
+| ----- | ------------------- | ------------------------------------- |
+| data  | <code>Object</code> | <p>JSON data for the new document</p> |
 
 **Example**  
 ```js
@@ -543,16 +543,16 @@ function has changed.</p>
 
 ### new Document([source], [options])
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [source] | <code>DocumentSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
-| [options] | <code>Object</code> | <p>Configuration options</p> |
-| [options.mode] | <code>String</code> | <p>See <code>Document.mode</code> (default: auto)</p> |
-| [options.schema] | <code>function</code> | <p>Superstruct schema for data validation</p> |
-| [options.snapshot] | <code>firestore.DocumentSnapshot</code> | <p>Initial document snapshot</p> |
-| [options.snapshotOptions] | <code>firestore.SnapshotOptions</code> | <p>Options that configure how data is retrieved from a snapshot</p> |
-| [options.debug] | <code>boolean</code> | <p>Enables debug logging</p> |
-| [options.debugName] | <code>String</code> | <p>Name to use when debug logging is enabled</p> |
+| Param                     | Type                                    | Description                                                         |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------- |
+| [source]                  | <code>DocumentSource</code>             | <p>String-path, ref or function that returns a path or ref</p>      |
+| [options]                 | <code>Object</code>                     | <p>Configuration options</p>                                        |
+| [options.mode]            | <code>String</code>                     | <p>See <code>Document.mode</code> (default: auto)</p>               |
+| [options.schema]          | <code>function</code>                   | <p>Superstruct schema for data validation</p>                       |
+| [options.snapshot]        | <code>firestore.DocumentSnapshot</code> | <p>Initial document snapshot</p>                                    |
+| [options.snapshotOptions] | <code>firestore.SnapshotOptions</code>  | <p>Options that configure how data is retrieved from a snapshot</p> |
+| [options.debug]           | <code>boolean</code>                    | <p>Enables debug logging</p>                                        |
+| [options.debugName]       | <code>String</code>                     | <p>Name to use when debug logging is enabled</p>                    |
 
 <a name="Document+schema"></a>
 
@@ -665,7 +665,7 @@ for changes in the firestore back-end.</p>
 <li>When real-time updating is started</li>
 <li>When a different <code>ref</code> or <code>path</code> is set</li>
 <li>When a <code>query</code> is set or cleared</li>
-<li>When <code>fetch</code> is explicitely called</li>
+<li>When <code>fetch</code> is explicitly called</li>
 </ul>
 
 **Kind**: instance property of [<code>Document</code>](#Document)  
@@ -699,8 +699,8 @@ not exist.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param  | Type                | Description             |
+| ------ | ------------------- | ----------------------- |
 | fields | <code>Object</code> | <p>Fields to update</p> |
 
 **Example**  
@@ -723,10 +723,10 @@ the existing document.</p>
 
 **Kind**: instance method of [<code>Document</code>](#Document)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| data | <code>Object</code> | <p>An object of the fields and values for the document</p> |
-| [options] | <code>Object</code> | <p>Set behaviour options</p> |
+| Param           | Type                 | Description                                                                                                                      |
+| --------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| data            | <code>Object</code>  | <p>An object of the fields and values for the document</p>                                                                       |
+| [options]       | <code>Object</code>  | <p>Set behaviour options</p>                                                                                                     |
 | [options.merge] | <code>Boolean</code> | <p>Set to <code>true</code> to only replace the values specified in the data argument. Fields omitted will remain untouched.</p> |
 
 **Example**  
@@ -812,12 +812,12 @@ encoded using <code>encodeGeohash</code>.</p>
 
 ### new GeoQuery([source], [options])
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [source] | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
-| [options] | <code>Object</code> | <p>Configuration options</p> |
-| [options.region] | <code>IGeoRegion</code> | <p>See <code>GeoQuery.region</code></p> |
-| [options.fieldPath] | <code>string</code> | <p>Field to query on (default = <code>geohash</code>)</p> |
+| Param               | Type                          | Description                                                    |
+| ------------------- | ----------------------------- | -------------------------------------------------------------- |
+| [source]            | <code>CollectionSource</code> | <p>String-path, ref or function that returns a path or ref</p> |
+| [options]           | <code>Object</code>           | <p>Configuration options</p>                                   |
+| [options.region]    | <code>IGeoRegion</code>       | <p>See <code>GeoQuery.region</code></p>                        |
+| [options.fieldPath] | <code>string</code>           | <p>Field to query on (default = <code>geohash</code>)</p>      |
 
 **Example**  
 ```js
@@ -956,9 +956,9 @@ pair, specified as an array.</p>
 **Kind**: global function  
 **Returns**: <p>The geohash of the inputted location.</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| location | <code>object</code> | <p>The {latitude, longitude} to encode into a geohash.</p> |
+| Param       | Type                | Description                                                                                           |
+| ----------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
+| location    | <code>object</code> | <p>The {latitude, longitude} to encode into a geohash.</p>                                            |
 | [precision] | <code>number</code> | <p>The length of the geohash to create. If no precision is specified, the global default is used.</p> |
 
 <a name="decodeGeohash"></a>
@@ -968,8 +968,8 @@ pair, specified as an array.</p>
 
 **Kind**: global function  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param   | Type                | Description                              |
+| ------- | ------------------- | ---------------------------------------- |
 | geohash | <code>string</code> | <p>Cell that bounds are required of.</p> |
 
 <a name="metersToLongitudeDegrees"></a>
@@ -980,9 +980,9 @@ pair, specified as an array.</p>
 **Kind**: global function  
 **Returns**: <p>The number of degrees the distance corresponds to.</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| distance | <code>number</code> | <p>The distance to convert.</p> |
+| Param       | Type                               | Description                                                    |
+| ------------- | ----------------------------------- | ---------------------------------------------------------------------- |
+| distance | <code>number</code> | <p>The distance to convert.</p>            |
 | latitude | <code>number</code> | <p>The latitude at which to calculate.</p> |
 
 <a name="metersToLatitudeDegrees"></a>
@@ -1006,10 +1006,10 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 **Kind**: global function  
 **Returns**: <p>An array of geohashes containing a [start, end] pair.</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param  | Type                | Description                                       |
+| ------ | ------------------- | ------------------------------------------------- |
 | center | <code>object</code> | <p>The center given as {latitude, longitude}.</p> |
-| radius | <code>number</code> | <p>The radius of the circle in meters.</p> |
+| radius | <code>number</code> | <p>The radius of the circle in meters.</p>        |
 
 <a name="getGeohashesForRegion"></a>
 
@@ -1020,8 +1020,8 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 **Kind**: global function  
 **Returns**: <p>An array of geohashes containing a [start, end] pair.</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param  | Type                | Description                                                                      |
+| ------ | ------------------- | -------------------------------------------------------------------------------- |
 | region | <code>object</code> | <p>The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.</p> |
 
 <a name="flattenGeohashRange"></a>
@@ -1031,10 +1031,10 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 
 **Kind**: global function  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param    | Type                | Description                   |
+| -------- | ------------------- | ----------------------------- |
 | geohash1 | <code>string</code> | <p>The geohash from range</p> |
-| geohash2 | <code>string</code> | <p>The geohash to range</p> |
+| geohash2 | <code>string</code> | <p>The geohash to range</p>   |
 
 <a name="flattenGeohashes"></a>
 
@@ -1043,8 +1043,8 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 
 **Kind**: global function  
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param     | Type                                            | Description                |
+| --------- | ----------------------------------------------- | -------------------------- |
 | geohashes | <code>Array.&lt;Array.&lt;string&gt;&gt;</code> | <p>The geohashes array</p> |
 
 <a name="calculateGeoDistance"></a>
@@ -1057,9 +1057,9 @@ Earth's radius varies between 6356.752 km and 6378.137 km.</p>
 **Kind**: global function  
 **Returns**: <p>The distance, in meters, between the inputted locations.</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| location1 | <code>object</code> | <p>The {latitude, longitude} of the first location.</p> |
+| Param     | Type                | Description                                              |
+| --------- | ------------------- | -------------------------------------------------------- |
+| location1 | <code>object</code> | <p>The {latitude, longitude} of the first location.</p>  |
 | location2 | <code>object</code> | <p>The {latitude, longitude} of the second location.</p> |
 
 <a name="initFirestorter"></a>
@@ -1069,11 +1069,11 @@ Earth's radius varies between 6356.752 km and 6378.137 km.</p>
 
 **Kind**: global function  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| config | <code>Object</code> | <p>Configuration options</p> |
-| config.firebase | <code>Firebase</code> | <p>Firebase reference</p> |
-| [config.app] | <code>String</code> \| <code>FirebaseApp</code> | <p>FirebaseApp to use (when omitted the default app is used)</p> |
+| Param           | Type                                            | Description                                                      |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------- |
+| config          | <code>Object</code>                             | <p>Configuration options</p>                                     |
+| config.firebase | <code>Firebase</code>                           | <p>Firebase reference</p>                                        |
+| [config.app]    | <code>String</code> \| <code>FirebaseApp</code> | <p>FirebaseApp to use (when omitted the default app is used)</p> |
 
 **Example**  
 ```js
@@ -1140,9 +1140,9 @@ and returns the new object.</p>
 **Kind**: global function  
 **Returns**: <code>Object</code> - <p>Result</p>  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| data | <code>Object</code> | <p>JSON data</p> |
+| Param  | Type                | Description                                |
+| ------ | ------------------- | ------------------------------------------ |
+| data   | <code>Object</code> | <p>JSON data</p>                           |
 | fields | <code>Object</code> | <p>JSON data that supports field-paths</p> |
 
 <a name="isTimestamp"></a>
@@ -1154,9 +1154,9 @@ that the field in the document is indeed a timestamp.</p>
 
 **Kind**: global function  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| val | <code>Object</code> | <p>Value to check</p> |
+| Param | Type                | Description           |
+| ----- | ------------------- | --------------------- |
+| val   | <code>Object</code> | <p>Value to check</p> |
 
 **Example**  
 ```js
