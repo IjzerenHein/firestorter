@@ -191,7 +191,7 @@ function degreesToRadians(degrees: number): number {
  *
  * @param {object} location The {latitude, longitude} to encode into a geohash.
  * @param {number} [precision] The length of the geohash to create. If no precision is specified, the
- * global default is used.
+ * default precision of `10` is used.
  * @returns The geohash of the inputted location.
  */
 export function encodeGeohash(

@@ -443,7 +443,7 @@ class Document<T extends object = object>
 	 * - When real-time updating is started
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
-	 * - When `fetch` is explicitely called
+	 * - When `fetch` is explicitly called
 	 *
 	 * @type {boolean}
 	 *

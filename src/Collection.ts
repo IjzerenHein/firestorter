@@ -83,7 +83,7 @@ import Document from "./Document";
  * });
  *
  * @example
- * // In manual mode, just call `fetch` explicitely
+ * // In manual mode, just call `fetch` explicitly
  * const col = new Collection('albums', {mode: 'off'});
  * col.fetch().then((collection) => {
  *   collection.docs.forEach((doc) => console.log(doc));
@@ -477,7 +477,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * - When real-time updating is started
 	 * - When a different `ref` or `path` is set
 	 * - When a `query` is set or cleared
-	 * - When `fetch` is explicitely called
+	 * - When `fetch` is explicitly called
 	 *
 	 * @type {boolean}
 	 *

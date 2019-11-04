@@ -56,7 +56,7 @@ function initFirestorter(config: {
 /**
  * If you need to use different firestore instances for different
  * collections, or otherwise want to avoid global state, you can
- * instead provide a "context" opton when creating Document and
+ * instead provide a "context" option when creating Document and
  * Collection instances.
  *
  * This function takes the same arguments as initFirestore and returns
