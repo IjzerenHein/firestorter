@@ -59,7 +59,6 @@ export type CollectionQuery =
 export interface ICollectionOptions<T> {
 	query?: CollectionQuery;
 	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T;
-	DocumentClass?: any; // deprecated, use `createDocument` instead
 	mode?: Mode;
 	debug?: boolean;
 	debugName?: string;

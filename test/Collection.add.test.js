@@ -35,15 +35,3 @@ test('fail on invalid doc schema', async () => {
 		expect(err).toBeDefined();
 	}
 });
-
-test('deprecated DocumentClass prop should still work', async () => {
-	expect.assertions(1);
-	const col = new Collection('todos', {
-		DocumentClass: TodoDoc
-	});
-	try {
-		await col.add({ id: 'not a number' });
-	} catch (err) {
-		expect(err).toBeDefined();
-	}
-});

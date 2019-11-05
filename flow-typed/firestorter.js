@@ -48,7 +48,6 @@ export type CollectionQuery = (
 export type ICollectionOptions<T> = {|
 	query?: CollectionQuery,
 	createDocument?: (source: DocumentSource, options: IDocumentOptions) => T,
-	DocumentClass?: any, // deprecated, use `createDocument` instead
 	mode?: Mode,
 	debug?: boolean,
 	debugName?: string,

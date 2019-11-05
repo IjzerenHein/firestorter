@@ -134,7 +134,6 @@ class Collection<T extends ICollectionDocument = Document>
 	constructor(source?: CollectionSource, options: ICollectionOptions<T> = {}) {
 		const {
 			query,
-			DocumentClass,
 			createDocument,
 			mode,
 			// limit,
@@ -165,20 +164,7 @@ class Collection<T extends ICollectionDocument = Document>
 		this.ctx = context;
 
 		if (createDocument) {
-			if (DocumentClass) {
-				throw new Error(
-					`${this.debugName} - The \`createDocument\` and deprecated \`DocumentClass\` options cannot be specified both, remove the \`DocumentClass\` option`
-				);
-			}
 			this.createDocument = createDocument;
-		} else if (DocumentClass) {
-			console.warn(
-				`${this.debugName} - \`DocumentClass\` option has been deprecated, use \`createDocument\` instead`
-			);
-			this.createDocument = (
-				docSource: DocumentSource,
-				docOptions: IDocumentOptions
-			): T => new DocumentClass(docSource, docOptions);
 		} else {
 			this.createDocument = (
 				docSource: DocumentSource,

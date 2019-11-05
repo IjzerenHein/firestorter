@@ -4,6 +4,22 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+### Added
+
+- Added new `AggregateCollection` class
+- Added new `GeoQuery` class for performing geographical queries
+- Added geographical helper functions
+- Added flow-typings
+- Revamped the Documentation 🤘
+
+### Changed
+
+- `makeContext` has been renamed to `makeFirestorterContext`
+
+### Removed
+
+- Removed the deprecated `DocumentClass` constructor option for `Collection`
+
 ## [1.2.3] - 2019-10-16
 
 ### Fixed
