@@ -7,6 +7,7 @@
   * [Adding, Updating & Deleting documents](./guides/AddUpdateDelete.md)
   * [Queries](./guides/Queries.md)
   * [Aggregate collections](./guides/AggregateCollections.md)
+  * [Fetch modes](./guides/FetchModes.md)
   * [Geo queries](./guides/GeoQueries.md)
   * [Generics](./guides/Generics.md)
   * [Schema validation](./guides/SchemaValidation.md)

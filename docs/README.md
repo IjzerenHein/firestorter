@@ -1,57 +1,41 @@
-<!-- prettier-ignore -->
-<h1 align="center">
-  <img src="./_media/logo.jpg" /><br>
-  Firestorter
-</h1>
+# Firestorter
 
-> Use Firestore in React with zero effort 🤘
+> Use Firestore in React with zero effort, using MobX 🤘
 
 * 🎶 Simple, easy to use API, get up & running in minutes
 * 🚀 Fast, only fetches and re-renders data when needed
 * 🤘 No clutter, no complex stores/providers/actions/reducers, just go
 
-Because, React `+` Firestore `+` Mobx `===` ❤️
-
-## Index
-
-- [Index](#index)
-- [Installation](#installation)
-- [Usage](#usage)
-- [How it works](#how-it-works)
-- [Examples](#examples)
-- [Documentation](#documentation)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-
-## Installation
-
-    yarn add firestorter
-
-> Firestorter is compatible with MobX >= 4.x. If you want to use MobX 3.x, please use [Firestorter 0.9.3](https://github.com/IjzerenHein/firestorter/releases/tag/v0.9.3) or lower.
-
-_Also install the `mobx`, `mobx-react` and `firebase` dependencies:_
-
-    yarn add firebase mobx mobx-react
-
-## Usage
+**1. Initialize**
 
 ```js
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {initFirestorter, Collection} from 'firestorter';
-import {observer} from 'mobx-react';
+import { initFirestorter } from 'firestorter';
 
 // Initialize firebase app
 firebase.initializeApp({...});
 
 // Initialize `firestorter`
-initFirestorter({firebase: firebase});
+initFirestorter({ firebase: firebase });
+```
+> Firestorter also works with react-native and supports multi app environments
 
-// Define collection
+**2. Create a `Collection` or `Document`**
+
+```js
+import { Collection, Document } from 'firestorter';
+
 const todos = new Collection('todos');
+const user = new Document('users/8273872***');
+```
 
-// Wrap your Components with mobx's `observer` pattern
-const Todos = observer(class Todos extends Component {
+**3. Wrap your Components with mobx's `observer` pattern**
+```jsx
+import * as React from 'react';
+import { observer } from 'mobx-react';
+
+const Todos = observer(class Todos extends React.Component {
   render() {
     return <div>
       {todos.docs.map((doc) => (
@@ -64,14 +48,12 @@ const Todos = observer(class Todos extends Component {
 });
 
 const TodoItem = observer(({doc}) => {
-  const {finished, text} = doc.data;
+  const { finished, text } = doc.data;
   return <div>
     <input type='checkbox' checked={finished} />
     <input type='text' value={text} />
   </div>;
 });
-
-ReactDOM.render(<Todos />, document.getElementById('root'));
 ```
 
 **That's it.** Your Components will now render your firestore data
@@ -83,29 +65,5 @@ Firestorter makes integrating Firestore real-time data into React easy as pie. I
 
 It does this by intelligently tracking whether a Collection or Document should be listening for real-time updates (`onSnapshot` events) or not. Whenever a Component renders a Collection or Document, firestorter enables real-time updates on that resource. And whenever a Component stops using the resource _(e.g., component was unmounted)_, it stops listening for snapshot updates. This behavior really shines when multiple components are rendering collection/document data and it becomes more difficult to determine whether snapshot updates should be enabled or not.
 
-## Examples
 
-* TodoApp [(view)](https://react-firestore-todo-app.stackblitz.io) [(source)](./examples/todoApp/src) [(Playground on StackBlitz)](https://stackblitz.com/edit/react-firestore-todo-app?file=Todos.js)
 
-## Documentation
-
-* [Introduction to Firestorter](https://medium.com/@hrutjes/building-a-react-firestore-app-with-zero-effort-and-mobx-525df611eabf)
-* [TypeScript support 👌](./docs/TypeScript.md)
-* [react-native support](./docs/ReactNative.md)
-* [Paths & References](./docs/PathsAndReferences.md)
-* [Adding, Updating & Deleting documents](./docs/AddUpdateDelete.md)
-* [Using Queries](./docs/Queries.md)
-* [Geo Queries](./docs/GeoQueries.md)
-* [Schemas & Custom documents](./docs/SchemasAndCustomDocuments.md)
-* [Using Collections and Documents with a store](./docs/Store.md)
-* [Using Sub-collections](./docs/SubCollections.md)
-* [API Reference](./docs/API.md)
-
-## License
-
-[MIT](./LICENSE.txt)
-
-## Acknowledgements
-
-* Big thanks to all [sponsors](./sponsors.md) and contributors supporting this project 🤘
-* Logo design by [Alex Prodrom](https://github.com/AlexProdrom)

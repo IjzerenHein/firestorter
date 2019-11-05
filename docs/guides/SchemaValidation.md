@@ -123,3 +123,10 @@ const article: Article = await articles.add({
   }
 });
 ```
+
+
+## See also
+
+- [Generics](./guides/Generics.md)
+- [Custom documents](./guides/CustomDocuments.md)
+- [isTimestamp](./api/UtilityFunctions.md#istimestamp)

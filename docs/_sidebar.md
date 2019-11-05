@@ -7,3 +7,4 @@
 * [Guides](./guides/Guides.md)
 * [API documentation](./api/API.md)
 * [Acknowledgements](./Acknowledgements.md)
+* [License](./License.md)

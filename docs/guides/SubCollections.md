@@ -40,3 +40,9 @@ export default observer(class ChatView extends React.Component {
   }
 });
 ```
+
+
+## See also
+
+- [Reactive path functions](./guides/SourcesPathsAndReferences.md#reactive-path-functions)
+- [Custom documents](./guides/CustomDocuments.md)

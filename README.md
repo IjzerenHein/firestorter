@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <h1 align="center">
-  <img src="./logo3.jpg" /><br>
+  <img src="./docs/_media/logo.jpg" /><br>
   Firestorter
 </h1>
 
@@ -15,7 +15,7 @@
 - [X] GeoQuery documentation
 - [X] Geo-hashing functions
 - [X] Geo-hashing functions documentation
-- [ ] Docs for AggregateCollection
+- [X] Docs for AggregateCollection
 - [ ] Tests for AggregateCollection
 - [ ] Tests for GeoQuery
 - [ ] Tests for Geo-functions
@@ -46,7 +46,7 @@ Nice to have:
 
 Because, React `+` Firestore `+` Mobx `===` ❤️
 
-![this-thing-really-moves](./this-thing-really-moves.gif)
+![this-thing-really-moves](./docs/_media/this-thing-really-moves.gif)
 
 ## Index
 

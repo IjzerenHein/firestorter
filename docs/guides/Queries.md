@@ -96,3 +96,9 @@ userId.set('mjkhasdjk8278238223');
 // User logs out
 userId.set(undefined);
 ```
+
+
+## See also
+
+- [Aggregate collections](./guides/AggregateCollections.md)
+- [Geo queries](./guides/GeoQueries.md)

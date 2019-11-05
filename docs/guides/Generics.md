@@ -44,3 +44,8 @@ todos.docs.forEach(doc => {
 });
 ```
 
+
+## See also
+
+- [Schema validation](./guides/SchemaValidation.md)
+- [Custom documents](./guides/CustomDocuments.md)

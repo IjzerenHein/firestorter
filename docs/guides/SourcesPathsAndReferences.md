@@ -104,3 +104,9 @@ The following properties exist on both `Collection` and `Document` to read and w
 | `path`   | `string`                                    | `read/write` | Path of the collection or document.                                          |
 | `ref`    | `DocumentReference,`  `CollectionReference` | `read/write` | Firestore Reference.                                                         |
 | `id`     | `string`                                    | `read-only`  | Id *(last part of the path)* of either the collection or document.           |
+
+
+## See also
+- [Document class](./api/Document.md)
+- [Collection class](./api/Collection.md)
+- [Fetching data](./guides/FetchingData.md)

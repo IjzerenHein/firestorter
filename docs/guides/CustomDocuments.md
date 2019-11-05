@@ -32,3 +32,8 @@ const albums = new Collection('albums', {
   createDocument: (source, options) => new Album(source, options)
 });
 ```
+
+
+## See also
+
+- [Subcollections](./guides/SubCollections.md)

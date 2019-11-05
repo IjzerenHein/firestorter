@@ -58,3 +58,7 @@ const albums = new AggregateCollection('albums', {
 
 
 
+## See also
+
+- [AggregateCollection class](./api/AggregateCollection.md)
+- [Geo queries](./guides/GeoQueries.md)
