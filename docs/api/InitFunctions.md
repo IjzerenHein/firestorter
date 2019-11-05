@@ -3,12 +3,12 @@
 <dl>
 <dt><a href="#initFirestorter">initFirestorter(config)</a></dt>
 <dd><p>Initializes <code>firestorter</code> with the firebase-app.</p></dd>
-<dt><a href="#makeContext">makeContext()</a></dt>
+<dt><a href="#makeFirestorterContext">makeFirestorterContext()</a></dt>
 <dd><p>If you need to use different firestore instances for different
 collections, or otherwise want to avoid global state, you can
 instead provide a &quot;context&quot; option when creating Document and
 Collection instances.</p>
-<p>This function takes the same arguments as initFirestore and returns
+<p>This function takes the same arguments as <code>initFirestorter</code> and returns
 a context suitable for Document and Collection creation.</p></dd>
 </dl>
 
@@ -43,14 +43,14 @@ const albums = new Collection('artists/Metallica/albums');
 const album = new Document('artists/Metallica/albums/BlackAlbum');
 ...
 ```
-<a name="makeContext"></a>
+<a name="makeFirestorterContext"></a>
 
-## makeContext()
+## makeFirestorterContext()
 <p>If you need to use different firestore instances for different
 collections, or otherwise want to avoid global state, you can
 instead provide a &quot;context&quot; option when creating Document and
 Collection instances.</p>
-<p>This function takes the same arguments as initFirestore and returns
+<p>This function takes the same arguments as <code>initFirestorter</code> and returns
 a context suitable for Document and Collection creation.</p>
 
 **Kind**: global function  
@@ -59,11 +59,11 @@ a context suitable for Document and Collection creation.</p>
 import firebase from 'firebase';
 import 'firebase/firestore'
 import * as firetest from '@firebase/testing'
-import {makeContext, Collection, Document} from "firestorter"
+import { makeFirestorterContext, Collection, Document } from "firestorter"
 
 function makeTestContext(fbtestArgs) {
 	 const app = firetest.initializeTestApp(fbtestArgs)
-  return makeContext({
+  return makeFirestorterContext({
     firestore,
     app,
   })

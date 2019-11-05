@@ -186,8 +186,7 @@ function degreesToRadians(degrees: number): number {
 }
 
 /**
- * Generates a geohash of the specified precision/string length from the  [latitude, longitude]
- * pair, specified as an array.
+ * Encodes a geographical position (latitude/longitude) into a geohash tile.
  *
  * @param {object} location The {latitude, longitude} to encode into a geohash.
  * @param {number} [precision] The length of the geohash to create. If no precision is specified, the
@@ -251,9 +250,9 @@ export function encodeGeohash(
 }
 
 /**
- * Returns SW/NE latitude/longitude bounds of specified geohash.
+ * Decodes a geohash tile into a geographical position (latitude/longitude).
  *
- * @param {string} geohash - Cell that bounds are required of.
+ * @param {string} geohash - Geohash tile
  */
 export function decodeGeohash(geohash: string): IGeoPoint[] {
 	validateGeohash(geohash);
@@ -301,7 +300,7 @@ export function decodeGeohash(geohash: string): IGeoPoint[] {
 }
 
 /**
- * Calculates the number of degrees a given distance is at a given latitude.
+ * Calculates the number of longitude degrees over a given distance and at a given latitude.
  *
  * @param {number} distance The distance to convert.
  * @param {number} latitude The latitude at which to calculate.
@@ -323,7 +322,7 @@ export function metersToLongitudeDegrees(
 }
 
 /**
- * Calculates the number of degrees for a given latitude span in meters.
+ * Calculates the number of latitude degrees over a given distance.
  *
  * @param {number} distance The distance to convert.
  * @returns The number of degrees the distance corresponds to.
@@ -518,7 +517,7 @@ export function geohashQuery(geohash1: string, bits: number): string[] {
 }
 
 /**
- * Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+ * Calculates a set of geohash queries to fully contain a given circle. A query is a [start, end] pair
  * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
  *
  * @param {object} center The center given as {latitude, longitude}.
@@ -550,7 +549,7 @@ export function getGeohashesForRadius(
 }
 
 /**
- * Calculates a set of queries for a given region box. A query is a [start, end] pair
+ * Calculates a set of geohash queries to fully contain a given region box. A query is a [start, end] pair
  * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
  *
  * @param {object} region The region given as {latitude, longitude, latitudeDelta, longitudeDelta}.

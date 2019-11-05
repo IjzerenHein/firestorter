@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <h1 align="center">
-  <img src="./logo3.jpg" /><br>
+  <img src="./_media/logo.jpg" /><br>
   Firestorter
 </h1>
 
@@ -11,8 +11,6 @@
 * 🤘 No clutter, no complex stores/providers/actions/reducers, just go
 
 Because, React `+` Firestore `+` Mobx `===` ❤️
-
-![this-thing-really-moves](../this-thing-really-moves.gif)
 
 ## Index
 

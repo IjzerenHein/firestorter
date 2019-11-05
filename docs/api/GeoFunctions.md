@@ -2,19 +2,18 @@
 
 <dl>
 <dt><a href="#encodeGeohash">encodeGeohash(location, [precision])</a> ⇒</dt>
-<dd><p>Generates a geohash of the specified precision/string length from the  [latitude, longitude]
-pair, specified as an array.</p></dd>
+<dd><p>Encodes a geographical position (latitude/longitude) into a geohash tile.</p></dd>
 <dt><a href="#decodeGeohash">decodeGeohash(geohash)</a></dt>
-<dd><p>Returns SW/NE latitude/longitude bounds of specified geohash.</p></dd>
+<dd><p>Decodes a geohash tile into a geographical position (latitude/longitude).</p></dd>
 <dt><a href="#metersToLongitudeDegrees">metersToLongitudeDegrees(distance, latitude)</a> ⇒</dt>
-<dd><p>Calculates the number of degrees a given distance is at a given latitude.</p></dd>
+<dd><p>Calculates the number of longitude degrees over a given distance and at a given latitude.</p></dd>
 <dt><a href="#metersToLatitudeDegrees">metersToLatitudeDegrees(distance)</a> ⇒</dt>
-<dd><p>Calculates the number of degrees for a given latitude span in meters.</p></dd>
+<dd><p>Calculates the number of latitude degrees over a given distance.</p></dd>
 <dt><a href="#getGeohashesForRadius">getGeohashesForRadius(center, radius)</a> ⇒</dt>
-<dd><p>Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+<dd><p>Calculates a set of geohash queries to fully contain a given circle. A query is a [start, end] pair
 where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p></dd>
 <dt><a href="#getGeohashesForRegion">getGeohashesForRegion(region)</a> ⇒</dt>
-<dd><p>Calculates a set of queries for a given region box. A query is a [start, end] pair
+<dd><p>Calculates a set of geohash queries to fully contain a given region box. A query is a [start, end] pair
 where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p></dd>
 <dt><a href="#flattenGeohashRange">flattenGeohashRange(geohash1, geohash2)</a></dt>
 <dd><p>Flattens a query start-geohash; and end-geohash into all its individual geohash components.</p></dd>
@@ -29,8 +28,7 @@ Earth's radius varies between 6356.752 km and 6378.137 km.</p></dd>
 <a name="encodeGeohash"></a>
 
 ## encodeGeohash(location, [precision]) ⇒
-<p>Generates a geohash of the specified precision/string length from the  [latitude, longitude]
-pair, specified as an array.</p>
+<p>Encodes a geographical position (latitude/longitude) into a geohash tile.</p>
 
 **Kind**: global function  
 **Returns**: <p>The geohash of the inputted location.</p>  
@@ -43,18 +41,18 @@ pair, specified as an array.</p>
 <a name="decodeGeohash"></a>
 
 ## decodeGeohash(geohash)
-<p>Returns SW/NE latitude/longitude bounds of specified geohash.</p>
+<p>Decodes a geohash tile into a geographical position (latitude/longitude).</p>
 
 **Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| geohash | <code>string</code> | <p>Cell that bounds are required of.</p> |
+| geohash | <code>string</code> | <p>Geohash tile</p> |
 
 <a name="metersToLongitudeDegrees"></a>
 
 ## metersToLongitudeDegrees(distance, latitude) ⇒
-<p>Calculates the number of degrees a given distance is at a given latitude.</p>
+<p>Calculates the number of longitude degrees over a given distance and at a given latitude.</p>
 
 **Kind**: global function  
 **Returns**: <p>The number of degrees the distance corresponds to.</p>  
@@ -67,7 +65,7 @@ pair, specified as an array.</p>
 <a name="metersToLatitudeDegrees"></a>
 
 ## metersToLatitudeDegrees(distance) ⇒
-<p>Calculates the number of degrees for a given latitude span in meters.</p>
+<p>Calculates the number of latitude degrees over a given distance.</p>
 
 **Kind**: global function  
 **Returns**: <p>The number of degrees the distance corresponds to.</p>  
@@ -79,7 +77,7 @@ pair, specified as an array.</p>
 <a name="getGeohashesForRadius"></a>
 
 ## getGeohashesForRadius(center, radius) ⇒
-<p>Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+<p>Calculates a set of geohash queries to fully contain a given circle. A query is a [start, end] pair
 where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p>
 
 **Kind**: global function  
@@ -93,7 +91,7 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 <a name="getGeohashesForRegion"></a>
 
 ## getGeohashesForRegion(region) ⇒
-<p>Calculates a set of queries for a given region box. A query is a [start, end] pair
+<p>Calculates a set of geohash queries to fully contain a given region box. A query is a [start, end] pair
 where any geohash is guaranteed to be lexiographically larger then start and smaller than end.</p>
 
 **Kind**: global function  

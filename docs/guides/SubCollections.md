@@ -1,4 +1,4 @@
-## Subcollections
+# Subcollections
 
 Subcollections are collections that belong to a specific document in the database. The best way to implement subcollections is probably using a [Custom document](./guides/CustomDocuments.md) and [Reactive path functions](./guides/SourcesPathsAndReferences.md#reactive-path-functions).
 
