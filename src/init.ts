@@ -50,7 +50,7 @@ function initFirestorter(config: {
 		);
 	}
 
-	globalContext = makeContext(config);
+	globalContext = makeFirestorterContext(config);
 }
 
 /**
@@ -59,18 +59,18 @@ function initFirestorter(config: {
  * instead provide a "context" option when creating Document and
  * Collection instances.
  *
- * This function takes the same arguments as initFirestore and returns
+ * This function takes the same arguments as `initFirestorter` and returns
  * a context suitable for Document and Collection creation.
  *
  * @example
  * import firebase from 'firebase';
  * import 'firebase/firestore'
  * import * as firetest from '@firebase/testing'
- * import {makeContext, Collection, Document} from "firestorter"
+ * import { makeFirestorterContext, Collection, Document } from "firestorter"
  *
  * function makeTestContext(fbtestArgs) {
  * 	 const app = firetest.initializeTestApp(fbtestArgs)
- *   return makeContext({
+ *   return makeFirestorterContext({
  *     firestore,
  *     app,
  *   })
@@ -88,7 +88,7 @@ function initFirestorter(config: {
  *   ...
  * })
  */
-export function makeContext(config: {
+export function makeFirestorterContext(config: {
 	firebase: typeof firebaseT;
 	app?: string | app.App;
 	firestore?: firestore.Firestore;
@@ -128,6 +128,13 @@ export function makeContext(config: {
 		firebase: globalFirebase,
 		firestore: globalFirestore
 	};
+}
+
+export function makeContext(config) {
+	console.warn(
+		`Firestorter \'makeContext\' function has been deprecated, use \`makeFirestorterContext\` instead`
+	);
+	return makeFirestorterContext(config);
 }
 
 function getContext(obj?: IHasContext): IContext {

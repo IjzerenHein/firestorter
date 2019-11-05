@@ -20,7 +20,8 @@ import {
 	getFirebaseApp,
 	getFirestore,
 	initFirestorter,
-	makeContext,
+	makeFirestorterContext,
+	makeContext, // Deprecated
 	IContext
 } from "./init";
 import { mergeUpdateData, isTimestamp } from "./Utils";
@@ -36,7 +37,8 @@ export {
 	mergeUpdateData,
 	Mode,
 	isTimestamp,
-	makeContext,
+	makeFirestorterContext,
+	makeContext, // Deprecated
 	IContext,
 	// Geo queries
 	GeoQuery,

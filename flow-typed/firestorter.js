@@ -80,7 +80,7 @@ declare export function initFirestorter(config: {
 	app?: string | app.App,
 	firestore?: firestore.Firestore
 }): void;
-declare export function makeContext(config: {
+declare export function makeFirestorterContext(config: {
 	firebase: typeof firebase,
 	app?: string | app.App,
 	firestore?: firestore.Firestore
