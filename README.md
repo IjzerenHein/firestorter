@@ -79,42 +79,17 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 ## Features
 
-- [Add, update & delete documents](./guides/AddUpdateDelete.md)
-- [Super efficient Component re-rendering](./guides/FetchingData.md#automatic-fetching)
+- [Add, update & delete documents](https://firestorter.com/guides/AddUpdateDelete.md)
+- [Super efficient Component re-rendering](https://firestorter.com/guides/FetchingData.md#automatic-fetching)
 - [Declaratively link document/collection paths to document data]
-- [Geo query support](./guides/GeoQueries.md)
-- [Easily create aggregate collections from multiple queries](./guides/AggregateCollections.md)
-- [Runtime schema validation](./guides/SchemaValidation.md) & [Type Generics](./guides/Generics.md)
-- [Manual fetching mode for use with Unit-tests/Async-functions](./guides/FetchModes.md)
-- [React-native support](./guides/Installation.md#usage-with-react-native)
-- [TypeScript- & Flow typings](./guides/Generics.md)
+- [Geo query support](https://firestorter.com/guides/GeoQueries.md)
+- [Easily create aggregate collections from multiple queries](https://firestorter.com/guides/AggregateCollections.md)
+- [Runtime schema validation](https://firestorter.com/guides/SchemaValidation.md) & [Type Generics](https://firestorter.com/guides/Generics.md)
+- [Manual fetching mode for use with Unit-tests/Async-functions](https://firestorter.com/guides/FetchModes.md)
+- [React-native support](https://firestorter.com/guides/Installation.md#usage-with-react-native)
+- [TypeScript- & Flow typings](https://firestorter.com/guides/Generics.md)
 - Works with Vue.js
 
 
-Want to learn more, head over to the [Guides](./guides/Guides.md).
+Want to learn more, head over to [Firestorter.com](https://firestorter.com).
 
-
-# GeoQuery & AggregateCollection todos
-- [X] AggregateCollection class
-  - [X] Base implementation
-  - [X] `toString'
-  - [X] `debugName`
-  - [X] ICollection interface which is shared with Collection
-  - [X] optional createDocument
-- [X] GeoQuery class 
-- [X] GeoQuery documentation
-- [X] Geo-hashing functions
-- [X] Geo-hashing functions documentation
-- [X] Docs for AggregateCollection
-- [ ] Tests for AggregateCollection
-- [ ] Tests for GeoQuery
-- [ ] Tests for Geo-functions
-- [ ] Medium article
-
-Nice to have:
-- AggregateCollection class, manual fetch support
-  - [ ] `mode` support
-  - [ ] `fetch` support
-  - [ ] `ready` function
-- [ ] Better documentation structure, iso 1 large MD file (like latest mobx?)
-- [ ] Update 'ready' to perform initial fetch or wait for completetion
