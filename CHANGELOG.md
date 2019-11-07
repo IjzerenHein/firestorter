@@ -4,6 +4,8 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [2.0.0] - 2019-11-07
+
 ### Added
 
 - Added new `AggregateCollection` class
