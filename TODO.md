@@ -1,6 +1,6 @@
 # Todos
 
-## GeoQuery & AggregateCollection
+## AggregateCollection
 - [ ] Tests for AggregateCollection
 - [ ] AggregateCollection class, manual fetch support
   - [ ] `mode` support
@@ -8,8 +8,10 @@
   - [ ] `ready` function
 
 ## GeoQuery
+- [ ] Too much data queries by GeoQuery
 - [ ] Tests for GeoQuery
 - [ ] Tests for Geo-functions
+- [ ] Add additional query clause
 - [ ] Medium article
 
 ## Other

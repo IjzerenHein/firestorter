@@ -12,7 +12,7 @@
 [![Release Notes](https://release-notes.com/badges/v1.svg)](https://release-notes.com/@IjzerenHein/Firestorter)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C7KAZKHW6MXYL)
 
-> Use Firestore in React with zero effort, using MobX 🤘
+> Use Google Firestore in React with zero effort, using MobX 🤘
 
 * 🎶 Simple, easy to use API, get up & running in minutes
 * 🚀 Fast, only fetches and re-renders data when needed
@@ -91,5 +91,5 @@ It does this by intelligently tracking whether a Collection or Document should b
 - Works with Vue.js
 
 
-Want to learn more, head over to [Firestorter.com](http://firestorter.com).
+Want to learn more, head over to [firestorter.com](http://firestorter.com) 🤘
 

@@ -1,6 +1,6 @@
 # Firestorter
 
-> Use Firestore in React with zero effort, using MobX 🤘
+> Use Google Firestore in React with zero effort, using MobX 🤘
 
 * 🎶 Simple, easy to use API, get up & running in minutes
 * 🚀 Fast, only fetches and re-renders data when needed
