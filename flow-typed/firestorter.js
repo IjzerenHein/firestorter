@@ -250,6 +250,14 @@ declare export function insideGeoRegion(
 	point: IGeoPoint,
 	region: IGeoRegion
 ): boolean;
+declare export function geoRegionToPoints(
+	region: IGeoRegion
+): {
+	northEast: IGeoPoint,
+	northWest: IGeoPoint,
+	southEast: IGeoPoint,
+	southWest: IGeoPoint
+};
 declare export function metersToLongitudeDegrees(
 	distance: number,
 	latitude: number

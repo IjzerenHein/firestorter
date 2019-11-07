@@ -115,6 +115,8 @@ Besides the `GeoQuery` class and `encodeGeohash` functions, firestorter also con
 - `getGeohashesForRegion`
 - `flattenGeohashRange`
 - `flattenGeohashes`
+- `insideGeoRegion`
+- `geoRegionToPoints`
 - `metersToLatitudeDegrees`
 - `metersToLongitudeDegrees`
 - `calculateGeoDistance`

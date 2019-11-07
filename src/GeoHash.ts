@@ -143,7 +143,12 @@ function validateGeohash(geohash: string): void {
 	}
 }
 
-function getRegionPoints(
+/**
+ * Converts a region into its geo points (nortEast, southWest, etc..).
+ *
+ * @param {IGeoRegion} region The region to convert
+ */
+export function geoRegionToPoints(
 	region: IGeoRegion
 ): {
 	northEast: IGeoPoint;
@@ -151,23 +156,15 @@ function getRegionPoints(
 	southEast: IGeoPoint;
 	southWest: IGeoPoint;
 } {
+	const north = region.latitude - region.latitudeDelta * 0.5;
+	const south = region.latitude + region.latitudeDelta * 0.5;
+	const east = wrapLongitude(region.longitude + region.longitudeDelta * 0.5);
+	const west = wrapLongitude(region.longitude - region.longitudeDelta * 0.5);
 	return {
-		northEast: {
-			latitude: region.latitude - region.latitudeDelta * 0.5,
-			longitude: wrapLongitude(region.longitude + region.longitudeDelta * 0.5)
-		},
-		northWest: {
-			latitude: region.latitude - region.latitudeDelta * 0.5,
-			longitude: wrapLongitude(region.longitude - region.longitudeDelta * 0.5)
-		},
-		southEast: {
-			latitude: region.latitude + region.latitudeDelta * 0.5,
-			longitude: wrapLongitude(region.longitude + region.longitudeDelta * 0.5)
-		},
-		southWest: {
-			latitude: region.latitude + region.latitudeDelta * 0.5,
-			longitude: wrapLongitude(region.longitude - region.longitudeDelta * 0.5)
-		}
+		northEast: { latitude: north, longitude: east },
+		northWest: { latitude: north, longitude: west },
+		southEast: { latitude: south, longitude: east },
+		southWest: { latitude: south, longitude: west }
 	};
 }
 
@@ -403,7 +400,7 @@ function boundingBoxBits(coordinate: IGeoPoint, size: number): number {
 	);
 }
 function boundingBoxBitsForRegion(region: IGeoRegion): number {
-	const { northEast, southEast, northWest, southWest } = getRegionPoints(
+	const { northEast, southEast, northWest, southWest } = geoRegionToPoints(
 		region
 	);
 	const bitsLat =
@@ -474,7 +471,7 @@ function boundingBoxCoordinates(center: IGeoPoint, radius: number): number[][] {
  * @returns The eight bounding box points.
  */
 function boundingBoxCoordinatesForRegion(region: IGeoRegion): number[][] {
-	const { northEast, northWest, southWest } = getRegionPoints(region);
+	const { northEast, northWest, southWest } = geoRegionToPoints(region);
 	return [
 		[region.latitude, region.longitude],
 		[region.latitude, northEast.longitude],

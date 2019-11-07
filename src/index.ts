@@ -11,6 +11,7 @@ import {
 	flattenGeohashes,
 	calculateGeoDistance,
 	insideGeoRegion,
+	geoRegionToPoints,
 	metersToLatitudeDegrees,
 	metersToLongitudeDegrees
 } from "./GeoHash";
@@ -50,6 +51,7 @@ export {
 	flattenGeohashes,
 	calculateGeoDistance,
 	insideGeoRegion,
+	geoRegionToPoints,
 	metersToLatitudeDegrees,
 	metersToLongitudeDegrees
 };

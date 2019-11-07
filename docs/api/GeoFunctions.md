@@ -1,6 +1,8 @@
 ## Functions
 
 <dl>
+<dt><a href="#geoRegionToPoints">geoRegionToPoints(region)</a></dt>
+<dd><p>Converts a region into its geo points (nortEast, southWest, etc..).</p></dd>
 <dt><a href="#encodeGeohash">encodeGeohash(location, [precision])</a> ⇒</dt>
 <dd><p>Encodes a geographical position (latitude/longitude) into a geohash tile.</p></dd>
 <dt><a href="#decodeGeohash">decodeGeohash(geohash)</a></dt>
@@ -24,6 +26,17 @@ where any geohash is guaranteed to be lexiographically larger then start and sma
 via the Haversine formula. Note that this is approximate due to the fact that the
 Earth's radius varies between 6356.752 km and 6378.137 km.</p></dd>
 </dl>
+
+<a name="geoRegionToPoints"></a>
+
+## geoRegionToPoints(region)
+<p>Converts a region into its geo points (nortEast, southWest, etc..).</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| region | <code>IGeoRegion</code> | <p>The region to convert</p> |
 
 <a name="encodeGeohash"></a>
 
