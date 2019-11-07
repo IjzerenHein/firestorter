@@ -65,5 +65,23 @@ Firestorter makes integrating Firestore real-time data into React easy as pie. I
 
 It does this by intelligently tracking whether a Collection or Document should be listening for real-time updates (`onSnapshot` events) or not. Whenever a Component renders a Collection or Document, firestorter enables real-time updates on that resource. And whenever a Component stops using the resource _(e.g., component was unmounted)_, it stops listening for snapshot updates. This behavior really shines when multiple components are rendering collection/document data and it becomes more difficult to determine whether snapshot updates should be enabled or not.
 
+## Features
+
+- [Add, update & delete documents](./guides/AddUpdateDelete.md)
+- [Super efficient Component re-rendering](./guides/FetchingData.md#automatic-fetching)
+- [Declaratively link document/collection paths to document data]
+- [Geo query support](./guides/GeoQueries.md)
+- [Easily create aggregate collections from multiple queries](./guides/AggregateCollections.md)
+- [Runtime schema validation](./guides/SchemaValidation.md) & [Type Generics](./guides/Generics.md)
+- [Manual fetching mode for use with Unit-tests/Async-functions](./guides/FetchModes.md)
+- [React-native support](./guides/Installation.md#usage-with-react-native)
+- [TypeScript- & Flow typings](./guides/Generics.md)
+- Works with Vue.js
+
+
+Want to learn more, head over to the [Guides](./guides/Guides.md).
+
+
+
 
 
