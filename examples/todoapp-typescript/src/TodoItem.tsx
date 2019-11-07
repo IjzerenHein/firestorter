@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import { observer } from "mobx-react";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
@@ -11,9 +11,9 @@ import { Todo } from "./store";
 
 interface PropsType {
 	todo: Todo;
-};
+}
 
-class TodoItem extends Component<PropsType, any> {
+class TodoItem extends React.Component<PropsType, any> {
 	private isDeleting: boolean = false;
 
 	public render() {

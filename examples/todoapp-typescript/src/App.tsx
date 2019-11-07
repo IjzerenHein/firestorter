@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import * as React from "react";
 import Button from "@material-ui/core/Button";
 import ContentAddIcon from "@material-ui/icons/Add";
 import Todos from "./Todos";
 import { todos } from "./store";
 import "./app.css";
 
-class App extends Component {
+class App extends React.Component {
 	public render() {
 		return (
 			<div className="app-container">

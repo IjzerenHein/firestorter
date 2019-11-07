@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import { observer } from "mobx-react";
 import { todos } from "./store";
 import FlipMove from "react-flip-move";
@@ -8,7 +8,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import TodoItem from "./TodoItem";
 import "./todos.css";
 
-class Todos extends Component<any, any> {
+class Todos extends React.Component<any, any> {
 	public state = {
 		disabled: false
 	};
