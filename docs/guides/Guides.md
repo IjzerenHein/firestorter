@@ -19,8 +19,3 @@
 
 * [Building a React/Firestore app with zero effort and mobx](https://medium.com/@hrutjes/building-a-react-firestore-app-with-zero-effort-and-mobx-525df611eabf)
 
-
-## Examples
-
-* TodoApp [(view)](https://react-firestore-todo-app.stackblitz.io) [(source)](https://github.com/IjzerenHein/firestorter/blob/master/examples/todoApp/src) [(Playground on StackBlitz)](https://stackblitz.com/edit/react-firestore-todo-app?file=Todos.js)
-* [TodoApp (TypeScript)](https://github.com/IjzerenHein/firestorter/blob/master/examples/todoapp-typescript/src)

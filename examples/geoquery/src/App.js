@@ -8,7 +8,8 @@ import {
 	initFirestorter,
 	GeoQuery,
 	flattenGeohashes,
-	decodeGeohash
+	decodeGeohash,
+	geoRegionToPoints
 } from 'firestorter';
 import firebaseConfig from './firebaseConfig';
 import MapRect from './MapRect';
@@ -35,7 +36,7 @@ export default observer(
 			map: null,
 			bounds: null,
 			geoQuery: new GeoQuery('chocolateBars', {
-				debug: true
+				//debug: true
 			})
 		};
 
@@ -46,27 +47,27 @@ export default observer(
 
 			// Calculate region
 			const span = new maps.LatLngBounds(bounds.sw, bounds.ne).toSpan();
-			const latDelta = span.lat() * 0.1;
-			const lngDelta = span.lng() * 0.1;
+			const region = {
+				latitude: center.lat,
+				longitude: center.lng,
+				latitudeDelta: span.lat() * 0.1,
+				longitudeDelta: span.lng() * 0.1
+			};
+			const { northWest, southEast } = geoRegionToPoints(region);
 
 			// Update query-bounds state
 			const newBounds = {
-				east: center.lng + lngDelta,
-				west: center.lng - lngDelta,
-				north: center.lat - latDelta,
-				south: center.lat + latDelta
+				east: southEast.longitude,
+				west: northWest.longitude,
+				north: northWest.latitude,
+				south: southEast.latitude
 			};
 			this.setState({
 				bounds: newBounds
 			});
 
 			// Update geo-query
-			geoQuery.region = {
-				latitude: center.lat,
-				longitude: center.lng,
-				latitudeDelta: latDelta * 2,
-				longitudeDelta: lngDelta * 2
-			};
+			geoQuery.region = region;
 		};
 
 		onGoogleApiLoaded = event => {
@@ -80,7 +81,7 @@ export default observer(
 			const { bounds, map, maps, geoQuery } = this.state;
 			const { docs, geohashes } = geoQuery;
 			const flattenedGeohashes = flattenGeohashes(geohashes);
-			console.log(geohashes);
+			//console.log(geohashes);
 			return (
 				<div className="App">
 					<GoogleMapReact
@@ -105,8 +106,8 @@ export default observer(
 									map={map}
 									bounds={bounds}
 									color="blue"
-									label={geohash}
-									labelColor="white"
+									//label={geohash}
+									//labelColor="white"
 								/>
 							);
 						})}

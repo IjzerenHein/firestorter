@@ -2,6 +2,7 @@
 
 * [Firestorter](/)
 * [API documentation](./api/API.md)
+* [Examples](./Examples.md)
 * [Guides](./guides/Guides.md)
   * [Installation *(web/react-native)*](./guides/Installation.md)
   * [Sources, Paths & References](./guides/SourcesPathsAndReferences.md)

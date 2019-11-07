@@ -11,14 +11,16 @@ export default class MapRect extends React.PureComponent {
 		labelColor: '#FFFFFF'
 	};
 	rectangle = null;
+	label = null;
 
 	componentWillUnmount() {
 		if (this.rectangle) {
 			this.rectangle.setMap(null);
+			this.rectangle = null;
 		}
 		if (this.label) {
-			console.log('remove');
 			this.label.setMap(null);
+			this.label = null;
 		}
 	}
 
@@ -44,20 +46,17 @@ export default class MapRect extends React.PureComponent {
 			});
 		}
 
-		/*if (label) {
+		if (label) {
 			const position = {
-				lat: bounds.north,
-				lng: bounds.west
+				lat: bounds.south,
+				lng: bounds.east
 			};
 			if (!this.label) {
-				if (!MapLabel.isInitialized) {
-					MapLabel.prototype = new maps.OverlayView();
-					MapLabel.isInitialized = true;
-				}
 				this.label = new MapLabel({
+					maps,
 					map,
 					position,
-					text: label,
+					label,
 					color: labelColor
 				});
 			} else {
@@ -67,7 +66,7 @@ export default class MapRect extends React.PureComponent {
 					color: labelColor
 				});
 			}
-		}*/
+		}
 
 		return null;
 	}

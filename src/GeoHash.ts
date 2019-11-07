@@ -494,7 +494,7 @@ function boundingBoxCoordinatesForRegion(region: IGeoRegion): number[][] {
  * @param {number} bits The number of bits of precision.
  * @returns A [start, end] pair of geohashes.
  */
-export function geohashQuery(geohash1: string, bits: number): string[] {
+function geohashQuery(geohash1: string, bits: number): string[] {
 	validateGeohash(geohash1);
 	const precision = Math.ceil(bits / BITS_PER_CHAR);
 	if (geohash1.length < precision) {
@@ -528,14 +528,11 @@ export function getGeohashesForRadius(
 	radius: number
 ): string[][] {
 	validateLocation(center);
-	const queryBits = Math.max(1, boundingBoxBits(center, radius));
-	const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
+	const bits = Math.max(1, boundingBoxBits(center, radius));
+	const precision = Math.ceil(bits / BITS_PER_CHAR);
 	const coordinates = boundingBoxCoordinates(center, radius);
 	const queries = coordinates.map(coordinate => {
-		return geohashQuery(
-			encodeGeohash(toGeoPoint(coordinate), geohashPrecision),
-			queryBits
-		);
+		return geohashQuery(encodeGeohash(toGeoPoint(coordinate), precision), bits);
 	});
 	// remove duplicates
 	return queries.filter((query, index) => {
@@ -556,14 +553,22 @@ export function getGeohashesForRadius(
  */
 export function getGeohashesForRegion(region: IGeoRegion): string[][] {
 	validateRegion(region);
-	const queryBits = Math.max(1, boundingBoxBitsForRegion(region));
-	const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
+	const bits = Math.max(1, boundingBoxBitsForRegion(region));
+	const precision = Math.ceil(bits / BITS_PER_CHAR);
 	const coordinates = boundingBoxCoordinatesForRegion(region);
 	const queries = coordinates.map(coordinate => {
-		return geohashQuery(
-			encodeGeohash(toGeoPoint(coordinate), geohashPrecision),
-			queryBits
-		);
+		const geohash = encodeGeohash(toGeoPoint(coordinate), precision);
+		const query = geohashQuery(geohash, bits);
+		/*console.log(
+			geohash,
+			", index: ",
+			index,
+			", query: ",
+			query,
+			", precision: ",
+			precision
+		);*/
+		return query;
 	});
 	// remove duplicates
 	return queries.filter((query, index) => {
