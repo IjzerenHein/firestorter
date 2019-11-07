@@ -4,10 +4,7 @@
 	"private": true,
 	"homepage": ".",
 	"dependencies": {
-		"@firebase/app": "^0.4.13",
-		"@firebase/app-types": "^0.4.3",
-		"@firebase/firestore": "^1.4.8",
-		"@firebase/firestore-types": "^1.4.4",
+		"firebase": "^7.2.3",
 		"firestorter": "file:.yalc/firestorter",
 		"material-ui": "^0.19.4",
 		"mobx": "^5.13.0",

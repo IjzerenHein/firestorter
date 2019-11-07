@@ -1,41 +1,38 @@
 {
-  "name": "firestorter-todoApp",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": ".",
-  "dependencies": {
-    "@firebase/app": "^0.4.13",
-    "@firebase/app-types": "^0.4.3",
-    "@firebase/firestore": "^1.4.8",
-    "@firebase/firestore-types": "^1.4.4",
-    "firestorter": "file:.yalc/firestorter",
-    "material-ui": "^0.19.4",
-    "mobx": "^5.13.0",
-    "mobx-react": "^6.1.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-flip-move": "^3.0.3"
-  },
-  "devDependencies": {
-    "react-scripts": "^3.0.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "lint": "eslint src",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+	"name": "firestorter-todoApp",
+	"version": "0.1.0",
+	"private": true,
+	"homepage": ".",
+	"dependencies": {
+		"firebase": "^7.2.3",
+		"firestorter": "file:.yalc/firestorter",
+		"material-ui": "^0.19.4",
+		"mobx": "^5.13.0",
+		"mobx-react": "^6.1.1",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"react-flip-move": "^3.0.3"
+	},
+	"devDependencies": {
+		"react-scripts": "^3.0.1"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"lint": "eslint src",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

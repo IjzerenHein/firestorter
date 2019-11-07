@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
-import { TableRow, TableRowColumn } from 'material-ui/Table';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { observer } from "mobx-react";
+import { TableRow, TableRowColumn } from "material-ui/Table";
 
 class ListItem extends Component {
-	static muiName = 'TableRow';
+	static muiName = "TableRow";
 	static propTypes = {
 		doc: PropTypes.any.isRequired
 	};
@@ -29,7 +29,7 @@ class ListItem extends Component {
 				<TableRowColumn>{company}</TableRowColumn>
 				<TableRowColumn>{companyLocation}</TableRowColumn>
 				<TableRowColumn>{origin}</TableRowColumn>
-				<TableRowColumn>{reviewDate.getFullYear()}</TableRowColumn>
+				<TableRowColumn>{reviewDate.toDate().getFullYear()}</TableRowColumn>
 				<TableRowColumn>{rating}</TableRowColumn>
 				<TableRowColumn>{beanType}</TableRowColumn>
 				<TableRowColumn>{broadBeanOrigin}</TableRowColumn>
