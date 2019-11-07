@@ -81,7 +81,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 - [Add, update & delete documents](https://firestorter.com/guides/AddUpdateDelete.md)
 - [Super efficient Component re-rendering](https://firestorter.com/guides/FetchingData.md#automatic-fetching)
-- [Declaratively link document/collection paths to document data]
+- [Declaratively link document/collection paths to document data](https://firestorter.com/guides/SourcesPathsAndReferences.md#reactive-path-functions)
 - [Geo query support](https://firestorter.com/guides/GeoQueries.md)
 - [Easily create aggregate collections from multiple queries](https://firestorter.com/guides/AggregateCollections.md)
 - [Runtime schema validation](https://firestorter.com/guides/SchemaValidation.md) & [Type Generics](https://firestorter.com/guides/Generics.md)

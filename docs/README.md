@@ -69,7 +69,7 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 - [Add, update & delete documents](./guides/AddUpdateDelete.md)
 - [Super efficient Component re-rendering](./guides/FetchingData.md#automatic-fetching)
-- [Declaratively link document/collection paths to document data]
+- [Declaratively link document/collection paths to document data](./guides/SourcesPathsAndReferences.md#reactive-path-functions)
 - [Geo query support](./guides/GeoQueries.md)
 - [Easily create aggregate collections from multiple queries](./guides/AggregateCollections.md)
 - [Runtime schema validation](./guides/SchemaValidation.md) & [Type Generics](./guides/Generics.md)
