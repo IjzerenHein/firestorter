@@ -79,15 +79,15 @@ It does this by intelligently tracking whether a Collection or Document should b
 
 ## Features
 
-- [Add, update & delete documents](https://firestorter.com/guides/AddUpdateDelete.md)
-- [Super efficient Component re-rendering](https://firestorter.com/guides/FetchingData.md#automatic-fetching)
-- [Declaratively link document/collection paths to document data](https://firestorter.com/guides/SourcesPathsAndReferences.md#reactive-path-functions)
-- [Geo query support](https://firestorter.com/guides/GeoQueries.md)
-- [Easily create aggregate collections from multiple queries](https://firestorter.com/guides/AggregateCollections.md)
-- [Runtime schema validation](https://firestorter.com/guides/SchemaValidation.md) & [Type Generics](https://firestorter.com/guides/Generics.md)
-- [Manual fetching mode for use with Unit-tests/Async-functions](https://firestorter.com/guides/FetchModes.md)
-- [React-native support](https://firestorter.com/guides/Installation.md#usage-with-react-native)
-- [TypeScript- & Flow typings](https://firestorter.com/guides/Generics.md)
+- [Add, update & delete documents](https://ijzerenhein.github.io/firestorter/#/./guides/AddUpdateDelete.md)
+- [Super efficient Component re-rendering](https://ijzerenhein.github.io/firestorter/#/./guides/FetchingData.md#automatic-fetching)
+- [Declaratively link document/collection paths to document data](https://ijzerenhein.github.io/firestorter/#/./guides/SourcesPathsAndReferences.md#reactive-path-functions)
+- [Geo query support](https://ijzerenhein.github.io/firestorter/#/./guides/GeoQueries.md)
+- [Easily create aggregate collections from multiple queries](https://ijzerenhein.github.io/firestorter/#/./guides/AggregateCollections.md)
+- [Runtime schema validation](https://ijzerenhein.github.io/firestorter/#/./guides/SchemaValidation.md) & [Type Generics](https://ijzerenhein.github.io/firestorter/#/./guides/Generics.md)
+- [Manual fetching mode for use with Unit-tests/Async-functions](https://ijzerenhein.github.io/firestorter/#/./guides/FetchModes.md)
+- [React-native support](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md#usage-with-react-native)
+- [TypeScript- & Flow typings](https://ijzerenhein.github.io/firestorter/#/./guides/Generics.md)
 - Works with Vue.js
 
 
