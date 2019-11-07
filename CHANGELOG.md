@@ -10,7 +10,7 @@ Use Firestore in React with zero effort, using MobX 🤘
 - Added new `GeoQuery` class for performing geographical queries
 - Added geographical helper functions
 - Added flow-typings
-- Revamped the Documentation 🤘
+- Added whole new Documentation website 🤘
 
 ### Changed
 
