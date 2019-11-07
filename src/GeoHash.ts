@@ -405,12 +405,14 @@ function boundingBoxBitsForRegion(region: IGeoRegion): number {
 	);
 	const bitsLat =
 		Math.floor(
-			latitudeBitsForResolution(calculateGeoDistance(northEast, southEast))
+			latitudeBitsForResolution(
+				calculateGeoDistance(northEast, southEast) * 0.5
+			)
 		) * 2;
 	const bitsLongNorth =
 		Math.floor(
 			longitudeBitsForResolution(
-				calculateGeoDistance(northEast, northWest),
+				calculateGeoDistance(northEast, northWest) * 0.5,
 				northWest.latitude
 			)
 		) *
@@ -419,7 +421,7 @@ function boundingBoxBitsForRegion(region: IGeoRegion): number {
 	const bitsLongSouth =
 		Math.floor(
 			longitudeBitsForResolution(
-				calculateGeoDistance(southEast, southWest),
+				calculateGeoDistance(southEast, southWest) * 0.5,
 				southWest.latitude
 			)
 		) *
