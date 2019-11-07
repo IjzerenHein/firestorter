@@ -27,6 +27,7 @@ Nice to have:
   - [ ] `fetch` support
   - [ ] `ready` function
 - [ ] Better documentation structure, iso 1 large MD file (like latest mobx?)
+- [ ] Update 'ready' to perform initial fetch or wait for completetion
 
 
 

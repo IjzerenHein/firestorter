@@ -19,7 +19,7 @@ firebase.initializeApp({...});
 // Initialize `firestorter`
 initFirestorter({ firebase: firebase });
 ```
-> Firestorter also works with react-native and supports multi app environments
+> Firestorter also works with **react-native** and supports multi app environments
 
 **2. Create a `Collection` or `Document`**
 
