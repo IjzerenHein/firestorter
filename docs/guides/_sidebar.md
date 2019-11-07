@@ -1,7 +1,9 @@
 <!-- docs/_sidebar.md -->
 
 * [Firestorter](/)
+* [API documentation](./api/API.md)
 * [**Guides**](./guides/Guides.md)
+  * [Installation *(web/react-native)*](./guides/Installation.md)
   * [Sources, Paths & References](./guides/SourcesPathsAndReferences.md)
   * [Fetching data](./guides/FetchingData.md)
   * [Adding, Updating & Deleting documents](./guides/AddUpdateDelete.md)
@@ -15,5 +17,5 @@
   * [Subcollections](./guides/SubCollections.md)
   * [Creating stores](./guides/Store.md)
   * [Debugging](./guides/Debugging.md)
-* [API documentation](./api/API.md)
 * [Acknowledgements](./Acknowledgements.md)
+* [License](./License.md)

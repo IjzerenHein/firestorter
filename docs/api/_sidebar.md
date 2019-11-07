@@ -1,7 +1,6 @@
 <!-- docs/_sidebar.md -->
 
 * [Firestorter](/)
-* [Guides](./guides/Guides.md)
 * [**API documentation**](./api/API.md)
   * [Document class](./api/Document.md)
   * [Collection class](./api/Collection.md)
@@ -10,4 +9,7 @@
   * [Init functions](./api/InitFunctions.md)
   * [Utility functions](./api/UtilityFunctions.md)
   * [Geo functions](./api/GeoFunctions.md)
+* [Guides](./guides/Guides.md)
 * [Acknowledgements](./Acknowledgements.md)
+* [License](./License.md)
+
