@@ -9,6 +9,7 @@
   * [Init functions](./api/InitFunctions.md)
   * [Utility functions](./api/UtilityFunctions.md)
   * [Geo functions](./api/GeoFunctions.md)
+* [Examples](./Examples.md)
 * [Guides](./guides/Guides.md)
 * [Acknowledgements](./Acknowledgements.md)
 * [License](./License.md)
