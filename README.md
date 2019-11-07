@@ -74,7 +74,7 @@ _Also install the `mobx`, `mobx-react` and `firebase` dependencies:_
 ## Usage
 
 ```js
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import {initFirestorter, Collection} from 'firestorter';
 import {observer} from 'mobx-react';

@@ -27,7 +27,7 @@ a context suitable for Document and Collection creation.</p></dd>
 
 **Example**  
 ```js
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import {initFirestorter, Collection, Document} from 'firestorter';
 
@@ -56,7 +56,7 @@ a context suitable for Document and Collection creation.</p>
 **Kind**: global function  
 **Example**  
 ```js
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore'
 import * as firetest from '@firebase/testing'
 import { makeFirestorterContext, Collection, Document } from "firestorter"

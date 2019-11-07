@@ -64,7 +64,7 @@ You can access the reference by using the `ref` property on a `Collection` or
 
 ```js
 import { Collection, Document } from 'firestorter';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 // Pass in a reference in the constructor
 const albums = new Collection(

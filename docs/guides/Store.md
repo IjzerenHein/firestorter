@@ -9,7 +9,7 @@ document.
 ## Store.js
 
 ```js
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import {initFirestorter, Collection, Document} from 'firestorter';
 
@@ -84,8 +84,8 @@ or becomes visible, it will automatically update to show that data from
 back-end, as efficiently as possible.
 
 ```jsx
-import {albums} from './store';
-import {observer} from 'mobx-react';
+import { albums } from './store';
+import { observer } from 'mobx-react';
 
 class AlbumView extends Component {
   render() {

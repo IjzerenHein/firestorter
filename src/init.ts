@@ -23,7 +23,7 @@ let globalContext: IContext;
  * @param {String|FirebaseApp} [config.app] - FirebaseApp to use (when omitted the default app is used)
  *
  * @example
- * import firebase from 'firebase';
+ * import * as firebase from 'firebase/app';
  * import 'firebase/firestore';
  * import {initFirestorter, Collection, Document} from 'firestorter';
  *
@@ -63,7 +63,7 @@ function initFirestorter(config: {
  * a context suitable for Document and Collection creation.
  *
  * @example
- * import firebase from 'firebase';
+ * import * as firebase from 'firebase/app';
  * import 'firebase/firestore'
  * import * as firetest from '@firebase/testing'
  * import { makeFirestorterContext, Collection, Document } from "firestorter"
