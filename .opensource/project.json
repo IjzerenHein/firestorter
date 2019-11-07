@@ -1,0 +1,6 @@
+{
+	"name": "Firestorter",
+	"type": "library",
+	"platforms": ["Web", "Android", "iOS"],
+	"content": "README.md"
+}
