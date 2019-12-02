@@ -11,6 +11,7 @@
   * [Geo functions](./api/GeoFunctions.md)
 * [Examples](./Examples.md)
 * [Guides](./guides/Guides.md)
+* [Changelog](https://github.com/IjzerenHein/firestorter/blob/master/CHANGELOG.md)
 * [Acknowledgements](./Acknowledgements.md)
 * [License](./License.md)
 

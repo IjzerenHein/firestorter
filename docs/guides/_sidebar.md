@@ -18,5 +18,6 @@
   * [Subcollections](./guides/SubCollections.md)
   * [Creating stores](./guides/Store.md)
   * [Debugging](./guides/Debugging.md)
+* [Changelog](https://github.com/IjzerenHein/firestorter/blob/master/CHANGELOG.md)
 * [Acknowledgements](./Acknowledgements.md)
 * [License](./License.md)
