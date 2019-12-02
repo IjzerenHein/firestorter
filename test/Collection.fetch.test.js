@@ -11,9 +11,13 @@ test('no ref fail', async () => {
 });
 
 test('fetch', async () => {
-	expect.assertions(1);
+	expect.assertions(5);
 	const col = new Collection('artists');
+	expect(col.isLoading).toBe(false);
+	expect(col.isLoaded).toBe(false);
 	await col.fetch();
+	expect(col.isLoading).toBe(false);
+	expect(col.isLoaded).toBe(true);
 	const docs = col.docs.filter(doc => doc.id !== 'TEMP');
 	expect(docs.length).toBe(2);
 });
@@ -30,12 +34,16 @@ test('already in progress', async () => {
 });
 
 test('ready', async () => {
-	expect.assertions(3);
+	expect.assertions(7);
 	const col = new Collection('artists');
+	expect(col.isLoading).toBe(false);
+	expect(col.isLoaded).toBe(false);
 	col.fetch();
 	expect(col.isLoading).toBe(true);
+	expect(col.isLoaded).toBe(false);
 	await col.ready();
 	expect(col.isLoading).toBe(false);
+	expect(col.isLoaded).toBe(true);
 	const docs = col.docs.filter(doc => doc.id !== 'TEMP');
 	expect(docs.length).toBe(2);
 });

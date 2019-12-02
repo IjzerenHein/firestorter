@@ -41,6 +41,7 @@ created or modified.</p>
     * [.mode](#Collection+mode) : <code>string</code>
     * [.isActive](#Collection+isActive) : <code>boolean</code>
     * [.isLoading](#Collection+isLoading) : <code>boolean</code>
+    * [.isLoaded](#Collection+isLoaded) : <code>boolean</code>
     * [.fetch()](#Collection+fetch) ⇒ <code>Promise</code>
     * [.ready()](#Collection+ready) ⇒ <code>Promise</code>
     * [.add(data)](#Collection+add) ⇒ <code>Promise</code>
@@ -239,6 +240,15 @@ console.log(col.isLoading);  // true
 dispose();                   // stop observing collection data
 console.log(col.isLoading);  // false
 ```
+<a name="Collection+isLoaded"></a>
+
+### collection.isLoaded : <code>boolean</code>
+<p>True when a query snapshot has been retrieved at least once.
+This however does not mean that any documents have been retrieved,
+as the number of returned document may have been 0.
+Use <code>hasDocs</code> to check whether any documents have been retrieved.</p>
+
+**Kind**: instance property of [<code>Collection</code>](#Collection)  
 <a name="Collection+fetch"></a>
 
 ### collection.fetch() ⇒ <code>Promise</code>

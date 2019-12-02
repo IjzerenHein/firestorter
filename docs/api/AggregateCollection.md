@@ -17,6 +17,7 @@ of geo-hash queries.</p>
     * [.cols](#AggregateCollection+cols) : <code>Array</code>
     * [.queries](#AggregateCollection+queries) : <code>function</code>
     * [.isLoading](#AggregateCollection+isLoading) : <code>boolean</code>
+    * [.isLoaded](#AggregateCollection+isLoaded) : <code>boolean</code>
 
 <a name="new_AggregateCollection_new"></a>
 
@@ -88,5 +89,11 @@ aggregateCollection.cols.forEach((col) => {
 
 ### aggregateCollection.isLoading : <code>boolean</code>
 <p>True when new data is being loaded.</p>
+
+**Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  
+<a name="AggregateCollection+isLoaded"></a>
+
+### aggregateCollection.isLoaded : <code>boolean</code>
+<p>True when data for all underlying collections has been loaded.</p>
 
 **Kind**: instance property of [<code>AggregateCollection</code>](#AggregateCollection)  

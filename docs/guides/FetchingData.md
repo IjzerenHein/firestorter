@@ -67,15 +67,16 @@ If you want to know how `isLoading` behaves for manual fetching, have a [look he
 
 Firestorter exposes the following properties for accessing fetched data.
 
-| Property    | Data-type | Class                                             | Action                                                                     |
-| ----------- | --------- | ------------------------------------------------- | -------------------------------------------------------------------------- |
-| `data`      | `object`  | `Document`                                        | Document data, as returned by a Firestore document snapshot.               |
-| `hasData`   | `boolean` | `Document`                                        | `true` when the document has been successfully fetched and exists.         |
-| `docs`      | `array`   | `Collection\|` `AggregateCollection\|` `GeoQuery` | Array of Documents                                                         |
-| `hasDocs`   | `boolean` | `Collection\|` `AggregateCollection\|` `GeoQuery` | `true` when the collection has 1 or more documents.                        |
-| `isLoading` | `boolean` | *all*                                             | `true` when the collection or document is loading (initial) data.          |
-| `mode`      | `string`  | `Document\|Collection`                            | Fetch mode, manual or automatic. See [Fetch modes](./guides/FetchModes.md) |
-| `snapshot`  | `object`  | `Document`                                        | Firestore snapshot object or `undefined` when no snapshot available.       |
+| Property    | Data-type | Class                                             | Action                                                                           |
+| ----------- | --------- | ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `data`      | `object`  | `Document`                                        | Document data, as returned by a Firestore document snapshot.                     |
+| `hasData`   | `boolean` | `Document`                                        | `true` when the document has been successfully fetched and exists.               |
+| `docs`      | `array`   | `Collection\|` `AggregateCollection\|` `GeoQuery` | Array of Documents                                                               |
+| `hasDocs`   | `boolean` | `Collection\|` `AggregateCollection\|` `GeoQuery` | `true` when the collection has 1 or more documents.                              |
+| `isLoading` | `boolean` | *all*                                             | `true` when the collection or document is loading (initial) data.                |
+| `isLoaded`  | `boolean` | *all*                                             | `true` when the collection or document has finished loading data, at least once. |
+| `mode`      | `string`  | `Document\|Collection`                            | Fetch mode, manual or automatic. See [Fetch modes](./guides/FetchModes.md)       |
+| `snapshot`  | `object`  | `Document`                                        | Firestore snapshot object or `undefined` when no snapshot available.             |
 
 
 And the following methods:

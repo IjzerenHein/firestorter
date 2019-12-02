@@ -21,6 +21,7 @@ function has changed.</p>
     * [.isActive](#Document+isActive) : <code>boolean</code>
     * [.snapshot](#Document+snapshot) : <code>firestore.DocumentSnapshot</code>
     * [.isLoading](#Document+isLoading) : <code>boolean</code>
+    * [.isLoaded](#Document+isLoaded) : <code>boolean</code>
     * [.update(fields)](#Document+update) ⇒ <code>Promise</code>
     * [.set(data, [options])](#Document+set) ⇒ <code>Promise</code>
     * [.delete()](#Document+delete) ⇒ <code>Promise</code>
@@ -178,6 +179,17 @@ console.log(doc.isLoading); 	// true
 dispose();										// stop observing document data
 console.log(doc.isLoading); 	// false
 ```
+<a name="Document+isLoaded"></a>
+
+### document.isLoaded : <code>boolean</code>
+<p>True when a snapshot has been obtained from the Firestore
+back-end. This property indicates whether an initial fetch/get call
+to Firestore has completed processing. This doesn't however mean that data
+is available, as the returned snapshot may contain a value indicating
+that the document doesn't exist. Use <code>hasData</code> to check whether any
+data was succesfully retrieved.</p>
+
+**Kind**: instance property of [<code>Document</code>](#Document)  
 <a name="Document+update"></a>
 
 ### document.update(fields) ⇒ <code>Promise</code>

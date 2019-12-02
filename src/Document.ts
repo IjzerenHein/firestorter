@@ -472,6 +472,21 @@ class Document<T extends object = object>
 	}
 
 	/**
+	 * True when a snapshot has been obtained from the Firestore
+	 * back-end. This property indicates whether an initial fetch/get call
+	 * to Firestore has completed processing. This doesn't however mean that data
+	 * is available, as the returned snapshot may contain a value indicating
+	 * that the document doesn't exist. Use `hasData` to check whether any
+	 * data was succesfully retrieved.
+	 *
+	 * @type {boolean}
+	 */
+	public get isLoaded(): boolean {
+		const { snapshot } = this;
+		return !!snapshot;
+	}
+
+	/**
 	 * Promise that is resolved when the Document has
 	 * data ready to be consumed.
 	 *

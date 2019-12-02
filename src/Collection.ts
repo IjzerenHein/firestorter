@@ -109,6 +109,7 @@ class Collection<T extends ICollectionDocument = Document>
 	private onSnapshotRefCache?: firestore.Query;
 	private modeObservable: IObservableValue<Mode>;
 	private isLoadingObservable: IObservableValue<boolean>;
+	private isLoadedObservable: IObservableValue<boolean>;
 	private docLookup: { [name: string]: T };
 	private docsObservable: IObservableArray<T>;
 	private hasDocsObservable: IObservableValue<boolean>;
@@ -159,6 +160,7 @@ class Collection<T extends ICollectionDocument = Document>
 		// this._cursor = observable.box(undefined);
 		this.modeObservable = observable.box(verifyMode(mode || Mode.Auto));
 		this.isLoadingObservable = observable.box(false);
+		this.isLoadedObservable = observable.box(false);
 		this.hasDocsObservable = enhancedObservable(false, this);
 		this.docsObservable = enhancedObservable([], this);
 		this.ctx = context;
@@ -490,6 +492,20 @@ class Collection<T extends ICollectionDocument = Document>
 		// tslint:disable-next-line
 		this.docsObservable.length;
 		return this.isLoadingObservable.get();
+	}
+
+	/**
+	 * True when a query snapshot has been retrieved at least once.
+	 * This however does not mean that any documents have been retrieved,
+	 * as the number of returned document may have been 0.
+	 * Use `hasDocs` to check whether any documents have been retrieved.
+	 *
+	 * @type {boolean}
+	 */
+	public get isLoaded(): boolean {
+		// tslint:disable-next-line
+		this.docsObservable.length;
+		return this.isLoadedObservable.get();
 	}
 
 	/**
@@ -855,6 +871,7 @@ class Collection<T extends ICollectionDocument = Document>
 		});
 
 		this.hasDocsObservable.set(!!newDocs.length);
+		this.isLoadedObservable.set(true);
 		if (this.docsObservable.length !== newDocs.length) {
 			this.docsObservable.replace(newDocs);
 		} else {

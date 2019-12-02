@@ -110,6 +110,7 @@ declare export class Document<T: Object = Object>
 	delete(): Promise<void>;
 	fetch(): Promise<Document<T>>;
 	+isLoading: boolean;
+	+isLoaded: boolean;
 	ready(): Promise<void>;
 	toString(): string;
 	+debugName: string;
@@ -143,6 +144,7 @@ declare export class Collection<T: ICollectionDocument = Document<Object>>
 	+isActive: boolean;
 	fetch(): Promise<Collection<T>>;
 	+isLoading: boolean;
+	+isLoaded: boolean;
 	ready(): Promise<void>;
 	add(data: any): Promise<T>;
 	deleteAll(): Promise<void>;
@@ -192,6 +194,7 @@ declare export class AggregateCollection<
 	+cols: Array<Collection<Y>>;
 	queries(): AggregateCollectionQueriesFn<Y>;
 	+isLoading: boolean;
+	+isLoaded: boolean;
 	toString(): string;
 	+debugName: string;
 	// IHasContext

@@ -218,6 +218,18 @@ class AggregateCollection<
 	}
 
 	/**
+	 * True when data for all underlying collections has been loaded.
+	 *
+	 * @type {boolean}
+	 */
+	public get isLoaded(): boolean {
+		return this.collections.reduce(
+			(acc, col) => (acc ? col.isLoaded : false),
+			true
+		);
+	}
+
+	/**
 	 * @private
 	 */
 	public get debugName(): string {

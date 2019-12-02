@@ -11,9 +11,15 @@ test('no ref fail', async () => {
 });
 
 test('fetch', async () => {
-	expect.assertions(1);
+	expect.assertions(7);
 	const doc = new Document('artists/FooFighters');
+	expect(doc.isLoading).toBe(false);
+	expect(doc.isLoaded).toBe(false);
+	expect(doc.hasData).toBe(false);
 	await doc.fetch();
+	expect(doc.isLoading).toBe(false);
+	expect(doc.isLoaded).toBe(true);
+	expect(doc.hasData).toBe(true);
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
 });
 
@@ -29,11 +35,15 @@ test('already in progress', async () => {
 });
 
 test('ready', async () => {
-	expect.assertions(3);
+	expect.assertions(7);
 	const doc = new Document('artists/FooFighters');
+	expect(doc.isLoading).toBe(false);
+	expect(doc.isLoaded).toBe(false);
 	doc.fetch();
 	expect(doc.isLoading).toBe(true);
+	expect(doc.isLoaded).toBe(false);
 	await doc.ready();
 	expect(doc.isLoading).toBe(false);
+	expect(doc.isLoaded).toBe(true);
 	expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
 });
