@@ -4,6 +4,13 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [2.0.1] - 2019-12-02
+
+### Added
+
+- Added new `isLoaded` property for checking whether data/docs have been loaded initially
+
+
 ## [2.0.0] - 2019-11-07
 
 ### Added
