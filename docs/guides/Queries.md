@@ -36,7 +36,7 @@ const TodosView extends Component {
     super(props);
     this._pageLimit = observable.box(10);
     this._col = new Collection('todos', {
-      query: (ref) => ref.limit(pageLimit)
+      query: (ref) => ref.limit(this._pageLimit)
     });
   }
   
