@@ -26,8 +26,9 @@ export interface IDocumentOptions {
 /**
  * Document interface.
  */
-export interface IDocument {
+export interface IDocument<T=any> {
 	readonly id: string | undefined;
+	data: T | undefined; 
 }
 
 /**
