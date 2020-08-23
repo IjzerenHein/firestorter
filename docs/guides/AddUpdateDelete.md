@@ -41,7 +41,7 @@ import { getFirebase } from 'firestorter';
 const todo = new Document('todos/akskladlkasd887asj');
 
 // Update one or more fields
-await doc.update({
+await todo.update({
   finished: true,
   settings: {}
 });
@@ -49,18 +49,18 @@ await doc.update({
 // Update a nested property using a field-path
 // This will only update `bar` and will leave all
 // other properties in settings and foo untouched.
-await doc.update({
+await todo.update({
   'settings.foo.bar': 56
 });
 
 // Properties can also be deleted entirely
 // See: https://firebase.google.com/docs/firestore/manage-data/delete-data
-await doc.update({
+await todo.update({
   'settings.foo': getFirebase().firestore.FieldValue.delete()
 });
 // Field-paths can be combined to update multiple
 // properties/objects at once
-await doc.update({
+await todo.update({
   'user.batman.isAwesome': true,
   'user.batman.secretName': 'Bruce Wayne'
   'user.batman.friends.robin': getFirebase().firestore.FieldValue.delete()
@@ -68,13 +68,13 @@ await doc.update({
 
 // Alternatively, you can use .set to create
 // or completely overwrite documents
-await doc.set({
+await todo.set({
   blank: true
 });
 
 // When {merge: true} is specified to .set, the provided
 // data is merged in case the document already exists
-await doc.set({
+await todo.set({
   settings: {
     foo2: 'hello'
   }
@@ -87,7 +87,7 @@ To delete a document, use Document.delete:
 
 ```js
 const todo = new Document('todos/akskladlkasd887asj');
-await doc.delete();
+await todo.delete();
 ```
 
 ## Deleting whole collections
