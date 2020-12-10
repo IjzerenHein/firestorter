@@ -1,7 +1,7 @@
 <a name="AggregateCollection"></a>
 
 ## AggregateCollection
-<p>Collection that aggregates documents resulting from multiple queries done to a single collection into
+<p>Collection that aggregates documents resulting from multiple queries made to a single collection into
 a single, easy accessible collection.</p>
 
 <p>AggregateCollection is driven by the <code>queries</code> function, which defines what
