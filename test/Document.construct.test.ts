@@ -1,5 +1,5 @@
-import { Document, firebase } from './init';
 import { Mode } from '../src/Types';
+import { Document, firebase } from './init';
 
 test('no args', () => {
   expect(new Document()).toBeDefined();

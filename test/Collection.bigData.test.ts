@@ -1,5 +1,6 @@
-import { Collection, Document } from './init';
 import { autorun } from 'mobx';
+
+import { Collection, Document } from './init';
 
 interface IBigData {
   number: number;
@@ -14,7 +15,7 @@ interface IBigData {
 		});
 		console.log(i);
 	}
-}, 1000000000);*/
+}, 1000000000); */
 
 test.skip('unobserve', async () => {
   expect.assertions(1);

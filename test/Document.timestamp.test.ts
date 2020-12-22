@@ -1,5 +1,6 @@
-import { Document, getFirebase, isTimestamp } from './init';
 import { struct } from 'superstruct';
+
+import { Document, getFirebase, isTimestamp } from './init';
 
 interface ISetting {
   date: {

@@ -13,6 +13,7 @@ import {
   mergeUpdateData,
   Mode,
 } from '../src';
+
 const firebaseConfig = require('./firebaseConfig.json');
 
 let firebaseApp;

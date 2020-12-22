@@ -1,6 +1,7 @@
-import { Collection, firebase, observable } from './init';
 import { runInAction } from 'mobx';
+
 import { Mode } from '../src';
+import { Collection, firebase, observable } from './init';
 
 test('no query', () => {
   const col = new Collection();

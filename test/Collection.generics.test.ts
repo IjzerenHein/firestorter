@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import { Collection, Document } from './init';
-import { ICollectionDocument } from '../src/Types';
 import type Firebase from 'firebase';
+
+import { ICollectionDocument } from '../src/Types';
+import { Collection, Document } from './init';
 
 class TestDoc implements ICollectionDocument {
   private collectionRef: number = 0;
