@@ -1,8 +1,9 @@
 {
-	"apiKey": "AIzaSyDgDX7GD9b8h8JxEB-ANs9LjlRkXpYpS3U",
-	"authDomain": "firestorter-tests.firebaseapp.com",
-	"databaseURL": "https://firestorter-tests.firebaseio.com",
-	"projectId": "firestorter-tests",
-	"storageBucket": "firestorter-tests.appspot.com",
-	"messagingSenderId": "667453207099"
+  "apiKey": "AIzaSyDgDX7GD9b8h8JxEB-ANs9LjlRkXpYpS3U",
+  "authDomain": "firestorter-tests.firebaseapp.com",
+  "databaseURL": "https://firestorter-tests.firebaseio.com",
+  "projectId": "firestorter-tests",
+  "storageBucket": "firestorter-tests.appspot.com",
+  "messagingSenderId": "667453207099",
+  "appId": "1:667453207099:web:d1e0ae6f1453005b83a21e"
 }

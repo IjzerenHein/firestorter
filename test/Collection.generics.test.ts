@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { Collection, Document } from './init';
 import { ICollectionDocument } from '../src/Types';
 import type Firebase from 'firebase';
@@ -5,7 +6,7 @@ import type Firebase from 'firebase';
 class TestDoc implements ICollectionDocument {
   private collectionRef: number = 0;
 
-  constructor(source, options) {
+  constructor(_source, _options) {
     this.collectionRef = 0;
   }
 
@@ -23,7 +24,7 @@ class TestDoc implements ICollectionDocument {
     return this.collectionRef;
   }
 
-  public updateFromCollectionSnapshot(snapshot: Firebase.firestore.DocumentSnapshot): void {
+  public updateFromCollectionSnapshot(_snapshot: Firebase.firestore.DocumentSnapshot): void {
     // nop
   }
 }
@@ -32,6 +33,7 @@ test('no generic type specified', () => {
   const col = new Collection();
   if (col.docs.length) {
     const doc: Document = col.docs[0];
+    doc.id;
   }
 });
 
@@ -39,6 +41,7 @@ test('default generic type specified', () => {
   const col = new Collection<Document>();
   if (col.docs.length) {
     const doc: Document = col.docs[0];
+    doc.id;
   }
 });
 
@@ -48,6 +51,7 @@ test('custom document type specified', () => {
   });
   if (col.docs.length) {
     const doc: TestDoc = col.docs[0];
+    doc.id;
   }
 });
 
@@ -57,6 +61,7 @@ test('.docs has correct generic type', () => {
   });
   if (col.docs.length) {
     const doc: TestDoc = col.docs[0];
+    doc.id;
   }
 });
 

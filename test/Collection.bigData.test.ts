@@ -1,8 +1,8 @@
-import { Collection, Document } from "./init";
-import { autorun } from "mobx";
+import { Collection, Document } from './init';
+import { autorun } from 'mobx';
 
 interface IBigData {
-	number: number;
+  number: number;
 }
 
 /* test.skip("insert", async () => {
@@ -16,14 +16,16 @@ interface IBigData {
 	}
 }, 1000000000);*/
 
-test.skip("unobserve", async () => {
-	expect.assertions(1);
-	const col = new Collection<Document<IBigData>>("bigData");
-	const dispose = autorun(() => {
-		const { length } = col.docs;
-		col.docs.reduce((c, d) => c + d.data.number || 0, 0);
-	});
-	await col.ready();
-	expect(col.docs.length).toBe(1602);
-	dispose();
+test.skip('unobserve', async () => {
+  expect.assertions(1);
+  const col = new Collection<Document<IBigData>>('bigData');
+  const dispose = autorun(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { length } = col.docs;
+    length;
+    col.docs.reduce((c, d) => c + d.data.number || 0, 0);
+  });
+  await col.ready();
+  expect(col.docs.length).toBe(1602);
+  dispose();
 });

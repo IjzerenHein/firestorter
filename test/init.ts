@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app';
+import firebase from 'firebase';
 import 'firebase/firestore';
 import { autorun, reaction, observable, configure } from 'mobx';
 
@@ -13,7 +13,7 @@ import {
   mergeUpdateData,
   Mode,
 } from '../src';
-import firebaseConfig from './firebaseConfig.json';
+const firebaseConfig = require('./firebaseConfig.json');
 
 let firebaseApp;
 
@@ -22,7 +22,7 @@ beforeAll(() => {
 
   // Initialize firebase
   firebaseApp = firebase.initializeApp(firebaseConfig);
-  const firestore = firebase.firestore();
+  firebase.firestore();
 
   // Configure mobx strict-mode
   configure({ enforceActions: 'always', computedRequiresReaction: true });

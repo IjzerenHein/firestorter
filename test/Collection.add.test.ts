@@ -1,8 +1,8 @@
-import { define } from 'superstruct';
+import { struct } from 'superstruct';
 
 import { Collection, Document } from './init';
 
-const schema = define({
+const schema = struct({
   id: 'number',
 });
 

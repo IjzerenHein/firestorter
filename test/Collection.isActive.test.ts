@@ -1,18 +1,18 @@
-import { Collection, autorun } from './init';
+import { Collection, autorun, Mode } from './init';
 
 describe('off', () => {
   test('construct no ref', () => {
-    const col = new Collection(undefined, { mode: 'off' });
+    const col = new Collection(undefined, { mode: Mode.Off });
     expect(col.isActive).toBe(false);
   });
 
   test('construct with ref', () => {
-    const col = new Collection('todos', { mode: 'off' });
+    const col = new Collection('todos', { mode: Mode.Off });
     expect(col.isActive).toBe(false);
   });
 
   test('no ref, observed', () => {
-    const col = new Collection('todos', { mode: 'off' });
+    const col = new Collection('todos', { mode: Mode.Off });
     const dispose = autorun(() => {
       col.docs;
     });
@@ -24,28 +24,28 @@ describe('off', () => {
 
 describe('on', () => {
   test('construct no ref', () => {
-    const col = new Collection(undefined, { mode: 'on' });
+    const col = new Collection(undefined, { mode: Mode.On });
     expect(col.isActive).toBe(false);
   });
 
   test('construct with ref', () => {
-    const col = new Collection('todos', { mode: 'on' });
+    const col = new Collection('todos', { mode: Mode.On });
     expect(col.isActive).toBe(true);
     col.ref = undefined;
     expect(col.isActive).toBe(false);
   });
 
   test('reset ref', () => {
-    const col = new Collection('todos', { mode: 'on' });
+    const col = new Collection('todos', { mode: Mode.On });
     col.path = undefined;
     expect(col.isActive).toBe(false);
   });
 
   test('set', () => {
     const col = new Collection('todos');
-    col.mode = 'on';
+    col.mode = Mode.On;
     expect(col.isActive).toBe(true);
-    col.mode = 'off';
+    col.mode = Mode.Off;
     expect(col.isActive).toBe(false);
   });
 });
@@ -87,6 +87,7 @@ describe('auto', () => {
     expect(col.isActive).toBe(true);
     col.ref = undefined;
     expect(col.isActive).toBe(false);
+    // @ts-igore
     col.ref = 'todos';
     expect(col.isActive).toBe(true);
     dispose();
@@ -100,9 +101,9 @@ describe('auto', () => {
       col.docs.length;
     });
     expect(col.isActive).toBe(true);
-    col.mode = 'off';
+    col.mode = Mode.Off;
     expect(col.isActive).toBe(false);
-    col.mode = 'auto';
+    col.mode = Mode.Auto;
     expect(col.isActive).toBe(true);
     dispose();
     expect(col.isActive).toBe(false);

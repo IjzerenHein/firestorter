@@ -43,7 +43,7 @@ test('document data', async () => {
   const doc = new Document('settings/setting');
   expect(doc.isActive).toBe(false);
   const col = new Collection(() =>
-    doc.hasData ? `artists/${doc.data.topArtistId}/albums` : undefined
+    doc.hasData ? `artists/${(doc.data as any).topArtistId}/albums` : undefined
   );
   expect(doc.isActive).toBe(false);
   expect(col.isActive).toBe(false);
