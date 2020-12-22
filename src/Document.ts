@@ -1,10 +1,10 @@
-import { firestore } from "firebase";
+import type Firebase from "firebase";
 import {
 	observable,
 	reaction,
 	toJS,
 	runInAction,
-	IObservableValue
+	IObservableValue,
 } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore, IContext, IHasContext } from "./init";
@@ -15,7 +15,7 @@ import {
 	// IDocument,
 	IDocumentOptions,
 	IEnhancedObservableDelegate,
-	Mode
+	Mode,
 } from "./Types";
 const isEqual = require("lodash.isequal"); //tslint:disable-line
 
@@ -25,7 +25,7 @@ const isEqual = require("lodash.isequal"); //tslint:disable-line
 function resolveRef(
 	value: DocumentSource,
 	hasContext: IHasContext
-): firestore.DocumentReference | undefined {
+): Firebase.firestore.DocumentReference | undefined {
 	if (typeof value === "string") {
 		return getFirestore(hasContext).doc(value);
 	} else if (typeof value === "function") {
@@ -59,9 +59,9 @@ class Document<T extends object = object>
 	private sourceDisposerFn: () => void;
 	private refObservable: IObservableValue<any>;
 	private snapshotObservable: IObservableValue<
-		firestore.DocumentSnapshot | undefined
+		Firebase.firestore.DocumentSnapshot | undefined
 	>;
-	private snapshotOptions: firestore.SnapshotOptions;
+	private snapshotOptions: Firebase.firestore.SnapshotOptions;
 	private docSchema: (data: object) => object;
 	private isVerbose: boolean;
 	private debugInstanceName?: string;
@@ -83,7 +83,7 @@ class Document<T extends object = object>
 			mode,
 			debug,
 			debugName,
-			context
+			context,
 		} = options;
 		this.debugInstanceName = debugName;
 		this.sourceInput = source;
@@ -166,10 +166,10 @@ class Document<T extends object = object>
 	 * // Switch to another document
 	 * doc.ref = firebase.firestore().doc('albums/americana');
 	 */
-	public get ref(): firestore.DocumentReference | undefined {
+	public get ref(): Firebase.firestore.DocumentReference | undefined {
 		return this.refObservable.get();
 	}
-	public set ref(ref: firestore.DocumentReference | undefined) {
+	public set ref(ref: Firebase.firestore.DocumentReference | undefined) {
 		this.source = ref;
 	}
 
@@ -287,7 +287,7 @@ class Document<T extends object = object>
 	 *
 	 * @type {firestore.DocumentSnapshot}
 	 */
-	public get snapshot(): firestore.DocumentSnapshot | undefined {
+	public get snapshot(): Firebase.firestore.DocumentSnapshot | undefined {
 		return this.snapshotObservable.get();
 	}
 
@@ -578,7 +578,7 @@ class Document<T extends object = object>
 		return --this.collectionRefCount;
 	}
 	public updateFromCollectionSnapshot(
-		snapshot: firestore.DocumentSnapshot
+		snapshot: Firebase.firestore.DocumentSnapshot
 	): void {
 		return this._updateFromSnapshot(snapshot);
 	}
@@ -586,7 +586,9 @@ class Document<T extends object = object>
 	/**
 	 * @private
 	 */
-	public _updateFromSnapshot(snapshot?: firestore.DocumentSnapshot): void {
+	public _updateFromSnapshot(
+		snapshot?: Firebase.firestore.DocumentSnapshot
+	): void {
 		let data: any = snapshot ? snapshot.data(this.snapshotOptions) : undefined;
 		if (data) {
 			data = this._validateSchema(data);
@@ -611,7 +613,7 @@ class Document<T extends object = object>
 				readyResolve();
 			}
 		} else if (!this.readyResolveFn) {
-			this.readyPromise = new Promise(resolve => {
+			this.readyPromise = new Promise((resolve) => {
 				this.readyResolveFn = resolve;
 			});
 		}
@@ -620,7 +622,7 @@ class Document<T extends object = object>
 	/**
 	 * @private
 	 */
-	protected _onSnapshot(snapshot: firestore.DocumentSnapshot) {
+	protected _onSnapshot(snapshot: Firebase.firestore.DocumentSnapshot) {
 		runInAction(() => {
 			if (this.isVerbose) {
 				console.debug(`${this.debugName} - onSnapshot`);
@@ -677,12 +679,10 @@ class Document<T extends object = object>
 			if (this.onSnapshotUnsubscribeFn) {
 				this.onSnapshotUnsubscribeFn();
 			}
-			this.onSnapshotUnsubscribeFn = this.refObservable
-				.get()
-				.onSnapshot(
-					snapshot => this._onSnapshot(snapshot),
-					err => this._onSnapshotError(err)
-				);
+			this.onSnapshotUnsubscribeFn = this.refObservable.get().onSnapshot(
+				(snapshot) => this._onSnapshot(snapshot),
+				(err) => this._onSnapshotError(err)
+			);
 		} else if (!newActive && active) {
 			if (this.isVerbose) {
 				console.debug(
@@ -712,10 +712,10 @@ class Document<T extends object = object>
 			this.sourceDisposerFn = reaction(
 				() =>
 					(this.sourceInput as () =>
-						| firestore.DocumentReference
+						| Firebase.firestore.DocumentReference
 						| string
 						| undefined)(),
-				value => {
+				(value) => {
 					runInAction(() => {
 						// TODO, check whether path has changed
 						this.refObservable.set(resolveRef(value, this));

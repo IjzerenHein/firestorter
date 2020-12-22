@@ -3,12 +3,12 @@ import {
 	IObservableValue,
 	observable,
 	reaction,
-	runInAction
+	runInAction,
 } from "mobx";
 import { enhancedObservable } from "./enhancedObservable";
 import { getFirestore, IContext, IHasContext } from "./init";
 import { verifyMode } from "./Utils";
-import { firestore } from "firebase";
+import type Firebase from "firebase";
 import {
 	CollectionQuery,
 	CollectionSource,
@@ -18,7 +18,7 @@ import {
 	ICollection,
 	IDocumentOptions,
 	IEnhancedObservableDelegate,
-	Mode
+	Mode,
 } from "./Types";
 import Document from "./Document";
 
@@ -97,16 +97,16 @@ class Collection<T extends ICollectionDocument = Document>
 	implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
 	private sourceInput: CollectionSource;
 	private sourceCache: CollectionSource;
-	private sourceCacheRef: firestore.CollectionReference;
+	private sourceCacheRef: Firebase.firestore.CollectionReference;
 	private refDisposerFn: () => void;
 	private refObservable: IObservableValue<
-		firestore.CollectionReference | undefined
+		Firebase.firestore.CollectionReference | undefined
 	>;
 	private queryInput?: CollectionQuery;
 	private queryRefObservable: IObservableValue<
-		firestore.Query | null | undefined
+		Firebase.firestore.Query | null | undefined
 	>;
-	private onSnapshotRefCache?: firestore.Query;
+	private onSnapshotRefCache?: Firebase.firestore.Query;
 	private modeObservable: IObservableValue<Mode>;
 	private isLoadingObservable: IObservableValue<boolean>;
 	private isLoadedObservable: IObservableValue<boolean>;
@@ -143,7 +143,7 @@ class Collection<T extends ICollectionDocument = Document>
 			minimizeUpdates = false,
 			initialLocalSnapshotDetectTime = 50,
 			initialLocalSnapshotDebounceTime = 1000,
-			context
+			context,
 		} = options;
 		this.isVerbose = debug || false;
 		this.debugInstanceName = debugName;
@@ -219,14 +219,14 @@ class Collection<T extends ICollectionDocument = Document>
 	 * // Switch to another collection
 	 * col.ref = firebase.firestore().collection('albums/americana/tracks');
 	 */
-	public get ref(): firestore.CollectionReference | undefined {
+	public get ref(): Firebase.firestore.CollectionReference | undefined {
 		let ref = this.refObservable.get();
 		if (!this.refDisposerFn) {
 			ref = this._resolveRef(this.sourceInput);
 		}
 		return ref;
 	}
-	public set ref(ref: firestore.CollectionReference | undefined) {
+	public set ref(ref: Firebase.firestore.CollectionReference | undefined) {
 		this.source = ref;
 	}
 
@@ -359,7 +359,7 @@ class Collection<T extends ICollectionDocument = Document>
 	 * null -> the query function returned `null` to disable the collection
 	 * undefined -> no query defined, use collection ref instead
 	 */
-	public get queryRef(): firestore.Query | null | undefined {
+	public get queryRef(): Firebase.firestore.Query | null | undefined {
 		return this.queryRefObservable.get();
 	}
 
@@ -582,8 +582,8 @@ class Collection<T extends ICollectionDocument = Document>
 				id: "",
 				isEqual: () => false,
 				metadata: undefined,
-				ref: undefined
-			}
+				ref: undefined,
+			},
 		});
 
 		// Add to firestore
@@ -591,7 +591,7 @@ class Collection<T extends ICollectionDocument = Document>
 		const snapshot = await ref2.get();
 		return this.createDocument(snapshot.ref, {
 			context: this.context,
-			snapshot
+			snapshot,
 		});
 	}
 
@@ -731,13 +731,13 @@ class Collection<T extends ICollectionDocument = Document>
 				readyResolve();
 			}
 		} else if (!this.readyResolveFn) {
-			this.readyPromise = new Promise(resolve => {
+			this.readyPromise = new Promise((resolve) => {
 				this.readyResolveFn = resolve;
 			});
 		}
 	}
 
-	protected _resolveRef(source): firestore.CollectionReference {
+	protected _resolveRef(source): Firebase.firestore.CollectionReference {
 		if (this.sourceCache === source) {
 			return this.sourceCacheRef;
 		}
@@ -756,9 +756,9 @@ class Collection<T extends ICollectionDocument = Document>
 	}
 
 	protected _resolveQuery(
-		collectionRef: firestore.CollectionReference,
+		collectionRef: Firebase.firestore.CollectionReference,
 		query?: CollectionQuery
-	): firestore.Query | null | undefined {
+	): Firebase.firestore.Query | null | undefined {
 		let ref: any = query;
 		if (typeof query === "function") {
 			ref = query(collectionRef);
@@ -788,7 +788,7 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	protected _onSnapshot(snapshot: firestore.QuerySnapshot): void {
+	protected _onSnapshot(snapshot: Firebase.firestore.QuerySnapshot): void {
 		// Firestore sometimes returns multiple snapshots initially.
 		// The first one containing cached results, followed by a second
 		// snapshot which was fetched from the cloud.
@@ -842,29 +842,33 @@ class Collection<T extends ICollectionDocument = Document>
 	/**
 	 * @private
 	 */
-	private _updateFromSnapshot(snapshot?: firestore.QuerySnapshot): void {
+	private _updateFromSnapshot(
+		snapshot?: Firebase.firestore.QuerySnapshot
+	): void {
 		const newDocs = [];
 		if (snapshot) {
-			snapshot.docs.forEach((docSnapshot: firestore.DocumentSnapshot) => {
-				let doc = this.docLookup[docSnapshot.id];
-				try {
-					if (doc) {
-						doc.updateFromCollectionSnapshot(docSnapshot);
-					} else {
-						doc = this.createDocument(docSnapshot.ref, {
-							context: this.context,
-							snapshot: docSnapshot
-						});
-						this.docLookup[doc.id] = doc;
+			snapshot.docs.forEach(
+				(docSnapshot: Firebase.firestore.DocumentSnapshot) => {
+					let doc = this.docLookup[docSnapshot.id];
+					try {
+						if (doc) {
+							doc.updateFromCollectionSnapshot(docSnapshot);
+						} else {
+							doc = this.createDocument(docSnapshot.ref, {
+								context: this.context,
+								snapshot: docSnapshot,
+							});
+							this.docLookup[doc.id] = doc;
+						}
+						doc.addCollectionRef();
+						newDocs.push(doc);
+					} catch (err) {
+						console.error(err.message);
 					}
-					doc.addCollectionRef();
-					newDocs.push(doc);
-				} catch (err) {
-					console.error(err.message);
 				}
-			});
+			);
 		}
-		this.docsObservable.forEach(doc => {
+		this.docsObservable.forEach((doc) => {
 			if (!doc.releaseCollectionRef()) {
 				delete this.docLookup[doc.id || ""];
 			}
@@ -961,7 +965,7 @@ class Collection<T extends ICollectionDocument = Document>
 					}
 					return {
 						queryRef2,
-						sourceRef
+						sourceRef,
 					};
 				},
 				({ sourceRef, queryRef2 }) => {
@@ -998,7 +1002,7 @@ class Collection<T extends ICollectionDocument = Document>
 		if (!ref) {
 			if (this.docsObservable.length) {
 				this._updateFromSnapshot({
-					docChanges: (options?: firestore.SnapshotListenOptions) => {
+					docChanges: (options?: Firebase.firestore.SnapshotListenOptions) => {
 						// tslint:disable-next-line
 						options;
 						return [];
@@ -1009,7 +1013,7 @@ class Collection<T extends ICollectionDocument = Document>
 					isEqual: () => false,
 					metadata: undefined,
 					query: queryRef,
-					size: 0
+					size: 0,
 				});
 			}
 			return;
@@ -1027,8 +1031,8 @@ class Collection<T extends ICollectionDocument = Document>
 		this.isLoadingObservable.set(true);
 		this.initialLocalSnapshotStartTime = Date.now();
 		this.onSnapshotUnsubscribe = ref.onSnapshot(
-			snapshot => this._onSnapshot(snapshot),
-			err => this._onSnapshotError(err)
+			(snapshot) => this._onSnapshot(snapshot),
+			(err) => this._onSnapshotError(err)
 		);
 	}
 }

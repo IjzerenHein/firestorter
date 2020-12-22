@@ -3,9 +3,9 @@ import {
 	autorun,
 	computed,
 	decorate,
-	IObservableArray
+	IObservableArray,
 } from "mobx";
-import { firestore } from "firebase";
+import type Firebase from "firebase";
 import Collection from "./Collection";
 import Document from "./Document";
 import {
@@ -14,7 +14,7 @@ import {
 	IDocumentOptions,
 	CollectionSource,
 	ICollectionDocument,
-	IEnhancedObservableDelegate
+	IEnhancedObservableDelegate,
 } from "./Types";
 import { IContext, IHasContext } from "./init";
 import { enhancedObservable } from "./enhancedObservable";
@@ -25,8 +25,8 @@ export type AggregateCollectionFilterBy<T> = (doc: T) => boolean;
 export interface IAggregateCollectionQuery {
 	key: string;
 	query: (
-		ref: firestore.CollectionReference
-	) => firestore.Query | null | undefined;
+		ref: Firebase.firestore.CollectionReference
+	) => Firebase.firestore.Query | null | undefined;
 }
 export type AggregateCollectionQueries<Y> = Y[] | null;
 export type AggregateCollectionQueriesFn<
@@ -93,7 +93,7 @@ class AggregateCollection<
 	private observedRefCount: number = 0;
 	private disposer: (() => any) | void;
 	private collections: IObservableArray<Collection<T>>;
-	private prevCollections: Array<Collection<T>>;
+	private prevCollections: Collection<T>[];
 	private collectionRecycleMap: {
 		[key: string]: Collection<T>;
 	};
@@ -143,11 +143,11 @@ class AggregateCollection<
 
 		// Aggregrate all docs from the queries
 		let hasAllData = true;
-		this.collections.forEach(col => {
+		this.collections.forEach((col) => {
 			if (col.isLoading) {
 				hasAllData = false;
 			}
-			col.docs.forEach(doc => docs.push(doc));
+			col.docs.forEach((doc) => docs.push(doc));
 		});
 
 		// If new queries have been added but have not yet
@@ -156,8 +156,8 @@ class AggregateCollection<
 		if (!hasAllData && this.prevCollections.length) {
 			// console.log('usingPrevQueries');
 			docs = [];
-			this.prevCollections.forEach(col => {
-				col.docs.forEach(doc => docs.push(doc));
+			this.prevCollections.forEach((col) => {
+				col.docs.forEach((doc) => docs.push(doc));
 			});
 		} else if (hasAllData) {
 			// console.log('+++ ALL DATA AVAIL');
@@ -195,7 +195,7 @@ class AggregateCollection<
 	 *   console.log(col.docs.length);
 	 * });
 	 */
-	public get cols(): Array<Collection<T>> {
+	public get cols(): Collection<T>[] {
 		return this.collections;
 	}
 
@@ -306,21 +306,21 @@ class AggregateCollection<
 
 		// Copy all current documents into the document recyle map
 		this.documentRecycleMap = {};
-		Object.values(this.collectionRecycleMap).forEach(query => {
-			query.docs.forEach(doc => {
+		Object.values(this.collectionRecycleMap).forEach((query) => {
+			query.docs.forEach((doc) => {
 				this.documentRecycleMap[doc.id] = doc;
 			});
 		});
 		// console.log(Object.keys(this._documentRecycleMap));
 
-		const cols = queries.map(query => {
+		const cols = queries.map((query) => {
 			let col = this.collectionRecycleMap[query.key];
 			if (!col) {
 				col = new Collection(this.collectionSource, {
 					createDocument: this._onCreateDocument,
 					debug: this.debug,
 					debugName: this.debugName + ".col: " + query.key,
-					query: ref => (ref ? query.query(ref) : ref)
+					query: (ref) => (ref ? query.query(ref) : ref),
 				});
 			}
 			return col;
