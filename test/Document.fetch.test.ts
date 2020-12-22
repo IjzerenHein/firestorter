@@ -20,7 +20,7 @@ test('fetch', async () => {
   expect(doc.isLoading).toBe(false);
   expect(doc.isLoaded).toBe(true);
   expect(doc.hasData).toBe(true);
-  expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
+  expect((doc.data as any).topAlbumId).toBe('TheColourAndTheShape');
 });
 
 test('already in progress', async () => {
@@ -45,5 +45,5 @@ test('ready', async () => {
   await doc.ready();
   expect(doc.isLoading).toBe(false);
   expect(doc.isLoaded).toBe(true);
-  expect(doc.data.topAlbumId).toBe('TheColourAndTheShape');
+  expect((doc.data as any).topAlbumId).toBe('TheColourAndTheShape');
 });

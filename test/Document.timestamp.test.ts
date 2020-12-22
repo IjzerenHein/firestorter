@@ -1,5 +1,5 @@
 import { Document, getFirebase, isTimestamp } from './init';
-import { define } from 'superstruct';
+import { struct } from 'superstruct';
 
 interface ISetting {
   date: {
@@ -8,7 +8,7 @@ interface ISetting {
   };
 }
 
-const TimestampSchema = define({
+const TimestampSchema = struct({
   date: isTimestamp,
 });
 
@@ -55,7 +55,6 @@ test('write timestamp with schema', async () => {
   const doc = new Document<ISetting>('settings/TimeStampTest', {
     schema: TimestampSchema,
   });
-  const date = new Date();
   const timestamp = getFirebase().firestore.Timestamp.fromDate(new Date());
   await doc.set({
     date: timestamp,

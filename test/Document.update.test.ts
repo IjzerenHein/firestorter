@@ -1,8 +1,8 @@
-import { define } from 'superstruct';
+import { struct } from 'superstruct';
 
 import { Document, firebase, getFirebase } from './init';
 
-const ArtistSchema = define({
+const ArtistSchema = struct({
   genre: 'string',
   memberCount: 'number?',
   members: 'object?',
@@ -11,7 +11,7 @@ const ArtistSchema = define({
 
 test('update field', async () => {
   expect.assertions(2);
-  const doc = new Document('artists/FooFighters');
+  const doc = new Document<any>('artists/FooFighters');
   await doc.update({
     memberCount: 4,
   });
@@ -22,7 +22,7 @@ test('update field', async () => {
 
 test('update field with schema', async () => {
   expect.assertions(1);
-  const doc = new Document('artists/FooFighters', {
+  const doc = new Document<any>('artists/FooFighters', {
     schema: ArtistSchema,
   });
   await doc.fetch();
@@ -35,7 +35,7 @@ test('update field with schema', async () => {
 
 test('update field-path with schema', async () => {
   expect.assertions(1);
-  const doc = new Document('artists/FooFighters', {
+  const doc = new Document<any>('artists/FooFighters', {
     schema: ArtistSchema,
   });
   await doc.fetch();
@@ -48,7 +48,7 @@ test('update field-path with schema', async () => {
 
 test('delete field with schema', async () => {
   expect.assertions(2);
-  const doc = new Document('artists/FooFighters', {
+  const doc = new Document<any>('artists/FooFighters', {
     schema: ArtistSchema,
   });
   await doc.fetch();
@@ -62,7 +62,7 @@ test('delete field with schema', async () => {
 
 test('delete field-path with schema', async () => {
   expect.assertions(1);
-  const doc = new Document('artists/FooFighters', {
+  const doc = new Document<any>('artists/FooFighters', {
     schema: ArtistSchema,
   });
   await doc.fetch();

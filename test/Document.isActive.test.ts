@@ -1,18 +1,18 @@
-import { Document, autorun } from './init';
+import { Document, autorun, Mode } from './init';
 
 describe('off', () => {
   test('construct no ref', () => {
-    const doc = new Document(undefined, { mode: 'off' });
+    const doc = new Document(undefined, { mode: Mode.Off });
     expect(doc.isActive).toBe(false);
   });
 
   test('construct with ref', () => {
-    const doc = new Document('todos/todo', { mode: 'off' });
+    const doc = new Document('todos/todo', { mode: Mode.Off });
     expect(doc.isActive).toBe(false);
   });
 
   test('no ref, observed', () => {
-    const doc = new Document('todos/todo', { mode: 'off' });
+    const doc = new Document('todos/todo', { mode: Mode.Off });
     const dispose = autorun(() => {
       doc.data;
     });
@@ -24,28 +24,28 @@ describe('off', () => {
 
 describe('on', () => {
   test('construct no ref', () => {
-    const doc = new Document(undefined, { mode: 'on' });
+    const doc = new Document(undefined, { mode: Mode.On });
     expect(doc.isActive).toBe(false);
   });
 
   test('construct with ref', () => {
-    const doc = new Document('todos/todo', { mode: 'on' });
+    const doc = new Document('todos/todo', { mode: Mode.On });
     expect(doc.isActive).toBe(true);
     doc.ref = undefined;
     expect(doc.isActive).toBe(false);
   });
 
   test('reset ref', () => {
-    const doc = new Document('todos/todo', { mode: 'on' });
+    const doc = new Document('todos/todo', { mode: Mode.On });
     doc.path = undefined;
     expect(doc.isActive).toBe(false);
   });
 
   test('set', () => {
     const doc = new Document('todos/todo');
-    doc.mode = 'on';
+    doc.mode = Mode.On;
     expect(doc.isActive).toBe(true);
-    doc.mode = 'off';
+    doc.mode = Mode.Off;
     expect(doc.isActive).toBe(false);
   });
 });
@@ -87,6 +87,7 @@ describe('auto', () => {
     expect(doc.isActive).toBe(true);
     doc.ref = undefined;
     expect(doc.isActive).toBe(false);
+    // @ts-ignore
     doc.ref = 'todos/todo';
     expect(doc.isActive).toBe(true);
     dispose();
@@ -100,9 +101,9 @@ describe('auto', () => {
       doc.data;
     });
     expect(doc.isActive).toBe(true);
-    doc.mode = 'off';
+    doc.mode = Mode.Off;
     expect(doc.isActive).toBe(false);
-    doc.mode = 'auto';
+    doc.mode = Mode.Auto;
     expect(doc.isActive).toBe(true);
     dispose();
     expect(doc.isActive).toBe(false);

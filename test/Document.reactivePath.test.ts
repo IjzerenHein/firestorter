@@ -1,6 +1,6 @@
 import { runInAction } from 'mobx';
 
-import { Document, Collection, observable } from './init';
+import { Document, Collection, observable, Mode } from './init';
 
 test('no path', () => {
   const doc = new Document(() => undefined);
@@ -46,8 +46,8 @@ test('document path', () => {
 
 test('document data', async () => {
   expect.assertions(3);
-  const doc = new Document('artists/FooFighters', { mode: 'off' });
-  const subDoc = new Document(() => `${doc.path}/albums/${doc.data.topAlbumId}`);
+  const doc = new Document('artists/FooFighters', { mode: Mode.Off });
+  const subDoc = new Document(() => `${doc.path}/albums/${(doc.data as any).topAlbumId}`);
   expect(doc.isActive).toBe(false);
   expect(subDoc.isActive).toBe(false);
   await doc.fetch();
@@ -57,7 +57,7 @@ test('document data', async () => {
 test('document data 2', async () => {
   expect.assertions(3);
   const doc = new Document('artists/FooFighters');
-  const subDoc = new Document(() => `${doc.path}/albums/${doc.data.topAlbumId}`);
+  const subDoc = new Document(() => `${doc.path}/albums/${(doc.data as any).topAlbumId}`);
   expect(doc.isActive).toBe(true);
   expect(subDoc.isActive).toBe(false);
   await doc.ready();

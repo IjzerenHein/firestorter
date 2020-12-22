@@ -1,9 +1,8 @@
-import { Document } from './init';
-import { define } from 'superstruct';
-import { ICollectionDocument } from '../src/Types';
-import { firestore } from 'firebase';
+import { struct } from 'superstruct';
 
-const ArtistSchema = define({
+import { Document } from './init';
+
+const ArtistSchema = struct({
   genre: 'string',
   memberCount: 'number?',
   members: 'object?',

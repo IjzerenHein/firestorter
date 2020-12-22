@@ -1,14 +1,15 @@
-import { Document } from "./init";
+import { Document } from './init';
 
-test("no generic type specified", () => {
-	const doc = new Document();
+test('no generic type specified', () => {
+  const doc = new Document();
+  doc.id;
 });
 
-test("default generic type specified", () => {
-	type TodoType = {
-		finished: boolean;
-		message: string;
-	};
-	const doc = new Document<TodoType>();
-	doc.data.finished;
+test('default generic type specified', () => {
+  type TodoType = {
+    finished: boolean;
+    message: string;
+  };
+  const doc = new Document<TodoType>();
+  doc.data.finished;
 });
