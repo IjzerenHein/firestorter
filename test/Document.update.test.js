@@ -1,8 +1,8 @@
-import { struct } from 'superstruct';
+import { define } from 'superstruct';
 
 import { Document, firebase, getFirebase } from './init';
 
-const ArtistSchema = struct({
+const ArtistSchema = define({
   genre: 'string',
   memberCount: 'number?',
   members: 'object?',

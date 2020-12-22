@@ -1,5 +1,4 @@
 import * as firebase from 'firebase/app';
-
 import 'firebase/firestore';
 import { autorun, reaction, observable, configure } from 'mobx';
 
