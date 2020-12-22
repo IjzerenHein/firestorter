@@ -11,7 +11,8 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitThis": false,
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"resolveJsonModule": true,
 	},
-	"include": ["./src/**/*.ts"]
+	"include": ["./src", "./test"]
 }
