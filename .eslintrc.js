@@ -24,7 +24,7 @@ module.exports = {
 				'@typescript-eslint/naming-convention': [
 					'warn',
 					{ selector: 'typeLike', format: ['PascalCase'] },
-					{ selector: 'enumMember', format: ['UPPER_CASE'] },
+					/* { selector: 'enumMember', format: ['UPPER_CASE'] }, */
 				],
 				'no-unused-expressions': 'off',
 				'@typescript-eslint/no-unused-expressions': 'warn',

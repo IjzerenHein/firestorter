@@ -1,15 +1,15 @@
-import type Firebase from "firebase";
+import type Firebase from 'firebase';
 
-export const ModuleName = "firestorter";
+export const ModuleName = 'firestorter';
 
 export interface IContext {
-	readonly firebase: typeof Firebase;
-	readonly app: Firebase.app.App;
-	readonly firestore: Firebase.firestore.Firestore;
+  readonly firebase: typeof Firebase;
+  readonly app: Firebase.app.App;
+  readonly firestore: Firebase.firestore.Firestore;
 }
 
 export interface IHasContext {
-	readonly context?: IContext;
+  readonly context?: IContext;
 }
 
 let globalContext: IContext;
@@ -39,17 +39,17 @@ let globalContext: IContext;
  * ...
  */
 function initFirestorter(config: {
-	firebase: typeof Firebase;
-	app?: string | Firebase.app.App;
-	firestore?: Firebase.firestore.Firestore;
+  firebase: typeof Firebase;
+  app?: string | Firebase.app.App;
+  firestore?: Firebase.firestore.Firestore;
 }): void {
-	if (globalContext) {
-		throw new Error(
-			"Firestorter already initialized, did you accidentally call `initFirestorter()` again?"
-		);
-	}
+  if (globalContext) {
+    throw new Error(
+      'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
+    );
+  }
 
-	globalContext = makeFirestorterContext(config);
+  globalContext = makeFirestorterContext(config);
 }
 
 /**
@@ -88,96 +88,94 @@ function initFirestorter(config: {
  * })
  */
 export function makeFirestorterContext(config: {
-	firebase: typeof Firebase;
-	app?: string | Firebase.app.App;
-	firestore?: Firebase.firestore.Firestore;
+  firebase: typeof Firebase;
+  app?: string | Firebase.app.App;
+  firestore?: Firebase.firestore.Firestore;
 }): IContext {
-	// Set firebase object
-	if (!config.firebase) {
-		throw new Error("Missing argument `config.firebase`");
-	}
-	const globalFirebase = config.firebase;
+  // Set firebase object
+  if (!config.firebase) {
+    throw new Error('Missing argument `config.firebase`');
+  }
+  const globalFirebase = config.firebase;
 
-	// Get app instance
-	const globalFirebaseApp = config.app
-		? typeof config.app === "string"
-			? globalFirebase.app(config.app)
-			: config.app
-		: globalFirebase.app();
+  // Get app instance
+  const globalFirebaseApp = config.app
+    ? typeof config.app === 'string'
+      ? globalFirebase.app(config.app)
+      : config.app
+    : globalFirebase.app();
 
-	// Get firestore instance
-	const globalFirestore = config.firestore || globalFirebaseApp.firestore();
-	if (!globalFirestore) {
-		throw new Error(
-			"firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';` ?"
-		);
-	}
+  // Get firestore instance
+  const globalFirestore = config.firestore || globalFirebaseApp.firestore();
+  if (!globalFirestore) {
+    throw new Error(
+      "firebase.firestore() returned `undefined`, did you forget `import 'firebase/firestore';` ?"
+    );
+  }
 
-	// Verify existence of firestore & fieldvalue
-	try {
-		globalFirebase.firestore.FieldValue.delete();
-	} catch (err) {
-		throw new Error(
-			"Invalid `firebase` argument specified: `firebase.firestore.FieldValue.delete` does not exist"
-		);
-	}
+  // Verify existence of firestore & fieldvalue
+  try {
+    globalFirebase.firestore.FieldValue.delete();
+  } catch (err) {
+    throw new Error(
+      'Invalid `firebase` argument specified: `firebase.firestore.FieldValue.delete` does not exist'
+    );
+  }
 
-	return {
-		app: globalFirebaseApp,
-		firebase: globalFirebase,
-		firestore: globalFirestore,
-	};
+  return {
+    app: globalFirebaseApp,
+    firebase: globalFirebase,
+    firestore: globalFirestore,
+  };
 }
 
 export function makeContext(config) {
-	console.warn(
-		`Firestorter \'makeContext\' function has been deprecated, use \`makeFirestorterContext\` instead`
-	);
-	return makeFirestorterContext(config);
+  console.warn(
+    `Firestorter 'makeContext' function has been deprecated, use \`makeFirestorterContext\` instead`
+  );
+  return makeFirestorterContext(config);
 }
 
 function getContext(obj?: IHasContext): IContext {
-	if (obj && obj.context) {
-		return obj.context;
-	}
+  if (obj?.context) {
+    return obj.context;
+  }
 
-	if (globalContext) {
-		return globalContext;
-	}
+  if (globalContext) {
+    return globalContext;
+  }
 
-	if (obj) {
-		throw new Error(
-			`No context for ${obj} or globally. Did you forget to call \`initFirestorter\` or pass {context: ...} option?`
-		);
-	}
+  if (obj) {
+    throw new Error(
+      `No context for ${obj} or globally. Did you forget to call \`initFirestorter\` or pass {context: ...} option?`
+    );
+  }
 
-	throw new Error(
-		`No global Firestore context. Did you forget to call \`initFirestorter\` ?`
-	);
+  throw new Error(`No global Firestore context. Did you forget to call \`initFirestorter\` ?`);
 }
 
 function contextWithProperty(key: keyof IContext, obj?: IHasContext) {
-	try {
-		const context = getContext(obj);
-		if (context[key]) {
-			return context;
-		}
-		throw new Error(`Context does not contain ${key}`);
-	} catch (err) {
-		throw new Error(`${ModuleName}: cannot get ${key}: ${err}`);
-	}
+  try {
+    const context = getContext(obj);
+    if (context[key]) {
+      return context;
+    }
+    throw new Error(`Context does not contain ${key}`);
+  } catch (err) {
+    throw new Error(`${ModuleName}: cannot get ${key}: ${err}`);
+  }
 }
 
 function getFirebase(obj?: IHasContext): typeof Firebase {
-	return contextWithProperty("firebase", obj).firebase;
+  return contextWithProperty('firebase', obj).firebase;
 }
 
 function getFirebaseApp(obj?: IHasContext): Firebase.app.App {
-	return contextWithProperty("app", obj).app;
+  return contextWithProperty('app', obj).app;
 }
 
 function getFirestore(obj?: IHasContext): Firebase.firestore.Firestore {
-	return contextWithProperty("firestore", obj).firestore;
+  return contextWithProperty('firestore', obj).firestore;
 }
 
 export { initFirestorter, getFirestore, getFirebase, getFirebaseApp };
