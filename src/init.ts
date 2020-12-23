@@ -12,6 +12,12 @@ export interface IHasContext {
   readonly context?: IContext;
 }
 
+export type FirestorterConfig = {
+  firebase: typeof Firebase;
+  app?: string | Firebase.app.App;
+  firestore?: Firebase.firestore.Firestore;
+};
+
 let globalContext: IContext;
 
 /**
@@ -38,11 +44,7 @@ let globalContext: IContext;
  * const album = new Document('artists/Metallica/albums/BlackAlbum');
  * ...
  */
-function initFirestorter(config: {
-  firebase: typeof Firebase;
-  app?: string | Firebase.app.App;
-  firestore?: Firebase.firestore.Firestore;
-}): void {
+function initFirestorter(config: FirestorterConfig): void {
   if (globalContext) {
     throw new Error(
       'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
@@ -87,11 +89,7 @@ function initFirestorter(config: {
  *   ...
  * })
  */
-export function makeFirestorterContext(config: {
-  firebase: typeof Firebase;
-  app?: string | Firebase.app.App;
-  firestore?: Firebase.firestore.Firestore;
-}): IContext {
+export function makeFirestorterContext(config: FirestorterConfig): IContext {
   // Set firebase object
   if (!config.firebase) {
     throw new Error('Missing argument `config.firebase`');
@@ -129,7 +127,7 @@ export function makeFirestorterContext(config: {
   };
 }
 
-export function makeContext(config) {
+export function makeContext(config: FirestorterConfig) {
   console.warn(
     `Firestorter 'makeContext' function has been deprecated, use \`makeFirestorterContext\` instead`
   );

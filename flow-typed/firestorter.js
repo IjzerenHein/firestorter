@@ -16,6 +16,12 @@ export interface IHasContext {
 	+context?: IContext;
 }
 
+export type FirestorterConfig = {
+	firebase: typeof firebase;
+	app?: string | app.App;
+	firestore?: firestore.Firestore;
+};
+
 export type DocumentSource =
 	| firestore.DocumentReference
 	| string
