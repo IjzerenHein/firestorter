@@ -40,7 +40,7 @@ export interface IAggregateCollectionOptions<T, Y extends IAggregateCollectionQu
 }
 
 /**
- * Collection that aggregates the documents of one or more collections into
+ * Collection that aggregates documents from multiple queries into
  * a single, easy accessible collection.
  *
  * AggregateCollection is driven by the `queries` function, which defines what
