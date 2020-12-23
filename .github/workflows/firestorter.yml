@@ -13,9 +13,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      # Yarn install
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -26,6 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn install --ignore-scripts --frozen-lockfile
+      # Run verifications
       - run: yarn test
       - run: yarn lint --max-warnings 0
       - run: yarn build
