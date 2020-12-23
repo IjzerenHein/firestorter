@@ -1,0 +1,27 @@
+name: mobx5-4
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [master]
+    paths-ignore:
+      - examples/**
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - examples/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install --ignore-scripts --frozen-lockfile
+      # Mobx 5
+      - run: yarn add mobx@5
+      - run: yarn build
+      - run: yarn test
+      # Mobx 4
+      - run: yarn add mobx@4
+      - run: yarn build
+      - run: yarn test
