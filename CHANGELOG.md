@@ -4,15 +4,17 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
-## [3.0.0] - 2020-12-23
+## [3.0.1] - 2020-12-23
 
 ### Added
 
 - Add support for MobX 6! 🤘🤘🤘🤘🤘🤘
+- Add `FirestorterConfig` type definition.
 
 ### Removed
 
 - MobX 5 and 4 are no longer supported. Use `firestorter@2` instead.
+- Removed the deprecated `makeContext` function. Use `makeFirestorterContext` instead.
 
 ## [2.0.1] - 2019-12-02
 
