@@ -1,4 +1,4 @@
-name: Firestorter
+name: build
 
 on:
   workflow_dispatch: {}
