@@ -4,6 +4,9 @@ Install Firestorter and MobX:
 
     yarn add firestorter mobx mobx-react
 
+Or when still using MobX 5 or 4, install the v2 version:
+
+	yarn add firestorter@2
 
 ## Usage on the web
 
@@ -14,7 +17,7 @@ To use Firestorter on the web, also install the [Firebase JavaScript SDK](https:
 After that, initialize Firebase and Firestorter:
 
 ```js
-import * as firebase from 'firebase/app';
+import firebase from 'firebase';
 import 'firebase/firestore';
 import { initFirestorter } from 'firestorter';
 
