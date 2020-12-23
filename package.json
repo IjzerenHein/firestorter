@@ -43,7 +43,8 @@
     "docs:utilityfunctions": "jsdoc2md --files 'src/Utils.ts' --configure jsdoc2md.json > ./docs/api/UtilityFunctions.md",
     "docs:geofunctions": "jsdoc2md --files 'src/GeoHash.ts' --configure jsdoc2md.json > ./docs/api/GeoFunctions.md",
     "docs:build": "yarn docs:document && yarn docs:collection && yarn docs:aggregatecollection && yarn docs:geoquery && yarn docs:types && yarn docs:initfunctions && yarn docs:geofunctions && yarn docs:utilityfunctions",
-    "docs:serve": "docsify serve docs"
+    "docs:serve": "docsify serve docs",
+    "docs:ci": "yarn docs:build && node ./scripts/checkUncommittedDocChanges.js"
   },
   "dependencies": {
     "lodash.isequal": "^4.5.0"
@@ -57,6 +58,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
+    "@expo/spawn-async": "^1.5.0",
     "@release-notes/cli": "^0.3.0",
     "@types/jest": "^26.0.19",
     "@types/lodash.isequal": "^4.5.5",
