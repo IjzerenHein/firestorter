@@ -18,6 +18,14 @@
 * 🚀 Fast, only fetches and re-renders data when needed
 * 🤘 No clutter, no complex stores/providers/actions/reducers, just go
 
+The latest version is compatible with **MobX 6**
+
+```sh
+yarn add firestorter
+```
+
+> When using **MobX 5** or **4**, install the v2 version: `yarn add firestorter@2`
+
 **1. Initialize**
 
 ```js
