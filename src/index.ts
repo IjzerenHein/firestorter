@@ -23,7 +23,6 @@ import {
   getFirestore,
   initFirestorter,
   makeFirestorterContext,
-  makeContext, // Deprecated
   IContext,
 } from './init';
 
@@ -39,7 +38,6 @@ export {
   Mode,
   isTimestamp,
   makeFirestorterContext,
-  makeContext, // Deprecated
   IContext,
   // Geo queries
   GeoQuery,

@@ -127,13 +127,6 @@ export function makeFirestorterContext(config: FirestorterConfig): IContext {
   };
 }
 
-export function makeContext(config: FirestorterConfig) {
-  console.warn(
-    `Firestorter 'makeContext' function has been deprecated, use \`makeFirestorterContext\` instead`
-  );
-  return makeFirestorterContext(config);
-}
-
 function getContext(obj?: IHasContext): IContext {
   if (obj?.context) {
     return obj.context;
