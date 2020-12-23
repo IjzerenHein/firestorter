@@ -1,4 +1,4 @@
-name: Firestorter
+name: build
 
 on:
   workflow_dispatch: {}
@@ -8,7 +8,7 @@ on:
       - examples/**
   pull_request:
     branches: [master]
-    paths:
+    paths-ignore:
       - examples/**
 
 jobs:
