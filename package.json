@@ -1,6 +1,6 @@
 {
   "name": "firestorter",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Simple & super fast Firestore to React bindings using Mobx observables",
   "keywords": [
     "react-firestore-mobox",
@@ -49,7 +49,7 @@
     "lodash.isequal": "^4.5.0"
   },
   "peerDependencies": {
-    "mobx": ">= 4"
+    "mobx": ">= 6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -70,7 +70,7 @@
     "jest": "^26.6.3",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-to-markdown": "^6.0.1",
-    "mobx": "^5.14.0",
+    "mobx": "^6.0.4",
     "prettier": "^2.2.1",
     "rollup": "^2.35.1",
     "rollup-plugin-filesize": "^9.1.0",

@@ -1,5 +1,5 @@
 import type Firebase from 'firebase';
-import { runInAction, autorun, computed, decorate, IObservableArray } from 'mobx';
+import { runInAction, autorun, computed, makeObservable, IObservableArray } from 'mobx';
 
 import Collection from './Collection';
 import Document from './Document';
@@ -93,6 +93,10 @@ class AggregateCollection<
   private ctx?: IContext;
 
   constructor(source: CollectionSource, options: IAggregateCollectionOptions<T, Y>) {
+    makeObservable(this, {
+      docs: computed,
+    });
+
     this.collectionSource = source;
     if (options.createDocument) {
       this.createDocument = options.createDocument;
@@ -317,7 +321,5 @@ class AggregateCollection<
     }
   }
 }
-
-decorate(AggregateCollection, { docs: computed });
 
 export default AggregateCollection;
