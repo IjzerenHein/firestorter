@@ -4,12 +4,21 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [3.0.0] - 2020-12-23
+
+### Added
+
+- Add support for MobX 6! 🤘🤘🤘🤘🤘🤘
+
+### Removed
+
+- MobX 5 and 4 are no longer supported. Use `firestorter@2` instead.
+
 ## [2.0.1] - 2019-12-02
 
 ### Added
 
 - Added new `isLoaded` property for checking whether data/docs have been loaded initially
-
 
 ## [2.0.0] - 2019-11-07
 
