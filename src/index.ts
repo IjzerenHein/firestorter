@@ -23,7 +23,6 @@ import {
   getFirestore,
   initFirestorter,
   makeFirestorterContext,
-  IContext,
 } from './init';
 
 export {
@@ -38,7 +37,6 @@ export {
   Mode,
   isTimestamp,
   makeFirestorterContext,
-  IContext,
   // Geo queries
   GeoQuery,
   decodeGeohash,
@@ -53,3 +51,24 @@ export {
   metersToLatitudeDegrees,
   metersToLongitudeDegrees,
 };
+export type { IContext, IHasContext, FirestorterConfig } from './init';
+export type {
+  DocumentSource,
+  IDocumentOptions,
+  IDocument,
+  ICollection,
+  CollectionSource,
+  CollectionQuery,
+  ICollectionOptions,
+  ICollectionDocument,
+} from './Types';
+export type {
+  AggregateCollectionOrderBy,
+  AggregateCollectionFilterBy,
+  IAggregateCollectionQuery,
+  AggregateCollectionQueries,
+  AggregateCollectionQueriesFn,
+  IAggregateCollectionOptions,
+} from './AggregateCollection';
+export type { IGeoPoint, IGeoRegion, GeoHash } from './GeoHash';
+export type { GeoQueryRegion, GeoQueryHash, IGeoQueryQuery, IGeoQueryOptions } from './GeoQuery';
