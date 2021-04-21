@@ -1,4 +1,5 @@
 import type Firebase from 'firebase';
+import isEqual from 'lodash/isEqual';
 import { observable, reaction, toJS, runInAction, IObservableValue } from 'mobx';
 
 import {
@@ -12,8 +13,6 @@ import {
 import { mergeUpdateData, verifyMode } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, IContext, IHasContext } from './init';
-
-const isEqual = require('lodash.isequal');
 
 /**
  * @private

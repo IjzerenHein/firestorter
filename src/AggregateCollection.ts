@@ -13,8 +13,7 @@ import {
 } from './Types';
 import { enhancedObservable } from './enhancedObservable';
 import { IContext, IHasContext } from './init';
-
-const isEqual = require('lodash.isequal');
+import isEqual from 'lodash/isEqual';
 
 export type AggregateCollectionOrderBy<T> = (a: T, b: T) => number;
 export type AggregateCollectionFilterBy<T> = (doc: T) => boolean;
