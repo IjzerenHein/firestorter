@@ -47,7 +47,7 @@
     "docs:ci": "yarn docs:build && node ./scripts/checkUncommittedDocChanges.js"
   },
   "dependencies": {
-    "lodash.isequal": "^4.5.0"
+    "lodash-es": "^4.17.21"
   },
   "peerDependencies": {
     "mobx": ">= 6"

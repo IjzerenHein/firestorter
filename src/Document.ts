@@ -1,5 +1,5 @@
 import type Firebase from 'firebase';
-import isEqual from 'lodash/isEqual';
+import isEqual from 'lodash-es/isEqual';
 import { observable, reaction, toJS, runInAction, IObservableValue } from 'mobx';
 
 import {
