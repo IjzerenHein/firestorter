@@ -1,18 +1,19 @@
 {
-	"compilerOptions": {
-		"target": "es6",
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"outDir": "./lib",
-		"declaration": true,
-		"downlevelIteration": true,
-		"alwaysStrict": true,
-		"noImplicitReturns": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitThis": false,
-		"experimentalDecorators": true,
-		"resolveJsonModule": true,
-	},
-	"include": ["./src", "./test"]
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "./lib",
+    "declaration": true,
+    "downlevelIteration": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": false,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./src", "./test"]
 }
