@@ -85,5 +85,8 @@
   },
   "resolutions": {
     "yargs-parser": "20.2.4"
+  },
+  "volta": {
+    "node": "14.16.1"
   }
 }
