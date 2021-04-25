@@ -3,6 +3,8 @@ import { getFirebase, IHasContext } from './init';
 
 const isEqual = require('lodash.isequal');
 
+export { isEqual };
+
 /**
  * Helper function which merges data into the source
  * and returns the new object.

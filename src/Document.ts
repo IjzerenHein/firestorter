@@ -9,11 +9,9 @@ import {
   IEnhancedObservableDelegate,
   Mode,
 } from './Types';
-import { mergeUpdateData, verifyMode } from './Utils';
+import { mergeUpdateData, verifyMode, isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
 import { getFirestore, IContext, IHasContext } from './init';
-
-const isEqual = require('lodash.isequal');
 
 /**
  * @private
