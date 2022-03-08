@@ -4,7 +4,5 @@
 yarn-error.log
 yalc.lock
 .idea/
-/lib
-/.build.es6
-/.build.es5
+*.log
 .DS_Store

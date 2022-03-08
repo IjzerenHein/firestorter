@@ -1,10 +1,7 @@
-// @ts-ignore
-import * as isEqual from 'lodash.isequal';
+import isEqual from 'lodash.isequal';
 
 import { Mode } from './Types';
 import { getContext, IHasContext } from './init';
-
-// const isEqual = require('lodash.isequal');
 
 export { isEqual };
 
@@ -23,12 +20,13 @@ export function mergeUpdateData(data: object, fields: object, hasContext?: IHasC
   const canonicalDelete = getContext(hasContext).deleteField();
   for (const key in fields) {
     if (fields.hasOwnProperty(key)) {
+      // @ts-ignore
       const val = fields[key];
       const isDelete = canonicalDelete.isEqual
         ? canonicalDelete.isEqual(val)
         : isEqual(canonicalDelete, val);
       const paths = key.split('.');
-      let dataVal = res;
+      let dataVal: any = res;
       for (let i = 0; i < paths.length - 1; i++) {
         if (dataVal[paths[i]] === undefined) {
           if (isDelete) {

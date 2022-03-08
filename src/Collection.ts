@@ -97,14 +97,14 @@ import { getContext, IContext, IHasContext } from './init';
 class Collection<T extends ICollectionDocument = Document>
   implements ICollection<T>, IEnhancedObservableDelegate, IHasContext
 {
-  private sourceInput: CollectionSource;
-  private sourceCache: CollectionSource;
-  private sourceCacheRef: CollectionReference;
-  private refDisposerFn: () => void;
+  private sourceInput?: CollectionSource;
+  private sourceCache?: CollectionSource;
+  private sourceCacheRef?: CollectionReference;
+  private refDisposerFn?: () => void;
   private refObservable: IObservableValue<CollectionReference | undefined>;
   private queryInput?: CollectionQuery;
   private queryRefObservable: IObservableValue<Query | null | undefined>;
-  private onSnapshotRefCache?: Query;
+  private onSnapshotRefCache: Query | undefined | null;
   private modeObservable: IObservableValue<Mode>;
   private isLoadingObservable: IObservableValue<boolean>;
   private isLoadedObservable: IObservableValue<boolean>;
@@ -112,15 +112,15 @@ class Collection<T extends ICollectionDocument = Document>
   private docsObservable: IObservableArray<T>;
   private hasDocsObservable: IObservableValue<boolean>;
   private createDocument: (source: DocumentSource, options: IDocumentOptions) => T;
-  private onSnapshotUnsubscribe: () => void;
+  private onSnapshotUnsubscribe?: () => void;
   private observedRefCount: number;
   private isVerbose: boolean;
   private debugInstanceName?: string;
   private isMinimizingUpdates: boolean;
   private initialLocalSnapshotDetectTime?: number;
   private initialLocalSnapshotDebounceTime?: number;
-  private readyPromise?: Promise<void>;
-  private readyResolveFn?: () => void;
+  private readyPromise?: Promise<null>;
+  private readyResolveFn?: (value: PromiseLike<null> | null) => void;
   private initialLocalSnapshotStartTime?: number;
   private initialLocalSnapshotDebounceTimer?: any;
   private ctx?: IContext;
@@ -269,10 +269,10 @@ class Collection<T extends ICollectionDocument = Document>
   /**
    * @private
    */
-  public get source(): CollectionSource {
+  public get source(): CollectionSource | undefined {
     return this.sourceInput;
   }
-  public set source(source: CollectionSource) {
+  public set source(source: CollectionSource | undefined) {
     if (this.sourceInput === source) {
       return;
     }
@@ -415,7 +415,7 @@ class Collection<T extends ICollectionDocument = Document>
       throw new Error('Fetch already in progress');
     }
     const colRef = this._resolveRef(this.sourceInput);
-    const queryRef = this._resolveQuery(colRef, this.queryInput);
+    const queryRef = this._resolveQuery(colRef!, this.queryInput);
     const ref = queryRef !== undefined ? queryRef : colRef;
     if (!ref) {
       throw new Error('No ref, path or query set on Collection');
@@ -436,7 +436,7 @@ class Collection<T extends ICollectionDocument = Document>
       this._ready(true);
       return this;
     } catch (err) {
-      console.log(`${this.debugName} - fetch failed: ${err.message}`);
+      console.log(`${this.debugName} - fetch failed: ${(err as Error).message}`);
       runInAction(() => {
         this.isLoadingObservable.set(false);
         this._updateFromSnapshot(undefined);
@@ -521,7 +521,7 @@ class Collection<T extends ICollectionDocument = Document>
    * await col.ready();
    * console.log('albums: ', col.docs);
    */
-  public ready(): Promise<void> {
+  public ready(): Promise<null> {
     this.readyPromise = this.readyPromise || Promise.resolve(null);
     return this.readyPromise;
   }
@@ -569,7 +569,9 @@ class Collection<T extends ICollectionDocument = Document>
         exists: () => true,
         get: (fieldPath: string) => data[fieldPath],
         id: '',
+        // @ts-ignore Type 'undefined' is not assignable to type 'SnapshotMetadata'
         metadata: undefined,
+        // @ts-ignore Type 'undefined' is not assignable to type 'DocumentReference<DocumentData>'
         ref: undefined,
       },
     });
@@ -611,7 +613,7 @@ class Collection<T extends ICollectionDocument = Document>
   /**
    * @private
    */
-  public get context(): IContext {
+  public get context(): IContext | undefined{
     return this.ctx;
   }
 
@@ -707,12 +709,12 @@ class Collection<T extends ICollectionDocument = Document>
     return res;
   }
 
-  protected _ready(complete) {
+  protected _ready(complete: boolean) {
     if (complete) {
       const readyResolve = this.readyResolveFn;
       if (readyResolve) {
         this.readyResolveFn = undefined;
-        readyResolve();
+        readyResolve(null);
       }
     } else if (!this.readyResolveFn) {
       this.readyPromise = new Promise((resolve) => {
@@ -721,7 +723,7 @@ class Collection<T extends ICollectionDocument = Document>
     }
   }
 
-  protected _resolveRef(source): CollectionReference {
+  protected _resolveRef(source?: CollectionSource): CollectionReference | undefined{
     if (this.sourceCache === source) {
       return this.sourceCacheRef;
     }
@@ -786,9 +788,9 @@ class Collection<T extends ICollectionDocument = Document>
       }
     }
     if (this.isMinimizingUpdates) {
-      const timeElapsed = Date.now() - this.initialLocalSnapshotStartTime;
+      const timeElapsed = Date.now() - (this.initialLocalSnapshotStartTime ?? 0);
       this.initialLocalSnapshotStartTime = 0;
-      if (timeElapsed >= 0 && timeElapsed < this.initialLocalSnapshotDetectTime) {
+      if (timeElapsed >= 0 && timeElapsed < (this.initialLocalSnapshotDetectTime ?? 0)) {
         if (this.isVerbose) {
           console.debug(
             `${this.debugName} - local snapshot detected (${timeElapsed}ms < ${this.initialLocalSnapshotDetectTime}ms threshold), debouncing ${this.initialLocalSnapshotDebounceTime} msec...`
@@ -824,7 +826,7 @@ class Collection<T extends ICollectionDocument = Document>
    * @private
    */
   private _updateFromSnapshot(snapshot?: QuerySnapshot): void {
-    const newDocs = [];
+    const newDocs: T[] = [];
     if (snapshot) {
       snapshot.docs.forEach((docSnapshot: DocumentSnapshot) => {
         let doc = this.docLookup[docSnapshot.id];
@@ -836,12 +838,12 @@ class Collection<T extends ICollectionDocument = Document>
               context: this.context,
               snapshot: docSnapshot,
             });
-            this.docLookup[doc.id] = doc;
+            this.docLookup[doc.id!] = doc;
           }
           doc.addCollectionRef();
           newDocs.push(doc);
         } catch (err) {
-          console.error(err.message);
+          console.error((err as Error).message);
         }
       });
     }
@@ -892,7 +894,7 @@ class Collection<T extends ICollectionDocument = Document>
       this.refObservable.set(this._resolveRef(this.sourceInput));
     }
     if (updateQueryRef) {
-      this.queryRefObservable.set(this._resolveQuery(this.refObservable.get(), this.queryInput));
+      this.queryRefObservable.set(this._resolveQuery(this.refObservable.get()!, this.queryInput));
     }
 
     // Upon de-activation, stop any observed reactions or
@@ -926,7 +928,7 @@ class Collection<T extends ICollectionDocument = Document>
       this.refDisposerFn = reaction(
         () => {
           let sourceRef = this._resolveRef(this.sourceInput);
-          let queryRef2 = this._resolveQuery(sourceRef, this.queryInput);
+          let queryRef2 = this._resolveQuery(sourceRef!, this.queryInput);
           if (initialSourceRef) {
             sourceRef = initialSourceRef;
             queryRef2 = initialQueryRef;
@@ -980,8 +982,9 @@ class Collection<T extends ICollectionDocument = Document>
           docs: [],
           empty: true,
           forEach: () => true,
+          // @ts-ignore Type 'undefined' is not assignable to type 'SnapshotMetadata'
           metadata: undefined,
-          query: queryRef,
+          query: queryRef!,
           size: 0,
         });
       }

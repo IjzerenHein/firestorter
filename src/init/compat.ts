@@ -73,8 +73,11 @@ export default function makeCompatContext(config: FirestorterCompatConfig): ICon
     where: (fieldPath, opStr, value) => [fieldPath, opStr, value],
     // @ts-ignore
     query: (ref, where1, where2, where3) => {
+      // @ts-ignore
       ref = where1 ? ref.where(where1[0], where1[1], where1[2]) : ref;
+      // @ts-ignore
       ref = where2 ? ref.where(where2[0], where2[1], where2[2]) : ref;
+      // @ts-ignore
       ref = where3 ? ref.where(where3[0], where3[1], where3[2]) : ref;
       return ref;
     },

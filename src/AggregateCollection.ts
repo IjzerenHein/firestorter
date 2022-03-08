@@ -78,7 +78,7 @@ class AggregateCollection<
   private debug: boolean;
   private debugInstanceName?: string;
   private observedRefCount: number = 0;
-  private disposer: (() => any) | void;
+  private disposer?: (() => any);
   private collections: IObservableArray<Collection<T>>;
   private prevCollections: Collection<T>[];
   private collectionRecycleMap: {
@@ -200,7 +200,7 @@ class AggregateCollection<
    * @type {boolean}
    */
   public get isLoading(): boolean {
-    return this.collections.reduce((acc, col) => acc || col.isLoading, false);
+    return this.collections.reduce((acc, col) => acc || col.isLoading, false) as any;
   }
 
   /**
@@ -209,7 +209,7 @@ class AggregateCollection<
    * @type {boolean}
    */
   public get isLoaded(): boolean {
-    return this.collections.reduce((acc, col) => (acc ? col.isLoaded : false), true);
+    return this.collections.reduce((acc, col) => (acc ? col.isLoaded : false), true) as any;
   }
 
   /**
@@ -226,7 +226,7 @@ class AggregateCollection<
   /**
    * @private
    */
-  public get context(): IContext {
+  public get context(): IContext | undefined {
     return this.ctx;
   }
 
@@ -287,7 +287,7 @@ class AggregateCollection<
     this.documentRecycleMap = {};
     Object.values(this.collectionRecycleMap).forEach((query) => {
       query.docs.forEach((doc) => {
-        this.documentRecycleMap[doc.id] = doc;
+        this.documentRecycleMap[doc.id!] = doc;
       });
     });
     // console.log(Object.keys(this._documentRecycleMap));

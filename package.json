@@ -14,27 +14,27 @@
     "mobx-firestore",
     "firestore-collection"
   ],
-  "main": "lib/firestorter.js",
-  "umd:main": "lib/firestorter.umd.js",
-  "module": "lib/firestorter.module.js",
-  "unpkg": "lib/firestorter.umd.min.js",
-  "jsnext:main": "lib/firestorter.module.js",
-  "react-native": "lib/firestorter.module.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/firestorter.esm.js",
+  "typings": "dist/index.d.ts",
   "sideEffects": false,
   "repository": "https://github.com/IjzerenHein/firestorter",
   "author": "IjzerenHein <hrutjes@gmail.com>",
   "license": "MIT",
   "files": [
-    "src",
-    "lib"
+    "dist",
+    "src"
   ],
   "scripts": {
-    "build": "yarn tsc && node scripts/build.js",
-    "lint": "eslint src",
-    "test": "yarn test:web && yarn test:compat",
-    "test:web": "node ./test/seedSampleData.js && jest --config jest.config.web.js",
-    "test:compat": "node ./test/seedSampleData.js && jest --config jest.config.compat.js",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "test2": "yarn test:web && yarn test:compat",
+    "test2:web": "node ./test/seedSampleData.js && jest --config jest.config.web.js",
+    "test2:compat": "node ./test/seedSampleData.js && jest --config jest.config.compat.js",
     "cov": "jest --coverage",
     "docs:document": "jsdoc2md --files 'src/Document.ts' --configure jsdoc2md.json > ./docs/api/Document.md",
     "docs:collection": "jsdoc2md --files 'src/Collection.ts' --configure jsdoc2md.json > ./docs/api/Collection.md",
@@ -48,6 +48,16 @@
     "docs:serve": "docsify serve docs",
     "docs:ci": "yarn docs:build && node ./scripts/checkUncommittedDocChanges.js"
   },
+  "size-limit": [
+    {
+      "path": "dist/mytsdxlib.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/mytsdxlib.esm.js",
+      "limit": "10 KB"
+    }
+  ],
   "dependencies": {
     "lodash.isequal": "^4.5.0"
   },
@@ -55,38 +65,20 @@
     "mobx": ">= 6"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.8",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
-    "@babel/preset-env": "^7.13.9",
-    "@babel/preset-typescript": "^7.13.0",
-    "@expo/spawn-async": "^1.5.0",
+    "@expo/spawn-async": "^1.6.0",
     "@release-notes/cli": "^0.3.0",
-    "@types/jest": "^26.0.20",
+    "@size-limit/preset-small-lib": "^7.0.8",
     "@types/lodash.isequal": "^4.5.5",
-    "@types/node": "^14.17.00",
-    "codecov": "^3.8.1",
-    "envify": "^4.1.0",
-    "eslint": "^8.10.0",
-    "eslint-config-universe": "^10.0.0",
+    "codecov": "^3.8.3",
     "firebase": "^9.6.7",
-    "fs-extra": "^9.0.1",
-    "jest": "^26.6.3",
     "jsdoc-babel": "^0.5.0",
-    "jsdoc-to-markdown": "^7.0.0",
+    "jsdoc-to-markdown": "^7.1.1",
     "mobx": "^6.4.2",
-    "prettier": "^2.5.1",
-    "rollup": "^2.35.1",
-    "rollup-plugin-filesize": "^9.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "shelljs": "^0.8.4",
+    "size-limit": "^7.0.8",
     "superstruct": "^0.8.2",
-    "ts-jest": "^26.5.3",
-    "typescript": "^4.2.3",
-    "uglify-es": "^3.3.9"
-  },
-  "resolutions": {
-    "yargs-parser": "20.2.4"
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.2"
   },
   "volta": {
     "node": "14.17.0"

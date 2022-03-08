@@ -20,8 +20,8 @@ const deleteCol = async (colId, keepDocIds) => {
   const snap = await getDocs(collection(firestore, colId));
   await Promise.all(
     snap.docs
-      .filter((d) => !keepDocIds.includes(d.id))
-      .map(async (d) => {
+      .filter(d => !keepDocIds.includes(d.id))
+      .map(async d => {
         console.info('Deleting: ' + d.ref.path);
         return deleteDoc(d.ref);
       })
@@ -48,7 +48,7 @@ Promise.all(
       deleteApp(firebaseApp);
       // process.exit(0);
     },
-    (err) => {
+    err => {
       console.error(err.message);
     }
   );

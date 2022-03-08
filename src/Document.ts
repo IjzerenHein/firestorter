@@ -53,11 +53,11 @@ class Document<T extends object = object>
   implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext
 {
   private sourceInput: DocumentSource;
-  private sourceDisposerFn: () => void;
+  private sourceDisposerFn?: () => void;
   private refObservable: IObservableValue<DocumentReference<DocumentData>>;
   private snapshotObservable: IObservableValue<DocumentSnapshot | undefined>;
-  private snapshotOptions: SnapshotOptions;
-  private docSchema: (data: object) => object;
+  private snapshotOptions?: SnapshotOptions;
+  private docSchema?: (data: object) => object;
   private isVerbose: boolean;
   private debugInstanceName?: string;
   private collectionRefCount: number;
@@ -65,7 +65,7 @@ class Document<T extends object = object>
   private dataObservable: IObservableValue<T>;
   private modeObservable: IObservableValue<Mode>;
   private isLoadingObservable: IObservableValue<boolean>;
-  private onSnapshotUnsubscribeFn: () => void;
+  private onSnapshotUnsubscribeFn?: () => void;
   private readyPromise?: Promise<void>;
   private readyResolveFn?: () => void;
   private ctx?: IContext;
@@ -101,7 +101,7 @@ class Document<T extends object = object>
    *
    * @type {Function}
    */
-  public get schema(): (data: any) => any {
+  public get schema(): ((data: any) => any) | undefined {
     return this.docSchema;
   }
 
@@ -228,7 +228,7 @@ class Document<T extends object = object>
     this.sourceInput = source;
     this._updateSourceObserver();
     runInAction(() => {
-      this.refObservable.set(resolveRef(source, this));
+      this.refObservable.set(resolveRef(source, this)!);
       this._updateRealtimeUpdates(true);
     });
   }
@@ -403,7 +403,7 @@ class Document<T extends object = object>
       });
       this._ready(true);
     } catch (err) {
-      console.log(`${this.debugName} - fetch failed: ${err.message}`);
+      console.log(`${this.debugName} - fetch failed: ${(err as Error).message}`);
       runInAction(() => {
         this.isLoadingObservable.set(false);
         this._updateFromSnapshot(undefined);
@@ -508,7 +508,7 @@ class Document<T extends object = object>
   /**
    * @private
    */
-  public get context(): IContext {
+  public get context(): IContext | undefined {
     return this.ctx;
   }
 
@@ -576,7 +576,7 @@ class Document<T extends object = object>
   /**
    * @private
    */
-  protected _ready(complete) {
+  protected _ready(complete: boolean) {
     if (complete) {
       const readyResolve = this.readyResolveFn;
       if (readyResolve) {
@@ -602,7 +602,7 @@ class Document<T extends object = object>
       try {
         this._updateFromSnapshot(snapshot);
       } catch (err) {
-        console.error(err.message);
+        console.error((err as Error).message);
       }
       this._ready(true);
     });
@@ -647,9 +647,7 @@ class Document<T extends object = object>
       }
       this._ready(false);
       this.isLoadingObservable.set(true);
-      if (this.onSnapshotUnsubscribeFn) {
-        this.onSnapshotUnsubscribeFn();
-      }
+      this.onSnapshotUnsubscribeFn?.();
       this.onSnapshotUnsubscribeFn = getContext(this).onSnapshot(
         this.refObservable.get(),
         (snapshot) => this._onSnapshot(snapshot),
@@ -661,7 +659,7 @@ class Document<T extends object = object>
           `${this.debugName} - stop (${this.modeObservable.get()}:${this.observedRefCount})`
         );
       }
-      this.onSnapshotUnsubscribeFn();
+      this.onSnapshotUnsubscribeFn?.();
       this.onSnapshotUnsubscribeFn = undefined;
       if (this.isLoadingObservable.get()) {
         this.isLoadingObservable.set(false);
@@ -684,7 +682,7 @@ class Document<T extends object = object>
         (value) => {
           runInAction(() => {
             // TODO, check whether path has changed
-            this.refObservable.set(resolveRef(value, this));
+            this.refObservable.set(resolveRef(value, this)!);
             this._updateRealtimeUpdates(true);
           });
         }
@@ -706,13 +704,13 @@ class Document<T extends object = object>
 
       throw new Error(
         'Invalid value at "' +
-          err.path +
+          (err as any).path +
           '" for ' +
           (this.debugInstanceName || this.constructor.name) +
           ' with id "' +
           this.id +
           '": ' +
-          err.message
+          (err as Error).message
       );
     }
     return data;

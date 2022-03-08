@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions @typescript-eslint/no-unused-expressions */
 import { autorun } from 'mobx';
 
 import { Document, Mode } from '../src';
@@ -16,7 +17,7 @@ describe('off', () => {
   test('no ref, observed', () => {
     const doc = new Document('todos/todo', { mode: Mode.Off });
     const dispose = autorun(() => {
-      doc.data;
+      doc.data; // eslint-disable-line no-unused-expressions
     });
     expect(doc.isActive).toBe(false);
     dispose();

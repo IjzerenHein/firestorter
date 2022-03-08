@@ -83,10 +83,10 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<T, IGe
           return null;
         }
         const { query, where } = getContext(this);
-        return geohashes.map((geohash) => ({
+        return geohashes.map(geohash => ({
           geohash,
           key: `${geohash[0]}-${geohash[1]}`,
-          query: (ref) =>
+          query: ref =>
             query(ref, where(fieldPath, '>=', geohash[0]), where(fieldPath, '<', geohash[1])),
         }));
       },
@@ -154,7 +154,7 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<T, IGe
    */
   get geohashes(): GeoQueryHash[] {
     const queries = this.queries();
-    return queries ? queries.map((query) => query.geohash) : [];
+    return queries ? queries.map(query => query.geohash) : [];
   }
 }
 
