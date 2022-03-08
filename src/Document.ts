@@ -50,7 +50,8 @@ const EMPTY_OPTIONS = {};
  * @param {String} [options.debugName] Name to use when debug logging is enabled
  */
 class Document<T extends object = object>
-  implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext {
+  implements ICollectionDocument, IEnhancedObservableDelegate, IHasContext
+{
   private sourceInput: DocumentSource;
   private sourceDisposerFn: () => void;
   private refObservable: IObservableValue<DocumentReference<DocumentData>>;

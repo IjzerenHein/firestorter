@@ -146,9 +146,7 @@ function validateGeohash(geohash: string): void {
  *
  * @param {IGeoRegion} region The region to convert
  */
-export function geoRegionToPoints(
-  region: IGeoRegion
-): {
+export function geoRegionToPoints(region: IGeoRegion): {
   northEast: IGeoPoint;
   northWest: IGeoPoint;
   southEast: IGeoPoint;

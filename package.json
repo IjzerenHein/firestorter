@@ -64,18 +64,18 @@
     "@release-notes/cli": "^0.3.0",
     "@types/jest": "^26.0.20",
     "@types/lodash.isequal": "^4.5.5",
-    "@types/node": "^14.14.31",
+    "@types/node": "^14.17.00",
     "codecov": "^3.8.1",
     "envify": "^4.1.0",
-    "eslint": "^7.21.0",
-    "eslint-config-universe": "^7.0.1",
+    "eslint": "^8.10.0",
+    "eslint-config-universe": "^10.0.0",
     "firebase": "^9.6.7",
     "fs-extra": "^9.0.1",
     "jest": "^26.6.3",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-to-markdown": "^7.0.0",
-    "mobx": "^6.1.8",
-    "prettier": "^2.2.1",
+    "mobx": "^6.4.2",
+    "prettier": "^2.5.1",
     "rollup": "^2.35.1",
     "rollup-plugin-filesize": "^9.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
@@ -89,6 +89,6 @@
     "yargs-parser": "20.2.4"
   },
   "volta": {
-    "node": "14.16.1"
+    "node": "14.17.0"
   }
 }

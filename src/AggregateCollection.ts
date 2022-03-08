@@ -22,9 +22,8 @@ export interface IAggregateCollectionQuery {
   query: (ref: CollectionReference) => Query | null | undefined;
 }
 export type AggregateCollectionQueries<Y> = Y[] | null;
-export type AggregateCollectionQueriesFn<
-  Y extends IAggregateCollectionQuery
-> = () => AggregateCollectionQueries<Y>;
+export type AggregateCollectionQueriesFn<Y extends IAggregateCollectionQuery> =
+  () => AggregateCollectionQueries<Y>;
 
 export interface IAggregateCollectionOptions<T, Y extends IAggregateCollectionQuery> {
   queries: AggregateCollectionQueriesFn<Y>;
@@ -69,7 +68,8 @@ export interface IAggregateCollectionOptions<T, Y extends IAggregateCollectionQu
 class AggregateCollection<
   T extends ICollectionDocument,
   Y extends IAggregateCollectionQuery = IAggregateCollectionQuery
-> implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
+> implements ICollection<T>, IEnhancedObservableDelegate, IHasContext
+{
   private queriesFn: AggregateCollectionQueriesFn<Y>;
   private collectionSource: CollectionSource;
   private createDocument: (source: DocumentSource, options: IDocumentOptions) => T;
@@ -99,7 +99,7 @@ class AggregateCollection<
       this.createDocument = options.createDocument;
     } else {
       this.createDocument = (docSource: DocumentSource, docOptions: IDocumentOptions): T =>
-        (new Document(docSource, docOptions) as unknown) as T;
+        new Document(docSource, docOptions) as unknown as T;
     }
     this.queriesFn = options.queries;
     this.orderBy = options.orderBy;

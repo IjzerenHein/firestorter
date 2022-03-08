@@ -95,7 +95,8 @@ import { getContext, IContext, IHasContext } from './init';
  * console.log(col.isLoading);
  */
 class Collection<T extends ICollectionDocument = Document>
-  implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
+  implements ICollection<T>, IEnhancedObservableDelegate, IHasContext
+{
   private sourceInput: CollectionSource;
   private sourceCache: CollectionSource;
   private sourceCacheRef: CollectionReference;
@@ -163,7 +164,7 @@ class Collection<T extends ICollectionDocument = Document>
       this.createDocument = createDocument;
     } else {
       this.createDocument = (docSource: DocumentSource, docOptions: IDocumentOptions): T =>
-        (new Document(docSource, docOptions) as unknown) as T;
+        new Document(docSource, docOptions) as unknown as T;
     }
 
     runInAction(() => this._updateRealtimeUpdates(true, true));
