@@ -1,7 +1,10 @@
-import { Mode } from './Types';
-import { getFirebase, IHasContext } from './init';
+// @ts-ignore
+import * as isEqual from 'lodash.isequal';
 
-const isEqual = require('lodash.isequal');
+import { Mode } from './Types';
+import { getContext, IHasContext } from './init';
+
+// const isEqual = require('lodash.isequal');
 
 export { isEqual };
 
@@ -17,7 +20,7 @@ export function mergeUpdateData(data: object, fields: object, hasContext?: IHasC
   const res = {
     ...data,
   };
-  const canonicalDelete = getFirebase(hasContext).firestore.FieldValue.delete();
+  const canonicalDelete = getContext(hasContext).deleteField();
   for (const key in fields) {
     if (fields.hasOwnProperty(key)) {
       const val = fields[key];

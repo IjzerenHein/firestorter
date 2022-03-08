@@ -1,4 +1,4 @@
-import { Collection } from './init';
+import { Collection } from '../src';
 
 test('no ref fail', async () => {
   expect.assertions(1);

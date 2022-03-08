@@ -1,4 +1,4 @@
-import { Document, Mode } from './init';
+import { Document, Mode } from '../src';
 
 describe('construct', () => {
   test('default is auto', () => {

@@ -1,4 +1,4 @@
-import { Document } from './init';
+import { Document } from '../src';
 
 test('no ref fail', async () => {
   expect.assertions(1);

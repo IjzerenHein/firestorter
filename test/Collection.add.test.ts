@@ -1,6 +1,6 @@
 import { struct } from 'superstruct';
 
-import { Collection, Document } from './init';
+import { Collection, Document } from '../src';
 
 const schema = struct({
   id: 'number',

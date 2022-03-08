@@ -1,6 +1,7 @@
+import { Timestamp, serverTimestamp } from 'firebase/firestore';
 import { struct } from 'superstruct';
 
-import { Document, getFirebase, isTimestamp } from './init';
+import { Document, isTimestamp } from '../src';
 
 interface ISetting {
   date: {
@@ -27,7 +28,7 @@ test('write serverTimestamp', async () => {
   // Set server timestamp
   doc = new Document('settings/ServerTimeStampTest');
   await doc.set({
-    date: getFirebase().firestore.FieldValue.serverTimestamp(),
+    date: serverTimestamp(),
   });
   await doc.fetch();
   expect(doc.data.date).toHaveProperty('seconds');
@@ -46,7 +47,7 @@ test('write date with schema', async () => {
   await doc.fetch();
   expect(doc.data.date).toHaveProperty('seconds');
   expect(doc.data.date).toHaveProperty('nanoseconds');
-  const timestamp = getFirebase().firestore.Timestamp.fromDate(date);
+  const timestamp = Timestamp.fromDate(date);
   expect(doc.data.date.seconds).toBe(timestamp.seconds);
   expect(doc.data.date.nanoseconds).toBe(timestamp.nanoseconds);
 });
@@ -56,7 +57,7 @@ test('write timestamp with schema', async () => {
   const doc = new Document<ISetting>('settings/TimeStampTest', {
     schema: TimestampSchema,
   });
-  const timestamp = getFirebase().firestore.Timestamp.fromDate(new Date());
+  const timestamp = Timestamp.fromDate(new Date());
   await doc.set({
     date: timestamp,
   });

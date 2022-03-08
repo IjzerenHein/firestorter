@@ -1,6 +1,6 @@
-import { runInAction } from 'mobx';
+import { runInAction, observable, autorun } from 'mobx';
 
-import { Document, Collection, observable, autorun } from './init';
+import { Document, Collection } from '../src';
 
 test('no path', () => {
   const col = new Collection(() => undefined);

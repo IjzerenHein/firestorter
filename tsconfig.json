@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es6",
+		"target": "esnext",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"outDir": "./lib",
@@ -12,7 +12,7 @@
 		"noUnusedParameters": true,
 		"noImplicitThis": false,
 		"experimentalDecorators": true,
-		"resolveJsonModule": true,
+		"resolveJsonModule": true
 	},
 	"include": ["./src", "./test"]
 }

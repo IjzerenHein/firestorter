@@ -1,4 +1,6 @@
-import { Document, autorun, Mode } from './init';
+import { autorun } from 'mobx';
+
+import { Document, Mode } from '../src';
 
 describe('off', () => {
   test('construct no ref', () => {

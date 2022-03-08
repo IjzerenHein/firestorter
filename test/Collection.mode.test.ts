@@ -1,4 +1,4 @@
-import { Collection, Mode } from './init';
+import { Collection, Mode } from '../src';
 
 describe('construct', () => {
   test('default is auto', () => {

@@ -17,26 +17,17 @@ import {
 import GeoQuery from './GeoQuery';
 import { Mode } from './Types';
 import { mergeUpdateData, isTimestamp } from './Utils';
-import {
-  getFirebase,
-  getFirebaseApp,
-  getFirestore,
-  initFirestorter,
-  makeFirestorterContext,
-} from './init';
+import { getContext, initFirestorter } from './init';
 
 export {
   Collection,
   Document,
   AggregateCollection,
   initFirestorter,
-  getFirestore,
-  getFirebase,
-  getFirebaseApp,
+  getContext,
   mergeUpdateData,
   Mode,
   isTimestamp,
-  makeFirestorterContext,
   // Geo queries
   GeoQuery,
   decodeGeohash,
@@ -51,7 +42,7 @@ export {
   metersToLatitudeDegrees,
   metersToLongitudeDegrees,
 };
-export type { IContext, IHasContext, FirestorterConfig } from './init';
+export type { IContext, IHasContext } from './init';
 export type {
   DocumentSource,
   IDocumentOptions,

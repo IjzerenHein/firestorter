@@ -29,15 +29,16 @@ yarn add firestorter
 **1. Initialize**
 
 ```js
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, FieldValue } from 'firebase/firestore';
 import { initFirestorter } from 'firestorter';
 
 // Initialize firebase app
-firebase.initializeApp({...});
+const app = initializeApp({...});
+const firestore = getFirestore(app);
 
 // Initialize `firestorter`
-initFirestorter({ firebase: firebase });
+initFirestorter({ firebase, firestore, FieldValue });
 ```
 > Firestorter also works with **react-native** and supports multi app environments
 

@@ -1,9 +1,10 @@
 /node_modules
 /dist
-/lib
 /coverage
 yarn-error.log
 yalc.lock
 .idea/
-.build*/
+/lib
+/.build.es6
+/.build.es5
 .DS_Store

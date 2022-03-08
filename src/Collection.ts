@@ -1,4 +1,10 @@
-import type Firebase from 'firebase';
+import type {
+  Query,
+  CollectionReference,
+  QuerySnapshot,
+  SnapshotListenOptions,
+  DocumentSnapshot,
+} from 'firebase/firestore';
 import { IObservableArray, IObservableValue, observable, reaction, runInAction } from 'mobx';
 
 import Document from './Document';
@@ -15,7 +21,7 @@ import {
 } from './Types';
 import { verifyMode } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getFirestore, IContext, IHasContext } from './init';
+import { getContext, IContext, IHasContext } from './init';
 
 // * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
 
@@ -92,12 +98,12 @@ class Collection<T extends ICollectionDocument = Document>
   implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
   private sourceInput: CollectionSource;
   private sourceCache: CollectionSource;
-  private sourceCacheRef: Firebase.firestore.CollectionReference;
+  private sourceCacheRef: CollectionReference;
   private refDisposerFn: () => void;
-  private refObservable: IObservableValue<Firebase.firestore.CollectionReference | undefined>;
+  private refObservable: IObservableValue<CollectionReference | undefined>;
   private queryInput?: CollectionQuery;
-  private queryRefObservable: IObservableValue<Firebase.firestore.Query | null | undefined>;
-  private onSnapshotRefCache?: Firebase.firestore.Query;
+  private queryRefObservable: IObservableValue<Query | null | undefined>;
+  private onSnapshotRefCache?: Query;
   private modeObservable: IObservableValue<Mode>;
   private isLoadingObservable: IObservableValue<boolean>;
   private isLoadedObservable: IObservableValue<boolean>;
@@ -205,14 +211,14 @@ class Collection<T extends ICollectionDocument = Document>
    * // Switch to another collection
    * col.ref = firebase.firestore().collection('albums/americana/tracks');
    */
-  public get ref(): Firebase.firestore.CollectionReference | undefined {
+  public get ref(): CollectionReference | undefined {
     let ref = this.refObservable.get();
     if (!this.refDisposerFn) {
       ref = this._resolveRef(this.sourceInput);
     }
     return ref;
   }
-  public set ref(ref: Firebase.firestore.CollectionReference | undefined) {
+  public set ref(ref: CollectionReference | undefined) {
     this.source = ref;
   }
 
@@ -345,7 +351,7 @@ class Collection<T extends ICollectionDocument = Document>
    * null -> the query function returned `null` to disable the collection
    * undefined -> no query defined, use collection ref instead
    */
-  public get queryRef(): Firebase.firestore.Query | null | undefined {
+  public get queryRef(): Query | null | undefined {
     return this.queryRefObservable.get();
   }
 
@@ -418,7 +424,7 @@ class Collection<T extends ICollectionDocument = Document>
       this.isLoadingObservable.set(true);
     });
     try {
-      const snapshot = await ref.get();
+      const snapshot = await getContext(this).getDocs(ref);
       runInAction(() => {
         this.isLoadingObservable.set(false);
         this._updateFromSnapshot(snapshot);
@@ -559,18 +565,18 @@ class Collection<T extends ICollectionDocument = Document>
       context: this.context,
       snapshot: {
         data: () => data,
-        exists: true,
+        exists: () => true,
         get: (fieldPath: string) => data[fieldPath],
         id: '',
-        isEqual: () => false,
         metadata: undefined,
         ref: undefined,
       },
     });
 
     // Add to firestore
-    const ref2 = await ref.add(data);
-    const snapshot = await ref2.get();
+    const { addDoc, getDoc } = getContext(this);
+    const ref2 = await addDoc(ref, data);
+    const snapshot = await getDoc(ref2);
     return this.createDocument(snapshot.ref, {
       context: this.context,
       snapshot,
@@ -714,13 +720,13 @@ class Collection<T extends ICollectionDocument = Document>
     }
   }
 
-  protected _resolveRef(source): Firebase.firestore.CollectionReference {
+  protected _resolveRef(source): CollectionReference {
     if (this.sourceCache === source) {
       return this.sourceCacheRef;
     }
     let ref;
     if (typeof source === 'string') {
-      ref = getFirestore(this).collection(source);
+      ref = getContext(this).collection(source);
     } else if (typeof source === 'function') {
       ref = this._resolveRef(source());
       return ref; // don't set cache in this case
@@ -733,9 +739,9 @@ class Collection<T extends ICollectionDocument = Document>
   }
 
   protected _resolveQuery(
-    collectionRef: Firebase.firestore.CollectionReference,
+    collectionRef: CollectionReference,
     query?: CollectionQuery
-  ): Firebase.firestore.Query | null | undefined {
+  ): Query | null | undefined {
     let ref: any = query;
     if (typeof query === 'function') {
       ref = query(collectionRef);
@@ -765,7 +771,7 @@ class Collection<T extends ICollectionDocument = Document>
   /**
    * @private
    */
-  protected _onSnapshot(snapshot: Firebase.firestore.QuerySnapshot): void {
+  protected _onSnapshot(snapshot: QuerySnapshot): void {
     // Firestore sometimes returns multiple snapshots initially.
     // The first one containing cached results, followed by a second
     // snapshot which was fetched from the cloud.
@@ -816,10 +822,10 @@ class Collection<T extends ICollectionDocument = Document>
   /**
    * @private
    */
-  private _updateFromSnapshot(snapshot?: Firebase.firestore.QuerySnapshot): void {
+  private _updateFromSnapshot(snapshot?: QuerySnapshot): void {
     const newDocs = [];
     if (snapshot) {
-      snapshot.docs.forEach((docSnapshot: Firebase.firestore.DocumentSnapshot) => {
+      snapshot.docs.forEach((docSnapshot: DocumentSnapshot) => {
         let doc = this.docLookup[docSnapshot.id];
         try {
           if (doc) {
@@ -965,7 +971,7 @@ class Collection<T extends ICollectionDocument = Document>
     if (!ref) {
       if (this.docsObservable.length) {
         this._updateFromSnapshot({
-          docChanges: (options?: Firebase.firestore.SnapshotListenOptions) => {
+          docChanges: (options?: SnapshotListenOptions) => {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @babel/no-unused-expressions
             options;
             return [];
@@ -973,7 +979,6 @@ class Collection<T extends ICollectionDocument = Document>
           docs: [],
           empty: true,
           forEach: () => true,
-          isEqual: () => false,
           metadata: undefined,
           query: queryRef,
           size: 0,
@@ -993,7 +998,8 @@ class Collection<T extends ICollectionDocument = Document>
     this._ready(false);
     this.isLoadingObservable.set(true);
     this.initialLocalSnapshotStartTime = Date.now();
-    this.onSnapshotUnsubscribe = ref.onSnapshot(
+    this.onSnapshotUnsubscribe = getContext(this).onSnapshot(
+      ref,
       (snapshot) => this._onSnapshot(snapshot),
       (err) => this._onSnapshotError(err)
     );
