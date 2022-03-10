@@ -1,11 +1,11 @@
 import type { DocumentSnapshot } from 'firebase/firestore';
 
-import { Collection, Document, ICollectionDocument } from '../src';
+import { Collection, Document, ICollectionDocument, DocumentSource, IDocumentOptions } from '../src';
 
 class TestDoc implements ICollectionDocument {
   private collectionRef: number = 0;
 
-  constructor(_source, _options) {
+  constructor(_source: DocumentSource, _options: IDocumentOptions) {
     this.collectionRef = 0;
   }
 

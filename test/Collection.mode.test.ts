@@ -26,7 +26,7 @@ describe('construct', () => {
   });
 
   test('bogus', () => {
-    // @ts-expect-error
+    // @ts-expect-error Type '"bogus"' is not assignable to type 'Mode'.
     expect(() => new Collection(undefined, { mode: 'bogus' })).toThrow();
   });
 });
@@ -52,16 +52,17 @@ describe('get/set', () => {
   });
   test('bogus', () => {
     const col = new Collection();
-    // @ts-expect-error
+    // @ts-expect-error Type '"bogus"' is not assignable to type 'Mode'.
     expect(() => (col.mode = 'bogus')).toThrow();
   });
   test('empty string', () => {
     const col = new Collection();
-    // @ts-expect-error
+    // @ts-expect-error Type '""' is not assignable to type 'Mode'.
     expect(() => (col.mode = '')).toThrow();
   });
   test('undefined', () => {
     const col = new Collection();
+    // @ts-ignore Type 'undefined' is not assignable to type 'Mode'.
     expect(() => (col.mode = undefined)).toThrow();
   });
 });

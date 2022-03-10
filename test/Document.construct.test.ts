@@ -43,7 +43,9 @@ test('all options', () => {
         exists: () => false,
         get: (_fieldPath: string) => undefined,
         id: '',
+        // @ts-ignore Type 'undefined' is not assignable to type 'SnapshotMetadata'
         metadata: undefined,
+        // @ts-ignore Type 'undefined' is not assignable to type 'DocumentReference<DocumentData>'
         ref: undefined,
       },
       snapshotOptions: {

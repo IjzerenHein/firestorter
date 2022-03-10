@@ -1,6 +1,6 @@
 import { runInAction, observable } from 'mobx';
 
-import { Mode, Collection, getContext } from '../src';
+import { Mode, Collection, getContext, CollectionQuery } from '../src';
 
 test('no query', () => {
   const col = new Collection();
@@ -17,7 +17,8 @@ test('constructor - ref', () => {
 });
 
 test('constructor - function', () => {
-  const query = ref => getContext().query(ref, getContext().where('genre', '==', 'punk'));
+  const query: CollectionQuery = ref =>
+    getContext().query(ref, getContext().where('genre', '==', 'punk'));
   const col = new Collection('artists', {
     query,
   });
@@ -26,7 +27,7 @@ test('constructor - function', () => {
 
 test('constructor - expect query function to be called once', () => {
   let callCount = 0;
-  const query = ref => {
+  const query: CollectionQuery = ref => {
     callCount++;
     return getContext().query(ref, getContext().where('genre', '==', 'punk'));
   };
@@ -38,7 +39,8 @@ test('constructor - expect query function to be called once', () => {
 });
 
 test('update', () => {
-  const query = ref => getContext().query(ref, getContext().where('genre', '==', 'punk'));
+  const query: CollectionQuery = ref =>
+    getContext().query(ref, getContext().where('genre', '==', 'punk'));
   const col = new Collection('artists');
   expect(col.query).toBeUndefined();
   col.query = query;
@@ -104,7 +106,7 @@ test('reset & fetch', async () => {
 test('re-fetch', async () => {
   expect.assertions(5);
   const col = new Collection('artists');
-  col.query = getContext().query(col.ref, getContext().where('genre', '==', 'punk'));
+  col.query = getContext().query(col.ref!, getContext().where('genre', '==', 'punk'));
   expect(col.docs.length).toBe(0);
   await col.fetch();
   expect(col.docs.length).toBe(1);

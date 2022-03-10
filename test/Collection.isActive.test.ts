@@ -89,7 +89,7 @@ describe('auto', () => {
     expect(col.isActive).toBe(true);
     col.ref = undefined;
     expect(col.isActive).toBe(false);
-    // @ts-expect-error
+    // @ts-ignore
     col.ref = 'todos';
     expect(col.isActive).toBe(true);
     dispose();

@@ -1,13 +1,13 @@
 import { struct } from 'superstruct';
 
-import { Collection, Document } from '../src';
+import { Collection, Document, DocumentSource, IDocumentOptions } from '../src';
 
 const schema = struct({
   id: 'number',
 });
 
 class TodoDoc extends Document {
-  constructor(source, options) {
+  constructor(source?: DocumentSource, options?: IDocumentOptions) {
     super(source, {
       ...(options || {}),
       schema,
