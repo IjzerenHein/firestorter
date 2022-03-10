@@ -27,14 +27,13 @@
   ],
   "scripts": {
     "build": "tsdx build",
-    "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "test2": "yarn test:web && yarn test:compat",
-    "test2:web": "node ./test/seedSampleData.js && jest --config jest.config.web.js",
-    "test2:compat": "node ./test/seedSampleData.js && jest --config jest.config.compat.js",
+    "test": "yarn test:web && yarn test:compat",
+    "test:web": "node ./test/seedSampleData.js && tsdx test --config jest.config.web.js",
+    "test:compat": "node ./test/seedSampleData.js && tsdx test --config jest.config.compat.js",
     "cov": "jest --coverage",
     "docs:document": "jsdoc2md --files 'src/Document.ts' --configure jsdoc2md.json > ./docs/api/Document.md",
     "docs:collection": "jsdoc2md --files 'src/Collection.ts' --configure jsdoc2md.json > ./docs/api/Collection.md",
@@ -81,6 +80,6 @@
     "typescript": "^4.6.2"
   },
   "volta": {
-    "node": "14.17.0"
+    "node": "16.14.0"
   }
 }
