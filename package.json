@@ -49,12 +49,12 @@
   },
   "size-limit": [
     {
-      "path": "dist/mytsdxlib.cjs.production.min.js",
-      "limit": "10 KB"
+      "path": "dist/firestorter.cjs.production.min.js",
+      "limit": "15 KB"
     },
     {
-      "path": "dist/mytsdxlib.esm.js",
-      "limit": "10 KB"
+      "path": "dist/firestorter.esm.js",
+      "limit": "15 KB"
     }
   ],
   "dependencies": {
