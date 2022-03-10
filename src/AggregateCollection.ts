@@ -10,10 +10,10 @@ import {
   CollectionSource,
   ICollectionDocument,
   IEnhancedObservableDelegate,
+  IContext, IHasContext
 } from './Types';
 import { isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { IContext, IHasContext } from './init';
 
 export type AggregateCollectionOrderBy<T> = (a: T, b: T) => number;
 export type AggregateCollectionFilterBy<T> = (doc: T) => boolean;

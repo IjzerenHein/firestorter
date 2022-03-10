@@ -18,10 +18,11 @@ import {
   IDocumentOptions,
   IEnhancedObservableDelegate,
   Mode,
+  IContext, IHasContext
 } from './Types';
 import { verifyMode } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getContext, IContext, IHasContext } from './init';
+import { getContext } from './initFirestorter';
 
 // * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
 

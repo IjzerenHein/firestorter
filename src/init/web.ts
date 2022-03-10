@@ -1,5 +1,5 @@
+import type { Firestore } from 'firebase/firestore';
 import {
-  Firestore,
   collection,
   doc,
   getDocs,
@@ -12,9 +12,10 @@ import {
   deleteDoc,
   onSnapshot,
   deleteField,
+  serverTimestamp,
 } from 'firebase/firestore';
 
-import { IContext } from '../index';
+import type { IContext } from '../Types';
 
 export type FirestorterWebConfig = {
   firestore: Firestore;
@@ -29,15 +30,14 @@ export type FirestorterWebConfig = {
  * @example
  * import { initializeApp } from 'firebase/app';
  * import { getFirestore } from 'firebase/firestore';
- * import { Collection, Document } from 'firestorter'
- * import makeWebContext from 'firestorter/init/web';
+ * import { Collection, Document, makeWebContext } from 'firestorter'
  *
  * // Initialize firebase app
  * const app = initializeApp({...});
  * const firestore = getFirestore(app);
  *
  * // Initialize global `firestorter` context
- * initFirestorter({ firestore });
+ * initFirestorter(makeWebContext({ firestore }));
  *
  * // Create collection or document
  * const albums = new Collection('artists/Metallica/albums');
@@ -56,7 +56,7 @@ export type FirestorterWebConfig = {
  * const album2 = new Document('artists/Metallica/albums/BlackAlbum', {context: app2Context});
  * ...
  */
-export default function makeWebContext(config: FirestorterWebConfig): IContext {
+export function makeWebContext(config: FirestorterWebConfig): IContext {
   const { firestore } = config;
   if (!firestore) throw new Error('Missing argument `firestore`');
   return {
@@ -72,5 +72,6 @@ export default function makeWebContext(config: FirestorterWebConfig): IContext {
     deleteDoc,
     onSnapshot,
     deleteField,
+    serverTimestamp,
   };
 }

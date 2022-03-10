@@ -13,10 +13,11 @@ import {
   IDocumentOptions,
   IEnhancedObservableDelegate,
   Mode,
+  IContext, IHasContext
 } from './Types';
 import { mergeUpdateData, verifyMode, isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getContext, IContext, IHasContext } from './init';
+import { getContext  } from './initFirestorter';
 
 /**
  * @private

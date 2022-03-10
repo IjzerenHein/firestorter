@@ -79,6 +79,17 @@ test('delete field', () => {
   ).toEqual({});
 });
 
+test('server timestamp', () => {
+  expect(
+    mergeUpdateData(TEST_DATA, {
+      field2: getContext().serverTimestamp(),
+    })
+  ).toEqual({
+    ...TEST_DATA,
+    field2: getContext().serverTimestamp(),
+  });
+});
+
 /* test("default generic type specified", () => {
 	type TodoType = {
 		finished: boolean;

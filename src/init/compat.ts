@@ -1,6 +1,6 @@
 import type Firebase from 'firebase/compat/app';
 
-import { IContext } from '../index';
+import type { IContext } from '../Types';
 
 export type FirestorterCompatConfig = {
   firebase: typeof Firebase;
@@ -19,14 +19,13 @@ export type FirestorterCompatConfig = {
  * @example
  * import firebase from 'firebase/compat/app';
  * import 'firebase/compat/firestore';
- * import { Collection, Document } from 'firestorter'
- * import makeCompatContext from 'firestorter/init/compat';
+ * import { Collection, Document, makeCompatContext } from 'firestorter'
  *
  * // Initialize firebase app
  * firebase.initializeApp({...});
  *
  * // Initialize global `firestorter` context
- * initFirestorter({ firebase: firebase });
+ * initFirestorter(makeCompatContext({ firebase: firebase }));
  *
  * // Create collection or document
  * const albums = new Collection('artists/Metallica/albums');
@@ -44,7 +43,7 @@ export type FirestorterCompatConfig = {
  * const album2 = new Document('artists/Metallica/albums/BlackAlbum', {context: app2Context});
  * ...
  */
-export default function makeCompatContext(config: FirestorterCompatConfig): IContext {
+export function makeCompatContext(config: FirestorterCompatConfig): IContext {
   const { firebase } = config;
 
   // Get app instance
@@ -95,5 +94,7 @@ export default function makeCompatContext(config: FirestorterCompatConfig): ICon
     onSnapshot: (ref, resultFn, errorFn) => ref.onSnapshot(resultFn, errorFn),
     // @ts-ignore
     deleteField: () => firebase.firestore.FieldValue.delete(),
+  // @ts-ignore
+    serverTimestamp: () => firebase.firestore.FieldValue.serverTimestamp(),
   };
 }
