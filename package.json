@@ -1,6 +1,6 @@
 {
   "name": "firestorter",
-  "version": "3.1.0",
+  "version": "4.0.0-alpha0",
   "description": "Simple & super fast Firestore to React bindings using Mobx observables",
   "keywords": [
     "react-firestore-mobox",
@@ -25,6 +25,11 @@
     "dist",
     "src"
   ],
+  "exports": {
+    "./init": {
+      "default": "./dist/init"
+    }
+  },
   "scripts": {
     "build": "tsdx build",
     "lint": "tsdx lint",
