@@ -30,8 +30,8 @@ export type FirestorterWebConfig = {
  * @example
  * import { initializeApp } from 'firebase/app';
  * import { getFirestore } from 'firebase/firestore';
- * import makeWebContext from 'firestorter/web'
  * import { Collection, Document } from 'firestorter'
+ * import makeWebContext from 'firestorter/web'
  *
  * // Initialize firebase app
  * const app = initializeApp({...});

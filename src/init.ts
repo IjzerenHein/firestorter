@@ -6,21 +6,19 @@ import { makeCompatContext,  FirestorterCompatConfig } from './compat';
   /**
    * Initializes `firestorter` with the firebase-app.
    *
-   * @param {Object} config - Configuration options
-   * @param {FirebaseApp} config.app - Firebase App instance
-   * @param {Firestore} config.firestore - Firestore instance
+   * @param {IContext | FirestorterCompatConfig} config - Configuration options
    *
    * @example
    * import { initializeApp } from 'firebase/app';
-   * import { getFirestore, FieldValue } from 'firebase/firestore';
-   * import { initFirestorter, Collection, Document } from 'firestorter';
+   * import { getFirestore } from 'firebase/firestore';
+   * import { initFirestorter, Collection, Document } from 'firestorter'; 
    *
    * // Initialize firebase app
    * const app = initializeApp({...});
    * const firestore = getFirestore(app);
    *
    * // Initialize `firestorter`
-   * initFirestorter({ app, firestore, FieldValue });
+   * initFirestorter({ app, firestore });
    *
    * // Create collection or document
    * const albums = new Collection('artists/Metallica/albums');

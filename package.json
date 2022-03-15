@@ -42,8 +42,8 @@
     "docs:collection": "jsdoc2md --files 'src/Collection.ts' --configure jsdoc2md.json > ./docs/api/Collection.md",
     "docs:aggregatecollection": "jsdoc2md --files 'src/AggregateCollection.ts' --configure jsdoc2md.json > ./docs/api/AggregateCollection.md",
     "docs:geoquery": "jsdoc2md --files 'src/GeoQuery.ts' --configure jsdoc2md.json > ./docs/api/GeoQuery.md",
-    "docs:types": "jsdoc2md --files 'src/Types.ts' --configure jsdoc2md.json > ./docs/api/Types.md",
-    "docs:initfunctions": "jsdoc2md --files 'src/init.ts' --configure jsdoc2md.json > ./docs/api/InitFunctions.md",
+    "docs:types": "jsdoc2md --files 'src/Types.ts' 'src/IContext.ts' --configure jsdoc2md.json > ./docs/api/Types.md",
+    "docs:initfunctions": "jsdoc2md --files 'src/init.ts' 'src/compat.ts' 'web/index.ts' --configure jsdoc2md.json > ./docs/api/InitFunctions.md",
     "docs:utilityfunctions": "jsdoc2md --files 'src/Utils.ts' --configure jsdoc2md.json > ./docs/api/UtilityFunctions.md",
     "docs:geofunctions": "jsdoc2md --files 'src/GeoHash.ts' --configure jsdoc2md.json > ./docs/api/GeoFunctions.md",
     "docs:build": "yarn docs:document && yarn docs:collection && yarn docs:aggregatecollection && yarn docs:geoquery && yarn docs:types && yarn docs:initfunctions && yarn docs:geofunctions && yarn docs:utilityfunctions",
@@ -61,6 +61,7 @@
     }
   ],
   "dependencies": {
+    "@babel/preset-typescript": "^7.16.7",
     "lodash.isequal": "^4.5.0"
   },
   "peerDependencies": {
