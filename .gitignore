@@ -6,3 +6,5 @@ yalc.lock
 .idea/
 *.log
 .DS_Store
+/web
+!/web/index.ts
