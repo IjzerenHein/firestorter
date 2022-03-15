@@ -1,5 +1,6 @@
 import type { IContext, IHasContext} from './Types';
-  
+import { makeCompatContext,  FirestorterCompatConfig } from './compat';
+
   let globalContext: IContext;
   
   /**
@@ -27,13 +28,18 @@ import type { IContext, IHasContext} from './Types';
    * const album = new Document('artists/Metallica/albums/BlackAlbum');
    * ...
    */
-  export function initFirestorter(context: IContext) {
+  export function initFirestorter(context: IContext | FirestorterCompatConfig) {
     if (globalContext) {
       throw new Error(
         'Firestorter already initialized, did you accidentally call `initFirestorter()` again?'
       );
     }
-    globalContext = context;
+    // @ts-expect-error Property 'collection' does not exist on type 'IContext | FirestorterCompatConfig'.
+    if (context.collection) {
+      globalContext = context as IContext ;  
+    } else {
+      globalContext = makeCompatContext(context as FirestorterCompatConfig);
+    }
     return globalContext;
   }
   

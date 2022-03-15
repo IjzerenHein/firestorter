@@ -26,9 +26,11 @@
     "src"
   ],
   "scripts": {
-    "build": "tsdx build",
+    "build": "yarn build:dist && yarn build:web",
+    "build:dist": "tsdx build",
+    "build:web": "cp src/IContext.ts web && tsc web/index.ts --declaration",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepare": "yarn build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "test": "yarn test:web && yarn test:compat",

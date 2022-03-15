@@ -7,7 +7,7 @@ import AggregateCollection, {
 } from './AggregateCollection';
 import { IGeoRegion, getGeohashesForRegion } from './GeoHash';
 import { CollectionSource, ICollectionDocument } from './Types';
-import { getContext } from './initFirestorter';
+import { getContext } from './init';
 
 export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void);
 export type GeoQueryHash = string[];

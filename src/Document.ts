@@ -17,7 +17,7 @@ import {
 } from './Types';
 import { mergeUpdateData, verifyMode, isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getContext  } from './initFirestorter';
+import { getContext  } from './init';
 
 /**
  * @private

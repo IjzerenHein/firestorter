@@ -1,7 +1,7 @@
 import isEqual from 'lodash.isequal';
 
 import { Mode, IHasContext } from './Types';
-import { getContext } from './initFirestorter';
+import { getContext } from './init';
 
 export { isEqual };
 

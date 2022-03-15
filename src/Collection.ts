@@ -22,7 +22,7 @@ import {
 } from './Types';
 import { verifyMode } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getContext } from './initFirestorter';
+import { getContext } from './init';
 
 // * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
 

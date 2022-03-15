@@ -15,7 +15,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-import type { IContext } from '../Types';
+import type { IContext } from './IContext';
 
 export type FirestorterWebConfig = {
   firestore: Firestore;
@@ -30,7 +30,8 @@ export type FirestorterWebConfig = {
  * @example
  * import { initializeApp } from 'firebase/app';
  * import { getFirestore } from 'firebase/firestore';
- * import { Collection, Document, makeWebContext } from 'firestorter'
+ * import makeWebContext from 'firestorter/web'
+ * import { Collection, Document } from 'firestorter'
  *
  * // Initialize firebase app
  * const app = initializeApp({...});
@@ -56,7 +57,7 @@ export type FirestorterWebConfig = {
  * const album2 = new Document('artists/Metallica/albums/BlackAlbum', {context: app2Context});
  * ...
  */
-export function makeWebContext(config: FirestorterWebConfig): IContext {
+export default function makeWebContext(config: FirestorterWebConfig): IContext {
   const { firestore } = config;
   if (!firestore) throw new Error('Missing argument `firestore`');
   return {

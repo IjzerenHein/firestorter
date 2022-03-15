@@ -18,8 +18,8 @@ import GeoQuery from './GeoQuery';
 import { Mode } from './Types';
 import { mergeUpdateData, isTimestamp } from './Utils';
 
-export * from './initFirestorter';
-export * from './init/compat';
+export * from './init';
+export * from './compat';
 // export * from './init/web'; // <-- This one might causes problems on RN
 
 export {
