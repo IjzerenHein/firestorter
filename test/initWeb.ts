@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase/firestore';
 import { configure } from 'mobx';
 
 import { initFirestorter, getContext } from '../src';
-import makeWebContext from '../src/init/web';
+import makeWebContext from '../web';
 
 const firebaseConfig = require('./firebaseConfig.json');
 

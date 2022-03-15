@@ -4,6 +4,19 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [4.0.0] - 2022-03-15
+
+### Added
+
+- Adds support for the new Firebase v9 API.
+- Added `makeWebContext` for initializing a context with the new code-splitted Firebase API (v9+).
+- Added `makeCompatContext` for initializing using the compat API or react-native-firebase.
+
+### Removed
+
+- Removed flow-typings.
+- Removed `makeFirestorterContext` (replaced by `makeCompatContext` and `makeWebContext`).
+
 ## [3.1.0] - 2020-03-05
 
 ### Added

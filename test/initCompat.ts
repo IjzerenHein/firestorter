@@ -2,8 +2,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { configure } from 'mobx';
 
-import { initFirestorter, getContext } from '../src';
-import makeCompatContext from '../src/init/compat';
+import { initFirestorter, getContext, makeCompatContext } from '../src';
 
 const firebaseConfig = require('./firebaseConfig.json');
 

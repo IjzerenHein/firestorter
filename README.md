@@ -55,16 +55,14 @@ const user = new Document('users/8273872***');
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-const Todos = observer(class Todos extends React.Component {
-  render() {
-    return <div>
-      {todos.docs.map((doc) => (
-        <TodoItem
-          key={doc.id}
-          doc={doc} />
-      ))}
-    </div>;
-  }
+const Todos = observer(() => {
+  return <div>
+    {todos.docs.map((doc) => (
+      <TodoItem
+        key={doc.id}
+        doc={doc} />
+    ))}
+  </div>;
 });
 
 const TodoItem = observer(({doc}) => {
