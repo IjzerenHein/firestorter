@@ -4,7 +4,7 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
-## [4.0.0] - 2022-03-15
+## [4.0.0] - 2022-03-17
 
 ### Added
 
