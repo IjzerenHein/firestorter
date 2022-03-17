@@ -1,4 +1,4 @@
-import { firebase, mergeUpdateData } from './init';
+import { getContext, mergeUpdateData } from '../src';
 
 const TEST_DATA = {
   field1: 1,
@@ -74,9 +74,20 @@ test('append field path', () => {
 test('delete field', () => {
   expect(
     mergeUpdateData(TEST_DATA, {
-      field1: firebase.firestore.FieldValue.delete(),
+      field1: getContext().deleteField(),
     })
   ).toEqual({});
+});
+
+test('server timestamp', () => {
+  expect(
+    mergeUpdateData(TEST_DATA, {
+      field2: getContext().serverTimestamp(),
+    })
+  ).toEqual({
+    ...TEST_DATA,
+    field2: getContext().serverTimestamp(),
+  });
 });
 
 /* test("default generic type specified", () => {

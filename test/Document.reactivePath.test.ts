@@ -1,6 +1,6 @@
-import { runInAction } from 'mobx';
+import { runInAction, observable } from 'mobx';
 
-import { Document, Collection, observable, Mode } from './init';
+import { Document, Collection, Mode } from '../src';
 
 test('no path', () => {
   const doc = new Document(() => undefined);

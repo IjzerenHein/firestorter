@@ -3,13 +3,10 @@
 <dl>
 <dt><a href="#initFirestorter">initFirestorter(config)</a></dt>
 <dd><p>Initializes <code>firestorter</code> with the firebase-app.</p></dd>
-<dt><a href="#makeFirestorterContext">makeFirestorterContext()</a></dt>
-<dd><p>If you need to use different firestore instances for different
-collections, or otherwise want to avoid global state, you can
-instead provide a &quot;context&quot; option when creating Document and
-Collection instances.</p>
-<p>This function takes the same arguments as <code>initFirestorter</code> and returns
-a context suitable for Document and Collection creation.</p></dd>
+<dt><a href="#makeCompatContext">makeCompatContext(config)</a></dt>
+<dd><p>Creates a firestorter compat context.</p></dd>
+<dt><a href="#makeWebContext">makeWebContext(config)</a></dt>
+<dd><p>Creates a firestorter web context.</p></dd>
 </dl>
 
 <a name="initFirestorter"></a>
@@ -21,21 +18,20 @@ a context suitable for Document and Collection creation.</p></dd>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| config | <code>Object</code> | <p>Configuration options</p> |
-| config.firebase | <code>Firebase</code> | <p>Firebase reference</p> |
-| [config.app] | <code>String</code> \| <code>FirebaseApp</code> | <p>FirebaseApp to use (when omitted the default app is used)</p> |
+| config | <code>IContext</code> \| <code>FirestorterCompatConfig</code> | <p>Configuration options</p> |
 
 **Example**  
 ```js
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-import {initFirestorter, Collection, Document} from 'firestorter';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { initFirestorter, Collection, Document } from 'firestorter'; 
 
 // Initialize firebase app
-firebase.initializeApp({...});
+const app = initializeApp({...});
+const firestore = getFirestore(app);
 
 // Initialize `firestorter`
-initFirestorter({firebase: firebase});
+initFirestorter({ app, firestore });
 
 // Create collection or document
 const albums = new Collection('artists/Metallica/albums');
@@ -43,41 +39,88 @@ const albums = new Collection('artists/Metallica/albums');
 const album = new Document('artists/Metallica/albums/BlackAlbum');
 ...
 ```
-<a name="makeFirestorterContext"></a>
+<a name="makeCompatContext"></a>
 
-## makeFirestorterContext()
-<p>If you need to use different firestore instances for different
-collections, or otherwise want to avoid global state, you can
-instead provide a &quot;context&quot; option when creating Document and
-Collection instances.</p>
-<p>This function takes the same arguments as <code>initFirestorter</code> and returns
-a context suitable for Document and Collection creation.</p>
+## makeCompatContext(config)
+<p>Creates a firestorter compat context.</p>
 
 **Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| config | <code>Object</code> | <p>Configuration options</p> |
+| config.firebase | <code>Firebase</code> | <p>Firebase instance</p> |
+| [config.app] | <code>FirebaseApp</code> \| <code>string</code> | <p>Firebase app instance or name</p> |
+| [config.firestore] | <code>Firestore</code> | <p>Firestore instance</p> |
+
 **Example**  
 ```js
-import * as firebase from 'firebase/app';
-import 'firebase/firestore'
-import * as firetest from '@firebase/testing'
-import { makeFirestorterContext, Collection, Document } from "firestorter"
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { Collection, Document, makeCompatContext } from 'firestorter'
 
-function makeTestContext(fbtestArgs) {
-	 const app = firetest.initializeTestApp(fbtestArgs)
-  return makeFirestorterContext({
-    firestore,
-    app,
-  })
-}
+// Initialize firebase app
+firebase.initializeApp({...});
 
-// create collection or document without global state
-test('collection and document using different apps', () => {
-  const context1 = makeTestContext({ projectId: 'foo' })
-  const context2 = makeTestContext({ projectId: 'bar' })
+// Initialize global `firestorter` context
+initFirestorter(makeCompatContext({ firebase: firebase }));
 
-  // Create collection or document
-  const albums = new Collection('artists/Metallica/albums', {context: context1});
-  ...
-  const album = new Document('artists/Metallica/albums/BlackAlbum', {context: context2});
-  ...
-})
+// Create collection or document
+const albums = new Collection('artists/Metallica/albums');
+...
+const album = new Document('artists/Metallica/albums/BlackAlbum');
+...
+
+// Or create a custom context to connect to another Firebase app
+const app2 = firebase.initializeApp({...});
+const app2Context = makeCompatContext({ firebase: firebase, app: app2 });
+
+// Create collection or document
+const albums2 = new Collection('artists/Metallica/albums', {context: app2Context});
+...
+const album2 = new Document('artists/Metallica/albums/BlackAlbum', {context: app2Context});
+...
+```
+<a name="makeWebContext"></a>
+
+## makeWebContext(config)
+<p>Creates a firestorter web context.</p>
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| config | <code>Object</code> | <p>Configuration options</p> |
+| config.firestore | <code>Firestore</code> | <p>Firestore instance</p> |
+
+**Example**  
+```js
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { Collection, Document } from 'firestorter'
+import makeWebContext from 'firestorter/web'
+
+// Initialize firebase app
+const app = initializeApp({...});
+const firestore = getFirestore(app);
+
+// Initialize global `firestorter` context
+initFirestorter(makeWebContext({ firestore }));
+
+// Create collection or document
+const albums = new Collection('artists/Metallica/albums');
+...
+const album = new Document('artists/Metallica/albums/BlackAlbum');
+...
+
+// Or create a custom context to connect to another Firebase app
+const app2 = initializeApp({...});
+const firestore2 = getFirestore(app2);
+const app2Context = makeWebContext({ firestore: firestore2 });
+
+// Create collection or document
+const albums2 = new Collection('artists/Metallica/albums', {context: app2Context});
+...
+const album2 = new Document('artists/Metallica/albums/BlackAlbum', {context: app2Context});
+...
 ```

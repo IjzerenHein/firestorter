@@ -7,6 +7,7 @@ import AggregateCollection, {
 } from './AggregateCollection';
 import { IGeoRegion, getGeohashesForRegion } from './GeoHash';
 import { CollectionSource, ICollectionDocument } from './Types';
+import { getContext } from './init';
 
 export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void);
 export type GeoQueryHash = string[];
@@ -81,10 +82,12 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<T, IGe
         if (!geohashes) {
           return null;
         }
-        return geohashes.map((geohash) => ({
+        const { query, where } = getContext(this);
+        return geohashes.map(geohash => ({
           geohash,
           key: `${geohash[0]}-${geohash[1]}`,
-          query: (ref) => ref.where(fieldPath, '>=', geohash[0]).where(fieldPath, '<', geohash[1]),
+          query: ref =>
+            query(ref, where(fieldPath, '>=', geohash[0]), where(fieldPath, '<', geohash[1])),
         }));
       },
       ...otherOptions,
@@ -151,7 +154,7 @@ class GeoQuery<T extends ICollectionDocument> extends AggregateCollection<T, IGe
    */
   get geohashes(): GeoQueryHash[] {
     const queries = this.queries();
-    return queries ? queries.map((query) => query.geohash) : [];
+    return queries ? queries.map(query => query.geohash) : [];
   }
 }
 

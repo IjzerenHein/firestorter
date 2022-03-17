@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import type Firebase from 'firebase';
+import type { DocumentSnapshot } from 'firebase/firestore';
 
-import { ICollectionDocument } from '../src/Types';
-import { Collection, Document } from './init';
+import { Collection, Document, ICollectionDocument, DocumentSource, IDocumentOptions } from '../src';
 
 class TestDoc implements ICollectionDocument {
   private collectionRef: number = 0;
 
-  constructor(_source, _options) {
+  constructor(_source: DocumentSource, _options: IDocumentOptions) {
     this.collectionRef = 0;
   }
 
@@ -25,7 +23,7 @@ class TestDoc implements ICollectionDocument {
     return this.collectionRef;
   }
 
-  public updateFromCollectionSnapshot(_snapshot: Firebase.firestore.DocumentSnapshot): void {
+  public updateFromCollectionSnapshot(_snapshot: DocumentSnapshot): void {
     // nop
   }
 }

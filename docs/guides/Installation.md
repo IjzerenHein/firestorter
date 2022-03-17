@@ -4,10 +4,6 @@ Install Firestorter and MobX:
 
     yarn add firestorter mobx mobx-react
 
-Or when still using MobX 5 or 4, install the v2 version:
-
-	yarn add firestorter@2
-
 ## Usage on the web
 
 To use Firestorter on the web, also install the [Firebase JavaScript SDK](https://www.npmjs.com/package/firebase):
@@ -17,12 +13,13 @@ To use Firestorter on the web, also install the [Firebase JavaScript SDK](https:
 After that, initialize Firebase and Firestorter:
 
 ```js
-import firebase from 'firebase';
-import 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 import { initFirestorter } from 'firestorter';
+import makeWebContext from 'firestorter/web';
 
 // Initialize firebase app
-firebase.initializeApp({
+const app = initializeApp({
   "apiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
 	"authDomain": "xxxxxxx.firebaseapp.com",
 	"databaseURL": "https://xxxxxxxx.firebaseio.com",
@@ -30,9 +27,25 @@ firebase.initializeApp({
 	"storageBucket": "xxxxxxxxxx.appspot.com",
 	"messagingSenderId": "xxxxxxxxxxxxxxxx"
 });
+const firestore = getFirestore(app);
 
 // And initialize `firestorter`
-initFirestorter({ firebase: firebase });
+initFirestorter(makeWebContext({ firestore: firestore }));
+```
+
+## Usage older or compat firebase versions
+
+```js
+import firebase from 'firebase/compat/app';
+import  from 'firebase/compat/firestore';
+import { initFirestorter, makeCompatContext } from 'firestorter';
+import makeWebContext from 'firestorter/web';
+
+// Initialize firebase app
+firebase.initializeApp({ ... });
+
+// And initialize `firestorter`
+initFirestorter(makeWebContext({ firebase: firebase }));
 ```
 
 ## Usage with react-native
@@ -49,9 +62,9 @@ After that, import the Firebase dependencies and initialize Firestorter:
 
 ```js
 import firebase from 'react-native-firebase';
-import { initFirestorter } from 'firestorter';
+import { initFirestorter, makeCompatContext } from 'firestorter';
 
-initFirestorter({ firebase: firebase });
+initFirestorter(makeCompatContext({ firebase: firebase }));
 ```
 
 **react-native-firebase >= v6:**
@@ -59,9 +72,9 @@ initFirestorter({ firebase: firebase });
 ```js
 import { firebase } from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
-import { initFirestorter } from 'firestorter';
+import { initFirestorter, makeCompatContext } from 'firestorter';
 
-initFirestorter({ firebase: firebase });
+initFirestorter(makeCompatContext({ firebase: firebase }));
 ```
 
 > [!NOTE]

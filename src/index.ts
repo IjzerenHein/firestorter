@@ -17,26 +17,18 @@ import {
 import GeoQuery from './GeoQuery';
 import { Mode } from './Types';
 import { mergeUpdateData, isTimestamp } from './Utils';
-import {
-  getFirebase,
-  getFirebaseApp,
-  getFirestore,
-  initFirestorter,
-  makeFirestorterContext,
-} from './init';
+
+export * from './init';
+export * from './compat';
+// export * from './init/web'; // <-- This one might causes problems on RN
 
 export {
   Collection,
   Document,
   AggregateCollection,
-  initFirestorter,
-  getFirestore,
-  getFirebase,
-  getFirebaseApp,
   mergeUpdateData,
   Mode,
   isTimestamp,
-  makeFirestorterContext,
   // Geo queries
   GeoQuery,
   decodeGeohash,
@@ -51,7 +43,6 @@ export {
   metersToLatitudeDegrees,
   metersToLongitudeDegrees,
 };
-export type { IContext, IHasContext, FirestorterConfig } from './init';
 export type {
   DocumentSource,
   IDocumentOptions,
@@ -61,6 +52,8 @@ export type {
   CollectionQuery,
   ICollectionOptions,
   ICollectionDocument,
+  IContext,
+  IHasContext
 } from './Types';
 export type {
   AggregateCollectionOrderBy,
@@ -72,3 +65,5 @@ export type {
 } from './AggregateCollection';
 export type { IGeoPoint, IGeoRegion, GeoHash } from './GeoHash';
 export type { GeoQueryRegion, GeoQueryHash, IGeoQueryQuery, IGeoQueryOptions } from './GeoQuery';
+
+export const ModuleName = 'firestorter';

@@ -11,7 +11,8 @@
 | Functions                                                               | Description                                                                                           |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | [initFirestorter](./api/InitFunctions.md#initfirestorterconfig)         | Initializes firestorter with the firebase-app.                                                        |
-| [makeFirestorterContext](./api/InitFunctions.md#makefirestortercontext) | Initializes firestorter with the firebase-app.                                                        |
+| [makeCompatContext](./api/InitFunctions.md#makecompatcontext) | Initializes firestorter with a compat context.
+| [makeWebContext](./api/InitFunctions.md#makewebcontext) | Initializes firestorter with a web context.                                                        |
 | [mergeUpdateData](./api/UtilityFunctions.md#mergeupdatedata)            | Helper function which merges firestore update field data and returns the new object.                  |
 | [isTimestamp](./api/UtilityFunctions.md#istimestamp)                    | Schema helper function that checks whether the provided value is a valid Firestore Timestamp or Date. |
 

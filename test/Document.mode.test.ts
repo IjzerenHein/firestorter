@@ -1,4 +1,4 @@
-import { Document, Mode } from './init';
+import { Document, Mode } from '../src';
 
 describe('construct', () => {
   test('default is auto', () => {
@@ -26,7 +26,7 @@ describe('construct', () => {
   });
 
   test('bogus', () => {
-    // @ts-expect-error
+    // @ts-expect-error Type '"bogus"' is not assignable to type 'Mode'.
     expect(() => new Document(undefined, { mode: 'bogus' })).toThrow();
   });
 });
@@ -52,16 +52,17 @@ describe('get/set', () => {
   });
   test('bogus', () => {
     const doc = new Document();
-    // @ts-expect-error
+    // @ts-expect-error Type '"bogus"' is not assignable to type 'Mode'.
     expect(() => (doc.mode = 'bogus')).toThrow();
   });
   test('empty string', () => {
     const doc = new Document();
-    // @ts-expect-error
+    // @ts-expect-error Type '""' is not assignable to type 'Mode'.
     expect(() => (doc.mode = '')).toThrow();
   });
   test('undefined', () => {
     const doc = new Document();
+    // @ts-ignore Type 'undefined' is not assignable to type 'Mode'.
     expect(() => (doc.mode = undefined)).toThrow();
   });
 });

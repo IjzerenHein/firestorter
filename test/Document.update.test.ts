@@ -1,6 +1,6 @@
 import { struct } from 'superstruct';
 
-import { Document, firebase, getFirebase } from './init';
+import { Document, getContext } from '../src';
 
 const ArtistSchema = struct({
   genre: 'string',
@@ -54,7 +54,7 @@ test('delete field with schema', async () => {
   await doc.fetch();
   expect(doc.data.memberCount).toBe(3);
   await doc.update({
-    memberCount: getFirebase().firestore.FieldValue.delete(),
+    memberCount: getContext().deleteField(),
   });
   await doc.fetch();
   expect(doc.data.memberCount).toBeUndefined();
@@ -67,7 +67,7 @@ test('delete field-path with schema', async () => {
   });
   await doc.fetch();
   await doc.update({
-    'members.leadVocalist': firebase.firestore.FieldValue.delete(),
+    'members.leadVocalist': getContext().deleteField(),
   });
   await doc.fetch();
   expect(doc.data.members.leadVocalist).toBeUndefined();

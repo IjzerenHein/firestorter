@@ -18,26 +18,26 @@
 * 🚀 Fast, only fetches and re-renders data when needed
 * 🤘 No clutter, no complex stores/providers/actions/reducers, just go
 
-The latest version is compatible with **MobX 6**
+The latest version is compatible with the **Firebase v9 API**.
 
 ```sh
 yarn add firestorter
 ```
 
-> When using **MobX 5** or **4**, install the v2 version: `yarn add firestorter@2`
-
 **1. Initialize**
 
 ```js
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 import { initFirestorter } from 'firestorter';
+import makeWebContext from 'firestorter/web';
 
 // Initialize firebase app
-firebase.initializeApp({...});
+const app = initializeApp({ ... });
+const firestore = getFirestore(app);
 
 // Initialize `firestorter`
-initFirestorter({ firebase: firebase });
+initFirestorter(makeWebContext({ firestore }));
 ```
 > Firestorter also works with **react-native** and supports multi app environments
 
@@ -55,16 +55,14 @@ const user = new Document('users/8273872***');
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-const Todos = observer(class Todos extends React.Component {
-  render() {
-    return <div>
-      {todos.docs.map((doc) => (
-        <TodoItem
-          key={doc.id}
-          doc={doc} />
-      ))}
-    </div>;
-  }
+const Todos = observer(() => {
+  return <div>
+    {todos.docs.map((doc) => (
+      <TodoItem
+        key={doc.id}
+        doc={doc} />
+    ))}
+  </div>;
 });
 
 const TodoItem = observer(({doc}) => {

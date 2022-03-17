@@ -9,15 +9,14 @@ document.
 ## Store.js
 
 ```js
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-import {initFirestorter, Collection, Document} from 'firestorter';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { initFirestorter, Collection, Document} from 'firestorter';
+import makeWebContext from 'firestorter/web';
 
-firebase.initializeApp({
-  ...
-});
-
-initFirestorter({firebase: firebase});
+// Initialize firebase (web example)
+firebase.initializeApp({ ... });
+initFirestorter(makeWebContext({firestore: firestore}));
 
 const store = {
   artists: new Collection('artists'),		 // by default, mode is set to `auto`

@@ -1,4 +1,4 @@
-import { Collection } from './init';
+import { Collection } from '../src';
 
 test('no ref fail', async () => {
   expect.assertions(1);
@@ -18,7 +18,7 @@ test('fetch', async () => {
   await col.fetch();
   expect(col.isLoading).toBe(false);
   expect(col.isLoaded).toBe(true);
-  const docs = col.docs.filter((doc) => doc.id !== 'TEMP');
+  const docs = col.docs.filter(doc => doc.id !== 'TEMP');
   expect(docs.length).toBe(2);
 });
 
@@ -44,6 +44,6 @@ test('ready', async () => {
   await col.ready();
   expect(col.isLoading).toBe(false);
   expect(col.isLoaded).toBe(true);
-  const docs = col.docs.filter((doc) => doc.id !== 'TEMP');
+  const docs = col.docs.filter(doc => doc.id !== 'TEMP');
   expect(docs.length).toBe(2);
 });

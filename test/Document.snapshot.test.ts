@@ -1,4 +1,4 @@
-import { Document } from './init';
+import { Document } from '../src';
 
 test('no values', () => {
   const doc = new Document();

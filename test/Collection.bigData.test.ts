@@ -1,6 +1,6 @@
 import { autorun } from 'mobx';
 
-import { Collection, Document } from './init';
+import { Collection, Document } from '../src';
 
 interface IBigData {
   number: number;

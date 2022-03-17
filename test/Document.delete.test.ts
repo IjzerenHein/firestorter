@@ -1,6 +1,6 @@
 import { struct } from 'superstruct';
 
-import { Document } from './init';
+import { Document } from '../src';
 
 const ArtistSchema = struct({
   genre: 'string',

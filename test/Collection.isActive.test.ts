@@ -1,4 +1,6 @@
-import { Collection, autorun, Mode } from './init';
+import { autorun } from 'mobx';
+
+import { Collection, Mode } from '../src';
 
 describe('off', () => {
   test('construct no ref', () => {
@@ -87,7 +89,7 @@ describe('auto', () => {
     expect(col.isActive).toBe(true);
     col.ref = undefined;
     expect(col.isActive).toBe(false);
-    // @ts-expect-error
+    // @ts-ignore
     col.ref = 'todos';
     expect(col.isActive).toBe(true);
     dispose();

@@ -1,4 +1,4 @@
-import type Firebase from 'firebase';
+import type { CollectionReference, Query } from 'firebase/firestore';
 import { runInAction, autorun, computed, makeObservable, IObservableArray } from 'mobx';
 
 import Collection from './Collection';
@@ -10,24 +10,20 @@ import {
   CollectionSource,
   ICollectionDocument,
   IEnhancedObservableDelegate,
+  IContext, IHasContext
 } from './Types';
+import { isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { IContext, IHasContext } from './init';
-
-const isEqual = require('lodash.isequal');
 
 export type AggregateCollectionOrderBy<T> = (a: T, b: T) => number;
 export type AggregateCollectionFilterBy<T> = (doc: T) => boolean;
 export interface IAggregateCollectionQuery {
   key: string;
-  query: (
-    ref: Firebase.firestore.CollectionReference
-  ) => Firebase.firestore.Query | null | undefined;
+  query: (ref: CollectionReference) => Query | null | undefined;
 }
 export type AggregateCollectionQueries<Y> = Y[] | null;
-export type AggregateCollectionQueriesFn<
-  Y extends IAggregateCollectionQuery
-> = () => AggregateCollectionQueries<Y>;
+export type AggregateCollectionQueriesFn<Y extends IAggregateCollectionQuery> =
+  () => AggregateCollectionQueries<Y>;
 
 export interface IAggregateCollectionOptions<T, Y extends IAggregateCollectionQuery> {
   queries: AggregateCollectionQueriesFn<Y>;
@@ -72,7 +68,8 @@ export interface IAggregateCollectionOptions<T, Y extends IAggregateCollectionQu
 class AggregateCollection<
   T extends ICollectionDocument,
   Y extends IAggregateCollectionQuery = IAggregateCollectionQuery
-> implements ICollection<T>, IEnhancedObservableDelegate, IHasContext {
+> implements ICollection<T>, IEnhancedObservableDelegate, IHasContext
+{
   private queriesFn: AggregateCollectionQueriesFn<Y>;
   private collectionSource: CollectionSource;
   private createDocument: (source: DocumentSource, options: IDocumentOptions) => T;
@@ -81,7 +78,7 @@ class AggregateCollection<
   private debug: boolean;
   private debugInstanceName?: string;
   private observedRefCount: number = 0;
-  private disposer: (() => any) | void;
+  private disposer?: (() => any);
   private collections: IObservableArray<Collection<T>>;
   private prevCollections: Collection<T>[];
   private collectionRecycleMap: {
@@ -102,7 +99,7 @@ class AggregateCollection<
       this.createDocument = options.createDocument;
     } else {
       this.createDocument = (docSource: DocumentSource, docOptions: IDocumentOptions): T =>
-        (new Document(docSource, docOptions) as unknown) as T;
+        new Document(docSource, docOptions) as unknown as T;
     }
     this.queriesFn = options.queries;
     this.orderBy = options.orderBy;
@@ -203,7 +200,7 @@ class AggregateCollection<
    * @type {boolean}
    */
   public get isLoading(): boolean {
-    return this.collections.reduce((acc, col) => acc || col.isLoading, false);
+    return this.collections.reduce((acc, col) => acc || col.isLoading, false) as any;
   }
 
   /**
@@ -212,7 +209,7 @@ class AggregateCollection<
    * @type {boolean}
    */
   public get isLoaded(): boolean {
-    return this.collections.reduce((acc, col) => (acc ? col.isLoaded : false), true);
+    return this.collections.reduce((acc, col) => (acc ? col.isLoaded : false), true) as any;
   }
 
   /**
@@ -229,7 +226,7 @@ class AggregateCollection<
   /**
    * @private
    */
-  public get context(): IContext {
+  public get context(): IContext | undefined {
     return this.ctx;
   }
 
@@ -290,7 +287,7 @@ class AggregateCollection<
     this.documentRecycleMap = {};
     Object.values(this.collectionRecycleMap).forEach((query) => {
       query.docs.forEach((doc) => {
-        this.documentRecycleMap[doc.id] = doc;
+        this.documentRecycleMap[doc.id!] = doc;
       });
     });
     // console.log(Object.keys(this._documentRecycleMap));

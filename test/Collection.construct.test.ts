@@ -1,19 +1,19 @@
-import { Collection, firebase } from './init';
+import { Collection, getContext } from '../src';
 
 test('no args', () => {
   expect(new Collection()).toBeDefined();
 });
 
 test('invalid ref (empty)', () => {
-  expect(() => new Collection(firebase.firestore().collection(''))).toThrow();
+  expect(() => new Collection(getContext().collection(''))).toThrow();
 });
 
 test('invalid ref (document path)', () => {
-  expect(() => new Collection(firebase.firestore().collection('albums/album'))).toThrow();
+  expect(() => new Collection(getContext().collection('albums/album'))).toThrow();
 });
 
 test('valid ref', () => {
-  expect(new Collection(firebase.firestore().collection('albums'))).toBeDefined();
+  expect(new Collection(getContext().collection('albums'))).toBeDefined();
 });
 
 test('invalid path (empty string)', () => {
