@@ -39,7 +39,7 @@ const firestore = getFirestore(app);
 // Initialize `firestorter`
 initFirestorter(makeWebContext({ firestore }));
 ```
-> See here on how to use with [react-native](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-react-native), [compat mode](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-compat-mode) and [older firebase SDKs](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-older-javascript_sdks_v8).
+> See here on how to use with [react-native](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-react-native), [compat mode](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-compat-mode) and [older firebase SDKs](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-older-javascript-sdks-lt-v8).
 
 **2. Create a `Collection` or `Document`**
 
