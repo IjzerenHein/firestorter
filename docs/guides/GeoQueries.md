@@ -126,4 +126,4 @@ Besides the `GeoQuery` class and `encodeGeohash` functions, firestorter also con
 
 - [GeoQuery](./api/GeoQuery.md)
 - [Geo functions](./api/GeoFunctions.md)
-- [GeoQuery Example App](https://github.com/IjzerenHein/firestorter/blob/master/examples/geoquery/src)
+- [GeoQuery Example App](https://github.com/IjzerenHein/firestorter/blob/main/examples/geoquery/src)

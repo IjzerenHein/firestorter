@@ -6,3 +6,4 @@ yarn-error.log
 yalc.lock
 .idea/
 .build*/
+.DS_Store

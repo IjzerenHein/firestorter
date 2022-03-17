@@ -3,11 +3,11 @@ name: build
 on:
   workflow_dispatch: {}
   push:
-    branches: [master]
+    branches: [main]
     paths-ignore:
       - examples/**
   pull_request:
-    branches: [master]
+    branches: [main]
     paths-ignore:
       - examples/**
 
