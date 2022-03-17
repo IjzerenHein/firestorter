@@ -32,4 +32,5 @@ jobs:
       - run: yarn test
       - run: yarn lint --max-warnings 0
       - run: yarn build
+      - run: yarn size
       - run: yarn docs:ci
