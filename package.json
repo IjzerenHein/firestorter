@@ -35,7 +35,7 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "test": "yarn test:web && yarn test:compat",
-    "test:web": "node ./test/seedSampleData.js && tsdx test --config jest.config.web.js",
+    "test:web": "node ./test/seedSampleData.js && cp src/IContext.ts web && tsdx test --config jest.config.web.js",
     "test:compat": "node ./test/seedSampleData.js && tsdx test --config jest.config.compat.js",
     "cov": "jest --coverage",
     "docs:document": "jsdoc2md --files 'src/Document.ts' --configure jsdoc2md.json > ./docs/api/Document.md",
