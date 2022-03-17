@@ -39,7 +39,7 @@ const firestore = getFirestore(app);
 // Initialize `firestorter`
 initFirestorter(makeWebContext({ firestore }));
 ```
-> Firestorter also works with **react-native** and supports multi app environments
+> See here on how to use with [react-native](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-react-native), [compat mode](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-compat-mode) and [older firebase SDKs](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-older-javascript_sdks_v8).
 
 **2. Create a `Collection` or `Document`**
 
@@ -86,13 +86,13 @@ It does this by intelligently tracking whether a Collection or Document should b
 ## Features
 
 - [Add, update & delete documents](https://ijzerenhein.github.io/firestorter/#/./guides/AddUpdateDelete.md)
-- [Super efficient Component re-rendering](https://ijzerenhein.github.io/firestorter/#/./guides/FetchingData.md#automatic-fetching)
-- [Declaratively link document/collection paths to document data](https://ijzerenhein.github.io/firestorter/#/./guides/SourcesPathsAndReferences.md#reactive-path-functions)
+- [Super efficient Component re-rendering](https://ijzerenhein.github.io/firestorter/#/./guides/FetchingData.md?id=automatic-fetching)
+- [Declaratively link document/collection paths to document data](https://ijzerenhein.github.io/firestorter/#/./guides/SourcesPathsAndReferences.md?id=reactive-path-functions)
 - [Geo query support](https://ijzerenhein.github.io/firestorter/#/./guides/GeoQueries.md)
 - [Easily create aggregate collections from multiple queries](https://ijzerenhein.github.io/firestorter/#/./guides/AggregateCollections.md)
 - [Runtime schema validation](https://ijzerenhein.github.io/firestorter/#/./guides/SchemaValidation.md) & [Type Generics](https://ijzerenhein.github.io/firestorter/#/./guides/Generics.md)
 - [Manual fetching mode for use with Unit-tests/Async-functions](https://ijzerenhein.github.io/firestorter/#/./guides/FetchModes.md)
-- [React-native support](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md#usage-with-react-native)
+- [React-native support](https://ijzerenhein.github.io/firestorter/#/./guides/Installation.md?id=usage-with-react-native)
 - [TypeScript- & Flow typings](https://ijzerenhein.github.io/firestorter/#/./guides/Generics.md)
 - Works with Vue.js
 

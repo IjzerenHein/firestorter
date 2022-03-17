@@ -21,7 +21,7 @@ const firestore = getFirestore(app);
 // Initialize `firestorter`
 initFirestorter(makeWebContext({ firestore: firestore }));
 ```
-> Firestorter also works with **react-native** and supports multi app environments
+> See here on how to use with [react-native](./guides/Installation.md#usage-with-react-native), [compat mode](./guides/Installation.md#usage-with-compat-mode) and [older firebase SDKs](./guides/Installation.md#usage-with-older-javascript_sdks_v8).
 
 **2. Create a `Collection` or `Document`**
 
