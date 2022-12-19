@@ -4,6 +4,12 @@ Use Firestore in React with zero effort, using MobX 🤘
 
 ## [Unreleased]
 
+## [4.0.1] - 2022-12-19
+
+### Fixed
+
+- Fixed `Collection.isLoading` and `Collection.isLoaded` not reacting to data updates when accessed #180 (thanks @ghatchue).
+
 ## [4.0.0] - 2022-03-17
 
 ### Added
