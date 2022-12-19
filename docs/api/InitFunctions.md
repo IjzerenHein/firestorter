@@ -24,7 +24,7 @@
 ```js
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { initFirestorter, Collection, Document } from 'firestorter'; 
+import { initFirestorter, Collection, Document } from 'firestorter';
 
 // Initialize firebase app
 const app = initializeApp({...});
