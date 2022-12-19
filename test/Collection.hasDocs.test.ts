@@ -11,7 +11,7 @@ test('false when collection empty', async () => {
   expect.assertions(1);
   const col = new Collection('artists', {
     mode: Mode.On,
-    query: ref => getContext().query(ref, getContext().where('genre', '==', 'none')),
+    query: (ref) => getContext().query(ref, getContext().where('genre', '==', 'none')),
   });
   await col.ready();
   expect(col.hasDocs).toBeFalsy();
@@ -30,7 +30,7 @@ test('should not react when number of docs changes', async () => {
   expect.assertions(4);
   const col = new Collection('artists', {
     mode: Mode.On,
-    query: ref => getContext().query(ref, getContext().where('genre', '>', '')),
+    query: (ref) => getContext().query(ref, getContext().where('genre', '>', '')),
   });
   let reactionCount = 0;
   const dispose = autorun(() => {
@@ -42,10 +42,10 @@ test('should not react when number of docs changes', async () => {
   expect(reactionCount).toEqual(1);
   await col.ready();
   expect(reactionCount).toEqual(2);
-  col.query = ref => getContext().query(ref, getContext().where('genre', '>', 'r'));
+  col.query = (ref) => getContext().query(ref, getContext().where('genre', '>', 'r'));
   await col.ready();
   expect(reactionCount).toEqual(2);
-  col.query = ref => getContext().query(ref, getContext().where('genre', '>', 'z'));
+  col.query = (ref) => getContext().query(ref, getContext().where('genre', '>', 'z'));
   await col.ready();
   expect(reactionCount).toEqual(3);
   col.mode = Mode.Off;

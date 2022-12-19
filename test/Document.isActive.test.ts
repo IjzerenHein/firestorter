@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { autorun } from 'mobx';
 
 import { Document, Mode } from '../src';

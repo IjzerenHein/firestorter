@@ -5,7 +5,7 @@ import type {
   CollectionReference,
   Query,
 } from 'firebase/firestore';
-import type { IContext} from './IContext';
+import type { IContext } from './IContext';
 
 export { IContext };
 

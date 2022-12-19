@@ -17,7 +17,7 @@ test('constructor - ref', () => {
 });
 
 test('constructor - function', () => {
-  const query: CollectionQuery = ref =>
+  const query: CollectionQuery = (ref) =>
     getContext().query(ref, getContext().where('genre', '==', 'punk'));
   const col = new Collection('artists', {
     query,
@@ -27,7 +27,7 @@ test('constructor - function', () => {
 
 test('constructor - expect query function to be called once', () => {
   let callCount = 0;
-  const query: CollectionQuery = ref => {
+  const query: CollectionQuery = (ref) => {
     callCount++;
     return getContext().query(ref, getContext().where('genre', '==', 'punk'));
   };
@@ -39,7 +39,7 @@ test('constructor - expect query function to be called once', () => {
 });
 
 test('update', () => {
-  const query: CollectionQuery = ref =>
+  const query: CollectionQuery = (ref) =>
     getContext().query(ref, getContext().where('genre', '==', 'punk'));
   const col = new Collection('artists');
   expect(col.query).toBeUndefined();
@@ -60,7 +60,7 @@ test('reset', () => {
 test('fetch', async () => {
   expect.assertions(2);
   const col = new Collection('artists', {
-    query: ref => getContext().query(ref, getContext().where('genre', '==', 'punk')),
+    query: (ref) => getContext().query(ref, getContext().where('genre', '==', 'punk')),
   });
   expect(col.docs.length).toBe(0);
   await col.fetch();
@@ -111,7 +111,7 @@ test('re-fetch', async () => {
   await col.fetch();
   expect(col.docs.length).toBe(1);
   expect(col.docs[0].id).toBe('TheOffspring');
-  col.query = ref => getContext().query(ref, getContext().where('genre', '==', 'rock'));
+  col.query = (ref) => getContext().query(ref, getContext().where('genre', '==', 'rock'));
   await col.fetch();
   expect(col.docs.length).toBe(1);
   expect(col.docs[0].id).toBe('FooFighters');
@@ -121,7 +121,7 @@ test('observable', async () => {
   expect.assertions(2);
   const genre = observable.box('punk');
   const col = new Collection('artists');
-  col.query = ref => getContext().query(ref, getContext().where('genre', '==', genre.get()));
+  col.query = (ref) => getContext().query(ref, getContext().where('genre', '==', genre.get()));
   await col.fetch();
   expect(col.docs[0].id).toBe('TheOffspring');
   runInAction(() => genre.set('rock'));
@@ -132,7 +132,7 @@ test('observable', async () => {
 test('ref change', async () => {
   expect.assertions(3);
   const col = new Collection('artists', {
-    query: ref => getContext().query(ref, getContext().where('genre', '==', 'punk')),
+    query: (ref) => getContext().query(ref, getContext().where('genre', '==', 'punk')),
   });
   await col.fetch();
   expect(col.docs[0].id).toBe('TheOffspring');
@@ -147,7 +147,7 @@ test('ref change', async () => {
 test('disabled', async () => {
   expect.assertions(3);
   const col = new Collection('artists', {
-    query: _ref => null,
+    query: (_ref) => null,
   });
   try {
     await col.fetch();
@@ -155,7 +155,7 @@ test('disabled', async () => {
     expect(err).toBeDefined();
   }
   expect(col.docs.length).toBe(0);
-  col.query = _ref => undefined;
+  col.query = (_ref) => undefined;
   await col.fetch();
   expect(col.docs.length).toBe(2);
 });

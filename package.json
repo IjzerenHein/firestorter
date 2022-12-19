@@ -30,10 +30,9 @@
     "build": "yarn build:dist && yarn build:web",
     "build:dist": "tsdx build",
     "build:web": "cp src/IContext.ts web && tsc web/index.ts --declaration",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src test",
     "prepare": "yarn build",
     "size": "size-limit",
-    "analyze": "size-limit --why",
     "test": "yarn test:web && yarn test:compat",
     "test:web": "node ./test/seedSampleData.js && cp src/IContext.ts web && tsdx test --config jest.config.web.js",
     "test:compat": "node ./test/seedSampleData.js && tsdx test --config jest.config.compat.js",
@@ -82,5 +81,8 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4"
+  },
+  "resolutions": {
+    "prettier": "^2.8.1"
   }
 }

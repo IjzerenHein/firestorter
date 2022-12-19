@@ -146,9 +146,7 @@ function validateGeohash(geohash: string): void {
  *
  * @param {IGeoRegion} region The region to convert
  */
-export function geoRegionToPoints(
-  region: IGeoRegion
-): {
+export function geoRegionToPoints(region: IGeoRegion): {
   northEast: IGeoPoint;
   northWest: IGeoPoint;
   southEast: IGeoPoint;
@@ -496,7 +494,7 @@ export function getGeohashesForRadius(center: IGeoPoint, radius: number): string
   const bits = Math.max(1, boundingBoxBits(center, radius));
   const precision = Math.ceil(bits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
-  const queries = coordinates.map(coordinate => {
+  const queries = coordinates.map((coordinate) => {
     return geohashQuery(encodeGeohash(toGeoPoint(coordinate), precision), bits);
   });
   // remove duplicates
@@ -519,7 +517,7 @@ export function getGeohashesForRegion(region: IGeoRegion): string[][] {
   const bits = Math.max(1, boundingBoxBitsForRegion(region));
   const precision = Math.ceil(bits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinatesForRegion(region);
-  const queries = coordinates.map(coordinate => {
+  const queries = coordinates.map((coordinate) => {
     const geohash = encodeGeohash(toGeoPoint(coordinate), precision);
     const query = geohashQuery(geohash, bits);
     /* console.log(
@@ -580,7 +578,7 @@ export function flattenGeohashRange(geohash1: string, geohash2: string): string[
  */
 export function flattenGeohashes(geohashes: string[][]): string[] {
   const set = new Set<string>();
-  geohashes.forEach(a => flattenGeohashRange(a[0], a[1]).forEach(geohash => set.add(geohash)));
+  geohashes.forEach((a) => flattenGeohashRange(a[0], a[1]).forEach((geohash) => set.add(geohash)));
   return Array.from(set);
 }
 

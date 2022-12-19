@@ -18,7 +18,8 @@ import {
   IDocumentOptions,
   IEnhancedObservableDelegate,
   Mode,
-  IContext, IHasContext
+  IContext,
+  IHasContext,
 } from './Types';
 import { verifyMode } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
@@ -479,7 +480,7 @@ class Collection<T extends ICollectionDocument = Document>
    * console.log(col.isLoading);  // false
    */
   public get isLoading(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @babel/no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this.docsObservable.length;
     return this.isLoadingObservable.get();
   }
@@ -493,7 +494,7 @@ class Collection<T extends ICollectionDocument = Document>
    * @type {boolean}
    */
   public get isLoaded(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @babel/no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this.docsObservable.length;
     return this.isLoadedObservable.get();
   }
@@ -614,7 +615,7 @@ class Collection<T extends ICollectionDocument = Document>
   /**
    * @private
    */
-  public get context(): IContext | undefined{
+  public get context(): IContext | undefined {
     return this.ctx;
   }
 
@@ -724,7 +725,7 @@ class Collection<T extends ICollectionDocument = Document>
     }
   }
 
-  protected _resolveRef(source?: CollectionSource): CollectionReference | undefined{
+  protected _resolveRef(source?: CollectionSource): CollectionReference | undefined {
     if (this.sourceCache === source) {
       return this.sourceCacheRef;
     }
@@ -976,7 +977,7 @@ class Collection<T extends ICollectionDocument = Document>
       if (this.docsObservable.length) {
         this._updateFromSnapshot({
           docChanges: (options?: SnapshotListenOptions) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @babel/no-unused-expressions
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             options;
             return [];
           },

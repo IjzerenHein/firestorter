@@ -3,7 +3,7 @@ import type {
   DocumentSnapshot,
   SnapshotOptions,
   DocumentData,
-  CollectionReference
+  CollectionReference,
 } from 'firebase/firestore';
 import { observable, reaction, toJS, runInAction, IObservableValue } from 'mobx';
 
@@ -14,11 +14,12 @@ import {
   IDocumentOptions,
   IEnhancedObservableDelegate,
   Mode,
-  IContext, IHasContext
+  IContext,
+  IHasContext,
 } from './Types';
 import { mergeUpdateData, verifyMode, isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
-import { getContext  } from './init';
+import { getContext } from './init';
 
 /**
  * @private
@@ -203,7 +204,8 @@ class Document<T extends object = object>
       return undefined;
     }
     let path = ref.id;
-    let parent: CollectionReference<DocumentData> | DocumentReference<DocumentData> | null = ref.parent;
+    let parent: CollectionReference<DocumentData> | DocumentReference<DocumentData> | null =
+      ref.parent;
     while (parent) {
       path = parent.id + '/' + path;
       parent = parent.parent;

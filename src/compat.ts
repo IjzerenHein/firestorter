@@ -94,7 +94,7 @@ export function makeCompatContext(config: FirestorterCompatConfig): IContext {
     onSnapshot: (ref, resultFn, errorFn) => ref.onSnapshot(resultFn, errorFn),
     // @ts-ignore
     deleteField: () => firebase.firestore.FieldValue.delete(),
-  // @ts-ignore
+    // @ts-ignore
     serverTimestamp: () => firebase.firestore.FieldValue.serverTimestamp(),
   };
 }

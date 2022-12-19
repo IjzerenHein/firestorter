@@ -10,7 +10,8 @@ import {
   CollectionSource,
   ICollectionDocument,
   IEnhancedObservableDelegate,
-  IContext, IHasContext
+  IContext,
+  IHasContext,
 } from './Types';
 import { isEqual } from './Utils';
 import { enhancedObservable } from './enhancedObservable';
@@ -78,7 +79,7 @@ class AggregateCollection<
   private debug: boolean;
   private debugInstanceName?: string;
   private observedRefCount: number = 0;
-  private disposer?: (() => any);
+  private disposer?: () => any;
   private collections: IObservableArray<Collection<T>>;
   private prevCollections: Collection<T>[];
   private collectionRecycleMap: {

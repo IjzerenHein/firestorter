@@ -53,7 +53,7 @@ export type {
   ICollectionOptions,
   ICollectionDocument,
   IContext,
-  IHasContext
+  IHasContext,
 } from './Types';
 export type {
   AggregateCollectionOrderBy,

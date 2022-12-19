@@ -27,8 +27,7 @@ jobs:
 
       # Run verifications
       - run: yarn test
-      # Disabled prettier because b0rks on import/export type
-      # - run: yarn lint --max-warnings 0
+      - run: yarn lint --max-warnings 0
       - run: yarn build
       - run: yarn size
       - run: yarn docs:ci
