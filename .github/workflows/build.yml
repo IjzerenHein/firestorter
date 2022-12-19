@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-      -run: yarn --prefer-offline
+      - run: yarn --prefer-offline
 
       # Run verifications
       - run: yarn test
