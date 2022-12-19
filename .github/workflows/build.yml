@@ -15,19 +15,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Yarn install
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v1
+      # Install node and yarn
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - run: yarn install --ignore-scripts --frozen-lockfile
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn --prefer-offline
+
       # Run verifications
       - run: yarn test
       # Disabled prettier because b0rks on import/export type
