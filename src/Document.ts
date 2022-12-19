@@ -3,6 +3,7 @@ import type {
   DocumentSnapshot,
   SnapshotOptions,
   DocumentData,
+  CollectionReference
 } from 'firebase/firestore';
 import { observable, reaction, toJS, runInAction, IObservableValue } from 'mobx';
 
@@ -55,7 +56,7 @@ class Document<T extends object = object>
 {
   private sourceInput: DocumentSource;
   private sourceDisposerFn?: () => void;
-  private refObservable: IObservableValue<DocumentReference<DocumentData>>;
+  private refObservable: IObservableValue<DocumentReference<DocumentData> | undefined>;
   private snapshotObservable: IObservableValue<DocumentSnapshot | undefined>;
   private snapshotOptions?: SnapshotOptions;
   private docSchema?: (data: object) => object;
@@ -202,10 +203,10 @@ class Document<T extends object = object>
       return undefined;
     }
     let path = ref.id;
-    while (ref.parent) {
-      path = ref.parent.id + '/' + path;
-      // @ts-ignore
-      ref = ref.parent;
+    let parent: CollectionReference<DocumentData> | DocumentReference<DocumentData> | null = ref.parent;
+    while (parent) {
+      path = parent.id + '/' + path;
+      parent = parent.parent;
     }
     return path;
   }
@@ -310,7 +311,7 @@ class Document<T extends object = object>
         }
       }
     }
-    return getContext(this).updateDoc(ref, fields);
+    return getContext(this).updateDoc(ref!, fields);
   }
 
   /**
@@ -344,7 +345,7 @@ class Document<T extends object = object>
         return Promise.reject(err);
       }
     }
-    return getContext(this).setDoc(this.refObservable.get(), data, options);
+    return getContext(this).setDoc(this.refObservable.get()!, data, options);
   }
 
   /**
@@ -357,7 +358,7 @@ class Document<T extends object = object>
    * @return {Promise}
    */
   public delete(): Promise<void> {
-    return getContext(this).deleteDoc(this.refObservable.get());
+    return getContext(this).deleteDoc(this.refObservable.get()!);
   }
 
   /**
@@ -650,7 +651,7 @@ class Document<T extends object = object>
       this.isLoadingObservable.set(true);
       this.onSnapshotUnsubscribeFn?.();
       this.onSnapshotUnsubscribeFn = getContext(this).onSnapshot(
-        this.refObservable.get(),
+        this.refObservable.get()!,
         (snapshot) => this._onSnapshot(snapshot),
         (err) => this._onSnapshotError(err)
       );
