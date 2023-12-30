@@ -9,7 +9,7 @@ const schema = struct({
 class TodoDoc extends Document {
   constructor(source?: DocumentSource, options?: IDocumentOptions) {
     super(source, {
-      ...(options || {}),
+      ...options,
       schema,
     });
   }

@@ -1,11 +1,9 @@
-import type Firebase from 'firebase/compat/app';
-
-import type { IContext } from './IContext';
+import type { IContext } from './IContext.js';
 
 export type FirestorterCompatConfig = {
-  firebase: typeof Firebase;
-  app?: string | Firebase.app.App;
-  firestore?: Firebase.firestore.Firestore;
+  firebase: any;
+  app?: string | any;
+  firestore?: any;
 };
 
 /**

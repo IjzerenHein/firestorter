@@ -1,5 +1,5 @@
-import type { IContext, IHasContext } from './Types';
-import { makeCompatContext, FirestorterCompatConfig } from './compat';
+import type { IContext, IHasContext } from './Types.js';
+import { makeCompatContext, FirestorterCompatConfig } from './compat.js';
 
 let globalContext: IContext;
 

@@ -7,7 +7,7 @@ import type {
 } from 'firebase/firestore';
 import { IObservableArray, IObservableValue, observable, reaction, runInAction } from 'mobx';
 
-import Document from './Document';
+import Document from './Document.js';
 import {
   CollectionQuery,
   CollectionSource,
@@ -20,10 +20,10 @@ import {
   Mode,
   IContext,
   IHasContext,
-} from './Types';
-import { verifyMode } from './Utils';
-import { enhancedObservable } from './enhancedObservable';
-import { getContext } from './init';
+} from './Types.js';
+import { verifyMode } from './Utils.js';
+import { enhancedObservable } from './enhancedObservable.js';
+import { getContext } from './init.js';
 
 // * @param {Number} [options.limit] Maximum number of documents to fetch (see `Collection.limit`)
 

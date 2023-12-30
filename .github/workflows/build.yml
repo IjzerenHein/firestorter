@@ -17,17 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Install node and yarn
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - run: yarn --prefer-offline
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
       # Run verifications
-      - run: yarn test
       - run: yarn lint --max-warnings 0
       - run: yarn build
-      - run: yarn size
       - run: yarn docs:ci
+      - run: yarn test

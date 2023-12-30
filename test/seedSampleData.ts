@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { initializeApp, deleteApp } = require('firebase/app');
-const { getFirestore, doc, setDoc, collection, deleteDoc, getDocs } = require('firebase/firestore');
+import { initializeApp, deleteApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, collection, deleteDoc, getDocs } from 'firebase/firestore';
 
-const firebaseConfig = require('./firebaseConfig.json');
-const sampleData = require('./sampleData.json');
+import firebaseConfig from './firebaseConfig.json';
+import sampleData from './sampleData.json';
 
 // Initialize firestore
 const firebaseApp = initializeApp(firebaseConfig);
@@ -30,25 +30,26 @@ const deleteCol = async (colId, keepDocIds) => {
 
 // Seed the sample data
 console.info('Seeding firebase project with sample data...');
-Promise.all(
-  Object.entries(sampleData).map(([colId, colData]) => deleteCol(colId, Object.keys(colData)))
-)
-  .then(() =>
-    Promise.all(
-      Object.entries(sampleData).map(([colId, colData]) =>
-        Promise.all(
-          Object.entries(colData).map(([docId, docData]) => addDoc(colId, docId, docData))
-        )
+try {
+
+  // Delete documents from collections
+  await Promise.all(
+    Object.entries(sampleData).map(([colId, colData]) => deleteCol(colId, Object.keys(colData)))
+  )
+
+  // Add documents
+  await Promise.all(
+    Object.entries(sampleData).map(([colId, colData]) =>
+      Promise.all(
+        Object.entries(colData).map(([docId, docData]) => addDoc(colId, docId, docData))
       )
     )
   )
-  .then(
-    () => {
-      console.info('DONE');
-      deleteApp(firebaseApp);
-      // process.exit(0);
-    },
-    (err) => {
-      console.error(err.message);
-    }
-  );
+
+  console.info('DONE');
+  await deleteApp(firebaseApp);
+  process.exit(0);
+} catch (err) {
+  console.error(err);
+}
+
