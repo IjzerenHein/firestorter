@@ -1,8 +1,8 @@
 import type { CollectionReference, Query } from 'firebase/firestore';
 import { runInAction, autorun, computed, makeObservable, IObservableArray } from 'mobx';
 
-import Collection from './Collection';
-import Document from './Document';
+import Collection from './Collection.js';
+import Document from './Document.js';
 import {
   ICollection,
   DocumentSource,
@@ -12,9 +12,9 @@ import {
   IEnhancedObservableDelegate,
   IContext,
   IHasContext,
-} from './Types';
-import { isEqual } from './Utils';
-import { enhancedObservable } from './enhancedObservable';
+} from './Types.js';
+import { isEqual } from './Utils.js';
+import { enhancedObservable } from './enhancedObservable.js';
 
 export type AggregateCollectionOrderBy<T> = (a: T, b: T) => number;
 export type AggregateCollectionFilterBy<T> = (doc: T) => boolean;
@@ -310,7 +310,9 @@ class AggregateCollection<
     this.collectionRecycleMap = {};
     cols.forEach((col, index) => {
       const query = queries[index];
-      this.collectionRecycleMap[query.key] = col;
+      if (query !== undefined) {
+        this.collectionRecycleMap[query.key] = col;
+      }
     });
 
     // Update the queries

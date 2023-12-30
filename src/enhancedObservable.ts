@@ -1,6 +1,6 @@
 import { observable, onBecomeObserved, onBecomeUnobserved } from 'mobx';
 
-import { IEnhancedObservableDelegate } from './Types';
+import { IEnhancedObservableDelegate } from './Types.js';
 
 /**
  * @ignore

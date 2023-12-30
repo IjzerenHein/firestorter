@@ -16,10 +16,10 @@ import {
   Mode,
   IContext,
   IHasContext,
-} from './Types';
-import { mergeUpdateData, verifyMode, isEqual } from './Utils';
-import { enhancedObservable } from './enhancedObservable';
-import { getContext } from './init';
+} from './Types.js';
+import { mergeUpdateData, verifyMode, isEqual } from './Utils.js';
+import { enhancedObservable } from './enhancedObservable.js';
+import { getContext } from './init.js';
 
 /**
  * @private

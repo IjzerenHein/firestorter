@@ -51,8 +51,8 @@ function fromGeoPoint(point: IGeoPoint): number[] {
 
 function toGeoPoint(location: number[]): IGeoPoint {
   return {
-    latitude: location[0],
-    longitude: location[1],
+    latitude: location[0]!,
+    longitude: location[1]!,
   };
 }
 
@@ -578,7 +578,7 @@ export function flattenGeohashRange(geohash1: string, geohash2: string): string[
  */
 export function flattenGeohashes(geohashes: string[][]): string[] {
   const set = new Set<string>();
-  geohashes.forEach((a) => flattenGeohashRange(a[0], a[1]).forEach((geohash) => set.add(geohash)));
+  geohashes.forEach((a) => flattenGeohashRange(a[0]!, a[1]!).forEach((geohash) => set.add(geohash)));
   return Array.from(set);
 }
 

@@ -5,7 +5,7 @@ import { configure } from 'mobx';
 import { initFirestorter, getContext } from '../src';
 import makeWebContext from '../web';
 
-const firebaseConfig = require('./firebaseConfig.json');
+import firebaseConfig from './firebaseConfig.json';
 
 let app: FirebaseApp;
 

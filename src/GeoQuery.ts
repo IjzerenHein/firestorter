@@ -4,10 +4,10 @@ import AggregateCollection, {
   IAggregateCollectionOptions,
   IAggregateCollectionQuery,
   AggregateCollectionQueriesFn,
-} from './AggregateCollection';
-import { IGeoRegion, getGeohashesForRegion } from './GeoHash';
-import { CollectionSource, ICollectionDocument } from './Types';
-import { getContext } from './init';
+} from './AggregateCollection.js';
+import { IGeoRegion, getGeohashesForRegion } from './GeoHash.js';
+import { CollectionSource, ICollectionDocument } from './Types.js';
+import { getContext } from './init.js';
 
 export type GeoQueryRegion = IGeoRegion | (() => IGeoRegion | void);
 export type GeoQueryHash = string[];
