@@ -97,5 +97,5 @@ It does this by intelligently tracking whether a Collection or Document should b
 - Works with Vue.js
 
 
-Want to learn more, head over to [firestorter.com](http://firestorter.com) 🤘
+Want to learn more, head over to the [docs](https://ijzerenhein.github.io/firestorter) 🤘
 
