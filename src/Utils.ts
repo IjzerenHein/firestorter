@@ -1,7 +1,7 @@
 import isEqual from 'lodash.isequal';
 
-import { Mode, IHasContext } from './Types';
-import { getContext } from './init';
+import { Mode, IHasContext } from './Types.js';
+import { getContext } from './init.js';
 
 export { isEqual };
 
@@ -28,25 +28,26 @@ export function mergeUpdateData(data: object, fields: object, hasContext?: IHasC
       const paths = key.split('.');
       let dataVal: any = res;
       for (let i = 0; i < paths.length - 1; i++) {
-        if (dataVal[paths[i]] === undefined) {
+        const path = paths[i]!
+        if (dataVal[path] === undefined) {
           if (isDelete) {
             dataVal = undefined;
             break;
           }
-          dataVal[paths[i]] = {};
+          dataVal[path] = {};
         } else {
-          dataVal[paths[i]] = {
-            ...dataVal[paths[i]],
+          dataVal[path] = {
+            ...dataVal[path],
           };
         }
-        dataVal = dataVal[paths[i]];
+        dataVal = dataVal[path];
       }
       if (isDelete) {
         if (dataVal) {
-          delete dataVal[paths[paths.length - 1]];
+          delete dataVal[paths[paths.length - 1]!];
         }
       } else {
-        dataVal[paths[paths.length - 1]] = val;
+        dataVal[paths[paths.length - 1]!] = val;
       }
     }
   }
